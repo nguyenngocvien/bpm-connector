@@ -3,8 +3,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BpmAdapterApplication {
+public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(BpmAdapterApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

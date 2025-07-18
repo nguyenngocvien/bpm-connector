@@ -1,6 +1,5 @@
 package com.bpm.api.service;
 
-import com.bpm.core.service.ServiceConfigLoader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdapterService {
 
-    private final ServiceConfigLoader configLoader;
+    private final ServiceConfigLoade configLoader;
     private final ObjectMapper objectMapper;
 
     private final WebClient webClient = WebClient.builder().build();

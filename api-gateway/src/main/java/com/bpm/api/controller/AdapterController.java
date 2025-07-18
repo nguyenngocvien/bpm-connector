@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bpm.adapter.service.AdapterService;
+import com.bpm.api.service.AdapterService;
 
 import lombok.RequiredArgsConstructor;
 

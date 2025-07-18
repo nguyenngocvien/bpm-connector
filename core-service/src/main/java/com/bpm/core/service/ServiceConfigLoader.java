@@ -13,7 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ServiceConfigLoader {
 
-    private final ServiceConfigRepository repository;
+    private final ServiceConfigRepository repository = null;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ServiceConfig loadConfig(String serviceCode) {
