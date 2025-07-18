@@ -1,0 +1,55 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+log/
+dependency-reduced-pom.xml
+buildNumber.properties
+release.properties
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.apt_generated/
+.factorypath
+.springBeans
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+test-output/
+surefire-reports/
+
+# Flyway
+db/migration/*.lock
+
+# Environment
+.env
+*.env
+
+# Java
+*.class
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
