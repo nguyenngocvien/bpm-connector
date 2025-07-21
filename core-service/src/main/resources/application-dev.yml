@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    jndi-name: java:comp/env/jdbc/BpmDS
+
+logging:
+  level:
+    root: INFO
+    com.bpm: DEBUG

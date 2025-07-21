@@ -1,4 +1,4 @@
-CREATE TABLE adapter_log (
+CREATE TABLE service_log (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50),
     request_data TEXT,

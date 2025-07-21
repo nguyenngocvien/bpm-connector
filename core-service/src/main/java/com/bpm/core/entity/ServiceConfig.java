@@ -1,42 +1,77 @@
 package com.bpm.core.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "service_config")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ServiceConfig {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "service_code", nullable = false, unique = true)
     private String serviceCode;
-
-    @Column(name = "target_url", nullable = false)
     private String targetUrl;
-
-    @Column(name = "http_method", nullable = false)
     private String httpMethod;
-
-    @Column(columnDefinition = "TEXT")
-    private String headers; // JSON string
-
-    @Column(name = "payload_mapping", columnDefinition = "TEXT")
-    private String payloadMapping; // JSON string
-
+    private String headers;
+    private String payloadMapping;
     private Boolean active;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    private Integer version;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getServiceCode() {
+		return serviceCode;
+	}
+	public void setServiceCode(String serviceCode) {
+		this.serviceCode = serviceCode;
+	}
+	public String getTargetUrl() {
+		return targetUrl;
+	}
+	public void setTargetUrl(String targetUrl) {
+		this.targetUrl = targetUrl;
+	}
+	public String getHttpMethod() {
+		return httpMethod;
+	}
+	public void setHttpMethod(String httpMethod) {
+		this.httpMethod = httpMethod;
+	}
+	public String getHeaders() {
+		return headers;
+	}
+	public void setHeaders(String headers) {
+		this.headers = headers;
+	}
+	public String getPayloadMapping() {
+		return payloadMapping;
+	}
+	public void setPayloadMapping(String payloadMapping) {
+		this.payloadMapping = payloadMapping;
+	}
+	public Boolean getActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	public Integer getVersion() {
+		return version;
+	}
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 }

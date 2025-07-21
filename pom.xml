@@ -8,6 +8,7 @@
 		<module>api-gateway</module>
 		<module>common-service</module>
 		<module>core-service</module>
+		<module>auth-service</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

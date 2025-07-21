@@ -1,17 +1,10 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bpm_db
-    username: bpm_user
-    password: bpm_pass
+fincore:
+  base-url: http://fincore-service
+  timeout: 3000
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
+payment:
+  base-url: http://payment-service
+  timeout: 5000
 
 server:
   port: 8080

@@ -1,5 +1,5 @@
 package com.bpm.common.constants;
 
-public class HttpMethodType {
+public class LOG {
 
 }

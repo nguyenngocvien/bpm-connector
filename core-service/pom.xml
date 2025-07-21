@@ -12,6 +12,12 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
+    
+    <!-- Web starter (WebClient nằm trong đây) -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-webflux</artifactId>
+	</dependency>
 
     <!-- JSON processing -->
     <dependency>
@@ -25,6 +31,13 @@
         <artifactId>lombok</artifactId>
         <optional>true</optional>
     </dependency>
-</dependencies>
+    
+    <!-- Common module -->
+	<dependency>
+		<groupId>com.bpm</groupId>
+		<artifactId>common-service</artifactId>
+		<version>1.0.0</version>
+	</dependency>
+  </dependencies>
 
 </project>
