@@ -1,22 +1,5 @@
-spring:
-  profiles:
-    active: local  # đổi sang dev, uat, prod tùy môi trường bạn chạy
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bpmdb
-    username: bpm_user
-    password: secret123
-    driver-class-name: org.postgresql.Driver
-    jndi-name: java:comp/env/jdbc/BpmDS  # chỉ dùng nếu profile là dev/prod/uat
-	
-
 # Logging (tùy chọn)
 logging:
   level:
     root: INFO
     com.bpm: DEBUG
-
-# Flyway (nếu dùng)
-flyway:
-  enabled: true
-  locations: classpath:db/migration

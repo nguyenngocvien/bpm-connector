@@ -9,6 +9,7 @@
 		<module>common-service</module>
 		<module>core-service</module>
 		<module>auth-service</module>
+		<module>main-app</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
