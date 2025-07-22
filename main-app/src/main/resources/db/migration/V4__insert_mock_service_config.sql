@@ -1,4 +1,4 @@
-INSERT INTO service_config (
+INSERT INTO int_service_config (
     service_code,
     target_url,
     http_method,

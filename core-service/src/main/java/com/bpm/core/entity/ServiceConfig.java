@@ -10,6 +10,7 @@ public class ServiceConfig {
     private String headers;
     private String payloadMapping;
     private Boolean active;
+    private Boolean logEnabled;
     private Integer version;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -56,6 +57,12 @@ public class ServiceConfig {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
+	public Boolean getLogEnabled() {
+        return logEnabled;
+    }
+    public void setLogEnabled(Boolean logEnabled) {
+        this.logEnabled = logEnabled;
+    }
 	public Integer getVersion() {
 		return version;
 	}

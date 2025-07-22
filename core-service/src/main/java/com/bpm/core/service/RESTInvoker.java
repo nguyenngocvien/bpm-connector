@@ -41,6 +41,8 @@ public class RESTInvoker {
         long start = System.currentTimeMillis();
         String response = null;
         int statusCode = 200;
+        String errorMessage = null;
+        Long logId = null;
 
         try {
             WebClient.RequestHeadersSpec<?> requestSpec;
@@ -65,31 +67,38 @@ public class RESTInvoker {
                     )
                     .bodyToMono(String.class)
                     .block();
-
-            return Response.success(response);
+            
         } catch (WebClientResponseException ex) {
             statusCode = ex.getStatusCode().value();
             response = ex.getResponseBodyAsString();
-            return Response.error("HTTP error: " + ex.getStatusCode() + " - " + response);
+            errorMessage = "HTTP error: " + statusCode + " - " + response;
             
         } catch (Exception ex) {
             statusCode = 500;
             response = ex.getMessage();
-            return Response.error("Call failed: " + response);
+            errorMessage = "Call failed: " + response;
         } finally {
-            ServiceLog log = new ServiceLog(
-                    config.getServiceCode(),
-                    payloadJson,
-                    payloadJson,
-                    response,
-                    statusCode,
-                    (int) (System.currentTimeMillis() - start)
-            );
-            try {
-                logRepository.insertLog(log);
-            } catch (Exception logEx) {
-                // optional: log to console or monitoring tool
+        	if (Boolean.TRUE.equals(config.getLogEnabled())) {
+                ServiceLog log = new ServiceLog(
+                        config.getServiceCode(),
+                        payloadJson,
+                        payloadJson,
+                        response,
+                        statusCode,
+                        (int) (System.currentTimeMillis() - start)
+                );
+                try {
+                    logId = logRepository.insertLog(log);
+                } catch (Exception logEx) {
+                    // Optional: log this error if needed
+                }
             }
+        }
+        if (statusCode == 200) {
+            return Response.success(response); // message="Success", data = response
+        } else {
+            String msgWithLog = (logId != null) ? errorMessage + " [Log_ID: " + logId + "]" : errorMessage;
+            return Response.error(msgWithLog);
         }
     }
 }

@@ -18,25 +18,20 @@ public class Response<T> {
         this.data = data;
     }
 
-    public static <T> Response<T> success() {
-        return new Response<>(0, "OK", null);
+    public static <T> Response<T> success(T data) {
+        return new Response<>(0, "Success", data);
     }
     
-    public static <T> Response<T> success(T data) {
-        return new Response<>(0, "OK", data);
+    public static <T> Response<T> success(String message, T data) {
+        return new Response<>(0, message, data);
     }
 
     public static <T> Response<T> error(String message) {
         return new Response<>(1, message, null);
     }
-    
+
     public static <T> Response<T> error(int code, String message) {
         return new Response<>(code, message, null);
-    }
-
-    public static <T> Response<T> error(int code, String message, Long logId) {
-        String fullMessage = (logId != null) ? message + " [LogId: " + logId + "]" : message;
-        return new Response<>(code, fullMessage, null);
     }
 
     // Getters & Setters

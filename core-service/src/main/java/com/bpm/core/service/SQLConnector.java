@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.bpm.core.entity.SQLRequest;
 import com.bpm.core.util.ErrorUtil;
+import com.bpm.core.constant.DB_INVOKE_TYPE;
 import com.bpm.core.entity.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,7 +42,7 @@ public class SQLConnector {
 
         } catch (Exception e) {
             status = 1;
-            return ErrorUtil.generateErrorJson(e.getMessage(), "SQL_QUERY", jsonInput, status, start);
+            return ErrorUtil.generateErrorJson(e.getMessage(), DB_INVOKE_TYPE.QUERY, jsonInput, status, start);
         }
     }
 
@@ -62,7 +63,7 @@ public class SQLConnector {
 
         } catch (Exception e) {
             status = 1;
-            return ErrorUtil.generateErrorJson(e.getMessage(), "SQL_UPDATE", jsonInput, status, start);
+            return ErrorUtil.generateErrorJson(e.getMessage(), DB_INVOKE_TYPE.UPDATE, jsonInput, status, start);
         }
     }
 
@@ -96,7 +97,7 @@ public class SQLConnector {
 
         } catch (Exception e) {
             status = 1;
-            return ErrorUtil.generateErrorJson(e.getMessage(), "SQL_PROC", jsonInput, status, start);
+            return ErrorUtil.generateErrorJson(e.getMessage(), DB_INVOKE_TYPE.PROCEDURE, jsonInput, status, start);
         }
     }
 }

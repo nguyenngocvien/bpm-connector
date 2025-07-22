@@ -1,4 +1,4 @@
-CREATE TABLE service_log (
+CREATE TABLE int_log (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50),
     request_data TEXT,

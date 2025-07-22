@@ -29,7 +29,7 @@ public class UserRepository {
     }
 
     public Optional<User> findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT * FROM int_auth WHERE username = ?";
         SQLRequest request = new SQLRequest();
         request.setSql(sql);
         request.setParams(Collections.singletonList(username));

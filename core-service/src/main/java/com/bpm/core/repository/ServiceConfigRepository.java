@@ -22,7 +22,7 @@ public class ServiceConfigRepository {
     }
 
     public Optional<ServiceConfig> loadServiceByCode(String serviceCode) {
-        String sql = "SELECT * FROM service_config WHERE service_code = ? AND active = true";
+        String sql = "SELECT * FROM int_service_config WHERE service_code = ? AND active = true";
 
         try {
             ServiceConfig config = jdbcTemplate.query(
@@ -41,6 +41,7 @@ public class ServiceConfigRepository {
                         sc.setHeaders(rs.getString("headers"));
                         sc.setPayloadMapping(rs.getString("payload_mapping"));
                         sc.setActive(rs.getBoolean("active"));
+                        sc.setLogEnabled(rs.getBoolean("log_enabled"));
                         sc.setVersion(rs.getInt("version"));
                         sc.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                         sc.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());

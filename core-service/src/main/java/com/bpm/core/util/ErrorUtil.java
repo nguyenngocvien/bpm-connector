@@ -26,7 +26,7 @@ public class ErrorUtil {
         Long logId = logExecution(serviceCode, requestData, responseJson, statusCode, duration);
 
         if (logId != null) {
-            String enrichedMessage = String.format("%s [LogId: %d]", message, logId);
+            String enrichedMessage = String.format("%s [Log_ID: %d]", message, logId);
             try {
                 return objectMapper.writeValueAsString(Response.error(1, enrichedMessage));
             } catch (Exception ex2) {
