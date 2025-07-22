@@ -6,8 +6,8 @@ import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bpm.common.constants.ENV;
-import com.bpm.common.utils.WebSphereUtil;
+import com.bpm.core.constant.ENV;
+import com.bpm.core.util.WebSphereUtil;
 
 public class BasicAuth {
 	private static final Logger log = LoggerFactory.getLogger(BasicAuth.class);

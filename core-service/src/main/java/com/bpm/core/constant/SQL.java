@@ -1,4 +1,4 @@
-package com.bpm.common.constants;
+package com.bpm.core.constant;
 
 public class SQL {
 	public static String SERVICE_CONFIG_STATEMENT = "SELECT system, service_config, log_on FROM si_version WHERE si_version=? AND service_name=? AND status=1";

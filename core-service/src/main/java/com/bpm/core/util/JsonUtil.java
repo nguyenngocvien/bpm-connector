@@ -1,4 +1,4 @@
-package com.bpm.common.utils;
+package com.bpm.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

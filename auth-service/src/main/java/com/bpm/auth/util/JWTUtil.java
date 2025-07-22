@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Component
-public class JwtUtil {
+public class JWTUtil {
 
     private final Key secretKey = Keys.hmacShaKeyFor("my-very-secret-key-which-should-be-long".getBytes());
     private final long expirationMs = 86400000; // 1 day
@@ -30,5 +30,14 @@ public class JwtUtil {
             .build()
             .parseClaimsJws(token)
             .getBody();
+    }
+    
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 }

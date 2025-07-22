@@ -13,6 +13,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
+		<!-- Auth module -->
+		<dependency>
+			<groupId>com.bpm</groupId>
+			<artifactId>auth-service</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		<!-- Core module -->
 		<dependency>
 			<groupId>com.bpm</groupId>

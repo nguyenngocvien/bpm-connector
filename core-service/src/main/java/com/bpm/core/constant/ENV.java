@@ -1,4 +1,4 @@
-package com.bpm.common.constants;
+package com.bpm.core.constant;
 
 public class ENV {
 	public static final String BASE_URL = "BASE_URL";

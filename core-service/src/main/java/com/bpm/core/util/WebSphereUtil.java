@@ -1,4 +1,4 @@
-package com.bpm.common.utils;
+package com.bpm.core.util;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

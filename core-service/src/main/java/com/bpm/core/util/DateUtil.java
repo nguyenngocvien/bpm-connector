@@ -1,4 +1,4 @@
-package com.bpm.common.utils;
+package com.bpm.core.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

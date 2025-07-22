@@ -1,4 +1,4 @@
-package com.bpm.common.constants;
+package com.bpm.core.constant;
 
 public class DATE_PATTERN {
 
