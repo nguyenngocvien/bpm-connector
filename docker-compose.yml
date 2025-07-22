@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: bpmdb
+      POSTGRES_USER: bpmuser
+      POSTGRES_PASSWORD: bpm123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - bpm-net
+
+  main-app:
+    build:
+      context: ./main-app
+      dockerfile: Dockerfile
+    container_name: main-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bpmdb
+      SPRING_DATASOURCE_USERNAME: bpmuser
+      SPRING_DATASOURCE_PASSWORD: bpm123
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - bpm-net
+
+volumes:
+  pg_data:
+
+networks:
+  bpm-net:
+    driver: bridge
