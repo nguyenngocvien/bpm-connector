@@ -1,0 +1,35 @@
+spring:
+	datasource:
+	    url: jdbc:postgresql://localhost:5432/bpm_db
+	    username: bpm_user
+	    password: bpm_password
+	    driver-class-name: org.postgresql.Driver
+	jpa:
+    	hibernate:
+			ddl-auto: update
+		show-sql: true
+		properties:
+			hibernate:
+				format_sql: true
+#	security:
+#		user:
+#			name: admin
+#			password: secret
+
+mail:
+	username: ${MAIL_USERNAME}
+	password: ${MAIL_PASSWORD}
+	host: smtp.gmail.com
+	port: 587
+
+auth:
+	jwt:
+		secret: mySuperSecretKey1234567890123456
+fincore:
+	base-url: http://fincore-service
+	timeout: 3000
+payment:
+	base-url: http://payment-service
+	timeout: 5000
+server:
+	port: 8080

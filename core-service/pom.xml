@@ -7,18 +7,6 @@
   </parent>
   <artifactId>core-service</artifactId>
   <dependencies>
-    <!-- JPA + H2/MySQL/... -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    
-    <!-- Web starter (WebClient nằm trong đây) -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-webflux</artifactId>
-	</dependency>
-
     <!-- JSON processing -->
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -38,6 +26,20 @@
 		<artifactId>common-service</artifactId>
 		<version>1.0.0</version>
 	</dependency>
-  </dependencies>
+	<!-- JavaMail API -->
+    <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>jakarta.mail</artifactId>
+        <version>2.0.1</version>
+    </dependency>
+    <dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-simple</artifactId>
+	</dependency>
 
+  </dependencies>
 </project>

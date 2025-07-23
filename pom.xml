@@ -10,6 +10,8 @@
 		<module>core-service</module>
 		<module>auth-service</module>
 		<module>main-app</module>
+		<module>database-service</module>
+		<module>bpm-gateway</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
