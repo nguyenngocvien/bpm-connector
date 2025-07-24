@@ -1,6 +1,8 @@
 package com.bpm.core.repository;
 
 import com.bpm.core.entity.ServiceLog;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -12,6 +14,7 @@ import java.sql.Timestamp;
 @Repository
 public class ServiceLogRepository {
 
+	@Autowired
     private final JdbcTemplate jdbcTemplate;
 
     public ServiceLogRepository(JdbcTemplate jdbcTemplate) {

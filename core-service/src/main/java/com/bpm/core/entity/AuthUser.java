@@ -1,6 +1,6 @@
 package com.bpm.core.entity;
 
-public class User {
+public class AuthUser {
     private Long id;
     private String username;
     private String password;

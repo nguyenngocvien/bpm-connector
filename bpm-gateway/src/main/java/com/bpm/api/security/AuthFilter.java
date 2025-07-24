@@ -29,6 +29,14 @@ public class AuthFilter extends OncePerRequestFilter{
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+    	String path = request.getRequestURI();
+
+        // Skip filter for public route
+        if (path.startsWith("/ui/service-config")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         String authHeader = request.getHeader("Authorization");
 
         AuthResult result = authManager.authenticate(authHeader);

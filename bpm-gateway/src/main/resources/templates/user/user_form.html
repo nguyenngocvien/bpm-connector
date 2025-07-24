@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Form</title>
+</head>
+<body>
+<h2 th:text="${user.id == null} ? 'Add User' : 'Edit User'"></h2>
+<form th:action="@{/ui/users/save}" th:object="${user}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+    Username: <input type="text" th:field="*{username}" required/><br/>
+    Password: <input type="password" th:field="*{password}" required/><br/>
+    Role: <input type="text" th:field="*{role}" required/><br/>
+    <button type="submit">Save</button>
+</form>
+<a href="/ui/users">Back to list</a>
+</body>
+</html>
