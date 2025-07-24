@@ -5,4 +5,5 @@ public class ROUTES {
 	public static final String MAIL = BASE + "/mail";
     public static final String AUTH = BASE + "/auth";
     public static final String USER = BASE + "/users";
+    public static final String SQL = BASE + "/sql";
 }

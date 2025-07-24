@@ -1,55 +1,42 @@
 package com.bpm.core.service;
 
-import jakarta.mail.*;
-
-import java.util.Properties;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
+@Service
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-    private final String username;
-    private final String password;
-    private final String smtpHost;
-    private final int smtpPort;
+    private final JavaMailSender mailSender;
+    private final String fromEmail;
 
-    public EmailService(String username, String password,
-                        String smtpHost, int smtpPort) {
-        this.username = username;
-        this.password = password;
-        this.smtpHost = smtpHost;
-        this.smtpPort = smtpPort;
+    public EmailService(JavaMailSender mailSender,
+                        @Value("${mail.from}") String fromEmail) {
+        this.mailSender = mailSender;
+        this.fromEmail = fromEmail;
     }
 
     public void sendEmail(String to, String subject, String content) {
         logger.info("Preparing to send email to {}", to);
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", smtpHost);
-        props.put("mail.smtp.port", smtpPort);
-
-        Authenticator authenticator = new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        };
-
-        Session session = Session.getInstance(props, authenticator);
-
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject(subject);
-            message.setContent(content, "text/html; charset=utf-8");
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            Transport.send(message);
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true); // true for HTML
+
+            mailSender.send(message);
             logger.info("Email successfully sent to {}", to);
 
         } catch (MessagingException e) {
@@ -57,4 +44,3 @@ public class EmailService {
         }
     }
 }
-

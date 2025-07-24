@@ -1,6 +1,6 @@
 package com.bpm.auth;
 
-public interface AuthenticationProvider {
+public interface AuthProvider {
     boolean supports(String authHeader);
     AuthResult authenticate(String authHeader);
 }

@@ -9,8 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.bpm.auth.AuthManager;
 import com.bpm.auth.AuthResult;
-import com.bpm.auth.Authenticator;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthFilter extends OncePerRequestFilter{
 
     @Autowired
-    private Authenticator authenticator;
+    private AuthManager authManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -31,7 +31,7 @@ public class AuthFilter extends OncePerRequestFilter{
 
         String authHeader = request.getHeader("Authorization");
 
-        AuthResult result = authenticator.authenticate(authHeader);
+        AuthResult result = authManager.authenticate(authHeader);
 
         if (result.isSuccess()) {
             UsernamePasswordAuthenticationToken authentication =
