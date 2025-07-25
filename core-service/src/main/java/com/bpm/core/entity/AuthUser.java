@@ -5,6 +5,15 @@ public class AuthUser {
     private String username;
     private String password;
     private String role = "USER";
+    
+    public AuthUser() {
+    }
+    
+    public AuthUser(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 
     public Long getId() {
         return id;
@@ -37,4 +46,14 @@ public class AuthUser {
     public void setRole(String role) {
         this.role = role;
     }
+    
+    @Override
+    public String toString() {
+        return "AuthUser{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               ", role='" + role + '\'' +
+               '}';
+    }
+    
 }

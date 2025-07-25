@@ -1,4 +1,4 @@
-CREATE TABLE isrv_config (
+CREATE TABLE IF NOT EXISTS isrv_config (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50) NOT NULL UNIQUE,
     target_url TEXT NOT NULL,
