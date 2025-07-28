@@ -1,5 +1,6 @@
 INSERT INTO isrv_config (
     service_code,
+    connection_type,
     target_url,
     http_method,
     headers,
@@ -11,6 +12,7 @@ INSERT INTO isrv_config (
 ) VALUES 
 (
     'USER001',
+    'REST',
     'http://example.com/api/users',
     'POST',
     '{"Content-Type":"application/json"}',
@@ -22,6 +24,7 @@ INSERT INTO isrv_config (
 ),
 (
     'ORDER002',
+    'REST',
     'http://example.com/api/orders',
     'GET',
     '{"Authorization":"Bearer abc123"}',

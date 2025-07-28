@@ -3,7 +3,7 @@
 <head><title>Service Config</title></head>
 <body>
 <h2>Configs</h2>
-<a th:href="@{/config/new}">New Config</a>
+<a th:href="@{/ui/service-config/new}">New Config</a>
 <table border="1">
 <tr>
   <th>ID</th><th>Service Code</th><th>Actions</th>
@@ -12,8 +12,8 @@
   <td th:text="${cfg.id}">1</td>
   <td th:text="${cfg.serviceCode}">SC001</td>
   <td>
-    <a th:href="@{'/config/edit/' + ${cfg.id}}">Edit</a> |
-    <a th:href="@{'/config/delete/' + ${cfg.id}}">Delete</a>
+    <a th:href="@{'/ui/service-config/edit/' + ${cfg.id}}">Edit</a> |
+    <a th:href="@{'/ui/service-config/delete/' + ${cfg.id}}">Delete</a>
   </td>
 </tr>
 </table>

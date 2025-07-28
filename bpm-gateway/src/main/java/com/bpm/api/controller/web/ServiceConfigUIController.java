@@ -18,7 +18,7 @@ import com.bpm.core.entity.ServiceConfig;
 import com.bpm.core.repository.ServiceConfigRepository;
 
 @Controller
-@RequestMapping(ROUTES.ISRV_CONFIG_UI)
+@RequestMapping(ROUTES.UI_SERVICE_CONFIG)
 public class ServiceConfigUIController {
 
     @Autowired
@@ -28,13 +28,13 @@ public class ServiceConfigUIController {
     public String list(Model model) {
         List<ServiceConfig> configs = repository.findAll();
         model.addAttribute("configs", configs);
-        return "list";
+        return "service_list";
     }
 
     @GetMapping("/new")
     public String showForm(Model model) {
         model.addAttribute("config", new ServiceConfig());
-        return "form";
+        return "service_form";
     }
 
     @PostMapping("/save")
@@ -52,7 +52,7 @@ public class ServiceConfigUIController {
         ServiceConfig config = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Config not found"));
         model.addAttribute("config", config);
-        return "form";
+        return "service_form";
     }
 
     @GetMapping("/delete/{id}")

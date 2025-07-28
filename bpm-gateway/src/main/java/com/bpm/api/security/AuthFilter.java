@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class AuthFilter extends OncePerRequestFilter{
+public class AuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private AuthManager authManager;
@@ -29,14 +29,14 @@ public class AuthFilter extends OncePerRequestFilter{
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-    	String path = request.getRequestURI();
+        String path = request.getRequestURI();
 
-        // Skip filter for public route
-        if (path.startsWith("/ui/service-config")) {
+        // ✅ Skip all /ui/* paths from auth
+        if (path.startsWith("/ui/") || path.equals("/ui")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         String authHeader = request.getHeader("Authorization");
 
         AuthResult result = authManager.authenticate(authHeader);

@@ -23,15 +23,16 @@ public class SecurityConfig {
 
     @Autowired
     private AuthFilter authFilter;
+    
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/**")
             .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/ui/service-config", "/ui/service-config/**").permitAll()
-                .anyRequest().authenticated()
-            )
+            	    .requestMatchers("/ui/**").permitAll()   // 👈 permit toàn bộ UI
+            	    .anyRequest().authenticated()
+            	)
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
             .csrf(csrf -> csrf.disable())
             .httpBasic(basic -> basic.disable())

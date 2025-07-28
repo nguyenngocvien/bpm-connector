@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.api.service.SQLService;
+import com.bpm.core.service.SQLConnector;
 
 import org.springframework.http.ResponseEntity;
 
@@ -14,27 +14,27 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping(ROUTES.SQL)
 public class SQLController {
 
-    private final SQLService sqlService;
+	private final SQLConnector sqlConnector;
 
-    public SQLController(SQLService sqlService) {
-        this.sqlService = sqlService;
+    public SQLController(SQLConnector sqlConnector) {
+        this.sqlConnector = sqlConnector;
     }
 
     @PostMapping("/query")
     public ResponseEntity<String> query(@RequestBody String jsonInput) {
-        String resultJson = sqlService.handleQuery(jsonInput);
+        String resultJson = sqlConnector.executeQuery(jsonInput);
         return ResponseEntity.ok(resultJson);
     }
 
     @PostMapping("/update")
     public ResponseEntity<String> update(@RequestBody String jsonInput) {
-        String resultJson = sqlService.handleUpdate(jsonInput);
+        String resultJson = sqlConnector.executeUpdate(jsonInput);
         return ResponseEntity.ok(resultJson);
     }
 
     @PostMapping("/procedure")
     public ResponseEntity<String> procedure(@RequestBody String jsonInput) {
-        String resultJson = sqlService.handleProcedure(jsonInput);
+        String resultJson = sqlConnector.executeProcedure(jsonInput);
         return ResponseEntity.ok(resultJson);
     }
 }

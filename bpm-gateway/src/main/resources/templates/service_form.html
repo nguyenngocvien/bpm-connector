@@ -3,7 +3,7 @@
 <head><title>Service Config Form</title></head>
 <body>
 <h2>Config Form</h2>
-<form th:action="@{/config/save}" th:object="${config}" method="post">
+<form th:action="@{/ui/service-config/save}" th:object="${config}" method="post">
     <input type="hidden" th:field="*{id}" />
     Service Code: <input type="text" th:field="*{serviceCode}" /><br/>
     Target URL: <input type="text" th:field="*{targetUrl}" /><br/>
@@ -11,6 +11,6 @@
     Active: <input type="checkbox" th:field="*{active}" /><br/>
     <button type="submit">Save</button>
 </form>
-<a th:href="@{/config}">Back</a>
+<a th:href="@{/ui/service-config}">Back</a>
 </body>
 </html>

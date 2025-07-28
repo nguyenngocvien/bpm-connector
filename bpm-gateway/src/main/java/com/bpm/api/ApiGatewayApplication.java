@@ -6,7 +6,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.bpm.auth", "com.bpm.core"})
+@ComponentScan(basePackages = {"com.bpm"})
 public class ApiGatewayApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
