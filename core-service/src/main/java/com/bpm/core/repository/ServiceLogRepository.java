@@ -22,7 +22,7 @@ public class ServiceLogRepository {
     }
 
     public Long insertLog(ServiceLog log) {
-        String sql = "INSERT INTO isrv_log " +
+        String sql = "INSERT INTO core_service_log " +
                 "(service_code, request_data, mapped_request, response_data, status_code, duration_ms, created_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 

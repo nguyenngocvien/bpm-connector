@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS isrv_log (
+CREATE TABLE IF NOT EXISTS core_service_log (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50),
     request_data TEXT,

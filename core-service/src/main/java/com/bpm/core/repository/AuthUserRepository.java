@@ -23,7 +23,7 @@ public class AuthUserRepository {
     }
     
     public int insert(AuthUser user, PasswordEncoder encoder) {
-        String sql = "INSERT INTO isrv_auth (username, password, role) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO core_auth_user (username, password, role) VALUES (?, ?, ?)";
         return jdbcTemplate.update(sql,
                 user.getUsername(),
                 encoder.encode(user.getPassword()),  // mã hóa mật khẩu
@@ -31,7 +31,7 @@ public class AuthUserRepository {
     }
     
     public int update(AuthUser user, PasswordEncoder encoder) {
-        String sql = "UPDATE isrv_auth SET username = ?, password = ?, role = ? WHERE id = ?";
+        String sql = "UPDATE core_auth_user SET username = ?, password = ?, role = ? WHERE id = ?";
         return jdbcTemplate.update(sql,
                 user.getUsername(),
                 encoder.encode(user.getPassword()),
@@ -40,12 +40,12 @@ public class AuthUserRepository {
     }
     
     public int delete(Long id) {
-        String sql = "DELETE FROM isrv_auth WHERE id = ?";
+        String sql = "DELETE FROM core_auth_user WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
     
     public List<AuthUser> findAll() {
-        String sql = "SELECT * FROM isrv_auth";
+        String sql = "SELECT * FROM core_auth_user";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             AuthUser user = new AuthUser();
             user.setId(rs.getLong("id"));
@@ -57,7 +57,7 @@ public class AuthUserRepository {
     }
     
     public Optional<AuthUser> findById(Long id) {
-        String sql = "SELECT * FROM isrv_auth WHERE id = ?";
+        String sql = "SELECT * FROM core_auth_user WHERE id = ?";
         try {
             AuthUser user = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 AuthUser u = new AuthUser();
@@ -75,7 +75,7 @@ public class AuthUserRepository {
     }
 
     public Optional<AuthUser> findByUsername(String username) {
-        String sql = "SELECT * FROM isrv_auth WHERE username = ?";
+        String sql = "SELECT * FROM core_auth_user WHERE username = ?";
 
         try {
         	AuthUser user = jdbcTemplate.queryForObject(sql, userRowMapper(), username);

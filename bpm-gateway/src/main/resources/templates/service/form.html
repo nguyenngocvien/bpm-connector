@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Config Form</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="d-flex">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <div class="container mt-4">
+        <h2 th:text="${serviceConfig.id != null} ? 'Edit Service Config' : 'Add Service Config'"></h2>
+
+        <form th:action="@{/serviceconfig/save}" th:object="${serviceConfig}" method="post">
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="mb-3">
+                <label>Service Code</label>
+                <input type="text" class="form-control" th:field="*{serviceCode}" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Target URL</label>
+                <input type="text" class="form-control" th:field="*{targetUrl}" required />
+            </div>
+
+            <div class="mb-3">
+                <label>HTTP Method</label>
+                <input type="text" class="form-control" th:field="*{httpMethod}" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Headers (JSON)</label>
+                <textarea class="form-control" th:field="*{headers}" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label>Payload Mapping</label>
+                <textarea class="form-control" th:field="*{payloadMapping}" rows="3"></textarea>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" th:field="*{active}" />
+                <label class="form-check-label">Active</label>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" th:field="*{logEnabled}" />
+                <label class="form-check-label">Enable Logging</label>
+            </div>
+
+            <div class="mb-3">
+                <label>Version</label>
+                <input type="number" class="form-control" th:field="*{version}" required />
+            </div>
+
+            <button type="submit" class="btn btn-success">Save</button>
+            <a th:href="@{/serviceconfig/list}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

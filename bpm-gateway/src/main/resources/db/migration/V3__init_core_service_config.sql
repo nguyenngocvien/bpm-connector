@@ -1,7 +1,6 @@
-CREATE TABLE IF NOT EXISTS isrv_config (
+CREATE TABLE IF NOT EXISTS core_service_config (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50) NOT NULL UNIQUE,
-    connection_type VARCHAR(10) NOT NULL,
     target_url TEXT NOT NULL,
     http_method VARCHAR(10),
     headers TEXT,

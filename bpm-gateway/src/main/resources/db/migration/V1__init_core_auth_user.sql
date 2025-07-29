@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS isrv_auth (
+CREATE TABLE IF NOT EXISTS core_auth_user (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,

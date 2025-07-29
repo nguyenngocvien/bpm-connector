@@ -22,12 +22,12 @@ public class ServiceConfigRepository {
     }
     
     public List<ServiceConfig> findAll() {
-        String sql = "SELECT * FROM isrv_config ORDER BY id ASC";
+        String sql = "SELECT * FROM core_service_config ORDER BY id ASC";
         return jdbcTemplate.query(sql, serviceConfigRowMapper);
     }
 
     public Optional<ServiceConfig> findById(Long id) {
-        String sql = "SELECT * FROM isrv_config WHERE id = ?";
+        String sql = "SELECT * FROM core_service_config WHERE id = ?";
 
         try {
             ServiceConfig sc = jdbcTemplate.queryForObject(sql, serviceConfigRowMapper, id);
@@ -41,7 +41,7 @@ public class ServiceConfigRepository {
     }
 
     public Optional<ServiceConfig> loadServiceByCode(String serviceCode) {
-        String sql = "SELECT * FROM isrv_config WHERE service_code = ? AND active = true";
+        String sql = "SELECT * FROM core_service_config WHERE service_code = ? AND active = true";
 
         try {
             ServiceConfig sc = jdbcTemplate.queryForObject(sql, serviceConfigRowMapper, serviceCode);
@@ -55,7 +55,7 @@ public class ServiceConfigRepository {
     }
     
     public int insert(ServiceConfig config) {
-        String sql = "INSERT INTO isrv_config (service_code, target_url, http_method, headers, payload_mapping, active, log_enabled, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO core_service_config (service_code, target_url, http_method, headers, payload_mapping, active, log_enabled, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         return jdbcTemplate.update(sql,
                 config.getServiceCode(),
@@ -69,12 +69,12 @@ public class ServiceConfigRepository {
     }
     
     public int deleteById(Long id) {
-        String sql = "DELETE FROM isrv_config WHERE id = ?";
+        String sql = "DELETE FROM core_service_config WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
     
     public int update(ServiceConfig config) {
-        String sql = "UPDATE isrv_config SET service_code = ?, target_url = ?, http_method = ?, headers = ?, payload_mapping = ?, active = ?, log_enabled = ?, version = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+        String sql = "UPDATE core_service_config SET service_code = ?, target_url = ?, http_method = ?, headers = ?, payload_mapping = ?, active = ?, log_enabled = ?, version = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
 
         return jdbcTemplate.update(sql,
                 config.getServiceCode(),

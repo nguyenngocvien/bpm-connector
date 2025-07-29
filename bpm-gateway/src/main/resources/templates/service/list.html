@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Config</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="d-flex">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <div class="container mt-4">
+        <h2>Service Configurations</h2>
+        <a th:href="@{/serviceconfig/form}" class="btn btn-primary mb-3">Add New Service Config</a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Service Code</th>
+                    <th>Target URL</th>
+                    <th>HTTP Method</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sc : ${serviceConfigs}">
+                    <td th:text="${sc.id}"></td>
+                    <td th:text="${sc.serviceCode}"></td>
+                    <td th:text="${sc.targetUrl}"></td>
+                    <td th:text="${sc.httpMethod}"></td>
+                    <td th:text="${sc.active ? 'Yes' : 'No'}"></td>
+                    <td>
+                        <a th:href="@{'/serviceconfig/form/' + ${sc.id}}" class="btn btn-sm btn-warning">Edit</a>
+                        <a th:href="@{'/serviceconfig/delete/' + ${sc.id}}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this config?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
