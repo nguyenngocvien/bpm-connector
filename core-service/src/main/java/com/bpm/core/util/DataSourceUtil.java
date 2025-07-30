@@ -1,6 +1,6 @@
 package com.bpm.core.util;
 
-import com.bpm.core.config.DbConfig;
+import com.bpm.core.entity.DbConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 

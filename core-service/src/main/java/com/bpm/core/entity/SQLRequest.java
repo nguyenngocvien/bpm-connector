@@ -7,6 +7,10 @@ public class SQLRequest {
     private String sql;
     private List<Object> params;
     
+    public SQLRequest() {
+		// TODO Auto-generated constructor stub
+	}
+    
     public SQLRequest(String datasource, String sql, List<Object> params) {
 		this.datasource = datasource;
 		this.sql = sql;

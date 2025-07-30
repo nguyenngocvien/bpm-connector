@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.service.EmailService;
+import com.bpm.core.service.impl.EmailService;
 
 @RestController
 @RequestMapping(ROUTES.MAIL)

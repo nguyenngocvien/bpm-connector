@@ -1,5 +1,6 @@
 package com.bpm.api.controller.web;
 
+import com.bpm.api.constant.ROUTES;
 import com.bpm.core.entity.ServiceConfig;
 import com.bpm.core.repository.ServiceConfigRepository;
 
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/serviceconfig")
+@RequestMapping(ROUTES.UI_SERVICE_CONFIG)
 public class ServiceConfigController {
 
     private final ServiceConfigRepository service;
@@ -18,35 +19,41 @@ public class ServiceConfigController {
         this.service = service;
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public String list(Model model) {
         List<ServiceConfig> configs = service.findAll();
-        model.addAttribute("configs", configs);
-        return "serviceconfig_list";
+        model.addAttribute("serviceConfigs", configs);
+        model.addAttribute("content", "service/list");
+        model.addAttribute("activeMenu", "service");
+        return "main";
     }
 
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("serviceConfig", new ServiceConfig());
-        return "serviceconfig_form";
+        model.addAttribute("content", "service/form");
+        model.addAttribute("activeMenu", "service");
+        return "main";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Long id, Model model) {
         ServiceConfig config = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
         model.addAttribute("serviceConfig", config);
-        return "serviceconfig_form";
+        model.addAttribute("content", "service/form");
+        model.addAttribute("activeMenu", "service");
+        return "main";
     }
 
     @PostMapping("/save")
     public String save(@ModelAttribute ServiceConfig config) {
-        service.insert(config);
-        return "redirect:/serviceconfig/list";
+        service.save(config);
+        return "redirect:" + ROUTES.UI_SERVICE_CONFIG;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         service.deleteById(id);
-        return "redirect:/serviceconfig/list";
+        return "redirect:" + ROUTES.UI_SERVICE_CONFIG;
     }
 }

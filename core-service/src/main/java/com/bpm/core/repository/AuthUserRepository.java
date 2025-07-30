@@ -22,28 +22,6 @@ public class AuthUserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
     
-    public int insert(AuthUser user, PasswordEncoder encoder) {
-        String sql = "INSERT INTO core_auth_user (username, password, role) VALUES (?, ?, ?)";
-        return jdbcTemplate.update(sql,
-                user.getUsername(),
-                encoder.encode(user.getPassword()),  // mã hóa mật khẩu
-                user.getRole());
-    }
-    
-    public int update(AuthUser user, PasswordEncoder encoder) {
-        String sql = "UPDATE core_auth_user SET username = ?, password = ?, role = ? WHERE id = ?";
-        return jdbcTemplate.update(sql,
-                user.getUsername(),
-                encoder.encode(user.getPassword()),
-                user.getRole(),
-                user.getId());
-    }
-    
-    public int delete(Long id) {
-        String sql = "DELETE FROM core_auth_user WHERE id = ?";
-        return jdbcTemplate.update(sql, id);
-    }
-    
     public List<AuthUser> findAll() {
         String sql = "SELECT * FROM core_auth_user";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -84,6 +62,31 @@ public class AuthUserRepository {
             // Optional: log error, e.g., logger.warn("User not found: {}", username);
             return Optional.empty();
         }
+    }
+    
+    public int save(AuthUser user, PasswordEncoder encoder) {
+    	if (user.getId() == null) {
+    		// INSERT
+    		String sql = "INSERT INTO core_auth_user (username, password, role) VALUES (?, ?, ?)";
+            return jdbcTemplate.update(sql,
+                    user.getUsername(),
+                    encoder.encode(user.getPassword()),  // mã hóa mật khẩu
+                    user.getRole());
+    	} else {
+            // UPDATE
+    		String sql = "UPDATE core_auth_user SET username = ?, password = ?, role = ? WHERE id = ?";
+            return jdbcTemplate.update(sql,
+                    user.getUsername(),
+                    encoder.encode(user.getPassword()),
+                    user.getRole(),
+                    user.getId());
+    	}
+        
+    }
+    
+    public int deleteById(Long id) {
+        String sql = "DELETE FROM core_auth_user WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 
     private RowMapper<AuthUser> userRowMapper() {

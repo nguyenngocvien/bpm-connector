@@ -1,10 +1,11 @@
 package com.bpm.api.security;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -31,8 +32,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // ✅ Skip all /ui/* paths from auth
-        if (path.startsWith("/ui/") || path.equals("/ui")) {
+        if (isPublicPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,15 +42,23 @@ public class AuthFilter extends OncePerRequestFilter {
         AuthResult result = authManager.authenticate(authHeader);
 
         if (result.isSuccess()) {
+            // Assign ROLE_USER authority by default
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            result.getUsername(), null, Collections.emptyList());
+                            result.getUsername(), null,
+                            Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized: " + result.getError());
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Unauthorized: " + result.getError() + "\"}");
         }
+    }
+
+    private boolean isPublicPath(String path) {
+        return path.equals("/login") || path.startsWith("/ui") || path.startsWith("/css/") || path.startsWith("/js/");
     }
 }

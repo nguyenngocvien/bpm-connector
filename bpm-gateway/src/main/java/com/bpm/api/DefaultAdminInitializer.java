@@ -36,7 +36,7 @@ public class DefaultAdminInitializer implements CommandLineRunner {
 
         if (!existingUser.isPresent()) {
             AuthUser user = new AuthUser(defaultUsername, defaultPassword, defaultRole);
-            authUserRepository.insert(user, passwordEncoder);
+            authUserRepository.save(user, passwordEncoder);
         }
     }
 }

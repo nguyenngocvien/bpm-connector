@@ -30,7 +30,7 @@ public class JsonUtil {
         }
     }
 
-    public static String toJson(Object object) {
+    public static String toString(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {

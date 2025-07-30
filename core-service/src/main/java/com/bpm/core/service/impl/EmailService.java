@@ -1,4 +1,4 @@
-package com.bpm.core.service;
+package com.bpm.core.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

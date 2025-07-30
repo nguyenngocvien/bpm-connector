@@ -1,0 +1,57 @@
+<div class="content" th:fragment="content">
+    <h2 th:text="${dbConfig.id == null} ? 'Add Datasource' : 'Edit Datasource'"></h2>
+
+    <form th:action="@{/ui/datasource/save}" th:object="${dbConfig}" method="post" class="needs-validation" novalidate>
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Datasource Name</label>
+            <input type="text" th:field="*{name}" class="form-control" id="name" required />
+            <div class="invalid-feedback">Please provide a datasource name.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="url" class="form-label">Database URL</label>
+            <input type="text" th:field="*{url}" class="form-control" id="url" placeholder="jdbc:mysql://..." required />
+            <div class="invalid-feedback">Please provide a valid JDBC URL.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" th:field="*{username}" class="form-control" id="username" required />
+            <div class="invalid-feedback">Please enter username.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" th:field="*{password}" class="form-control" id="password" required />
+            <div class="invalid-feedback">Please enter password.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="driverClassName" class="form-label">Driver Class Name</label>
+            <input type="text" th:field="*{driverClassName}" class="form-control" id="driverClassName" required />
+            <div class="invalid-feedback">Please enter JDBC driver class name.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a th:href="@{/ui/datasource}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+    <script>
+        // Bootstrap validation script
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+</div>

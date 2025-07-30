@@ -1,106 +1,120 @@
 package com.bpm.core.repository;
 
 import com.bpm.core.entity.ServiceConfig;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class ServiceConfigRepository {
 
-	@Autowired
     private final JdbcTemplate jdbcTemplate;
 
     public ServiceConfigRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
+
+    // 1. Find All
     public List<ServiceConfig> findAll() {
         String sql = "SELECT * FROM core_service_config ORDER BY id ASC";
         return jdbcTemplate.query(sql, serviceConfigRowMapper);
     }
 
+    // 2. Find by ID
     public Optional<ServiceConfig> findById(Long id) {
         String sql = "SELECT * FROM core_service_config WHERE id = ?";
-
         try {
-            ServiceConfig sc = jdbcTemplate.queryForObject(sql, serviceConfigRowMapper, id);
-            return Optional.ofNullable(sc);
+            ServiceConfig config = jdbcTemplate.queryForObject(sql, serviceConfigRowMapper, id);
+            return Optional.ofNullable(config);
         } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        } catch (Exception e) {
-            e.printStackTrace();
             return Optional.empty();
         }
     }
 
-    public Optional<ServiceConfig> loadServiceByCode(String serviceCode) {
+    // 3. Find by Service Code
+    public Optional<ServiceConfig> findServiceByCode(String serviceCode) {
         String sql = "SELECT * FROM core_service_config WHERE service_code = ? AND active = true";
-
         try {
-            ServiceConfig sc = jdbcTemplate.queryForObject(sql, serviceConfigRowMapper, serviceCode);
-            return Optional.ofNullable(sc);
+            ServiceConfig config = jdbcTemplate.queryForObject(sql, serviceConfigRowMapper, serviceCode);
+            return Optional.ofNullable(config);
         } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        } catch (Exception e) {
-            e.printStackTrace();
             return Optional.empty();
         }
     }
-    
-    public int insert(ServiceConfig config) {
-        String sql = "INSERT INTO core_service_config (service_code, target_url, http_method, headers, payload_mapping, active, log_enabled, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        return jdbcTemplate.update(sql,
-                config.getServiceCode(),
-                config.getTargetUrl(),
-                config.getHttpMethod(),
-                config.getHeaders(),
-                config.getPayloadMapping(),
-                config.getActive(),
-                config.getLogEnabled(),
-                config.getVersion());
+    // 4. Save (Insert or Update)
+    public int save(ServiceConfig config) {
+        if (config.getId() == null) {
+            // INSERT
+            String sql = "INSERT INTO core_service_config (service_code, service_type, target_url, http_method, headers, payload_template, db_datasource, sql_statement, sql_type, log_enabled, active, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            return jdbcTemplate.update(sql,
+                    config.getServiceCode(),
+                    config.getServiceType(),
+                    config.getTargetUrl(),
+                    config.getHttpMethod(),
+                    config.getHeaders(),
+                    config.getPayloadTemplate(),
+                    config.getDbDatasource(),
+                    config.getSqlStatement(),
+                    config.getSqlType(),
+                    config.getLogEnabled(),
+                    config.getActive(),
+                    config.getVersion()
+            );
+        } else {
+            // UPDATE
+            String sql = "UPDATE core_service_config SET service_code = ?, service_type = ?, target_url = ?, http_method = ?, headers = ?, payload_template = ?, db_datasource = ?, sql_statement = ?, sql_type = ?, log_enabled = ?, active = ?, version = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+
+            return jdbcTemplate.update(sql,
+                    config.getServiceCode(),
+                    config.getServiceType(),
+                    config.getTargetUrl(),
+                    config.getHttpMethod(),
+                    config.getHeaders(),
+                    config.getPayloadTemplate(),
+                    config.getDbDatasource(),
+                    config.getSqlStatement(),
+                    config.getSqlType(),
+                    config.getLogEnabled(),
+                    config.getActive(),
+                    config.getVersion(),
+                    config.getId()
+            );
+        }
     }
-    
+
+    // 5. Delete by ID
     public int deleteById(Long id) {
         String sql = "DELETE FROM core_service_config WHERE id = ?";
         return jdbcTemplate.update(sql, id);
     }
-    
-    public int update(ServiceConfig config) {
-        String sql = "UPDATE core_service_config SET service_code = ?, target_url = ?, http_method = ?, headers = ?, payload_mapping = ?, active = ?, log_enabled = ?, version = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
 
-        return jdbcTemplate.update(sql,
-                config.getServiceCode(),
-                config.getTargetUrl(),
-                config.getHttpMethod(),
-                config.getHeaders(),
-                config.getPayloadMapping(),
-                config.getActive(),
-                config.getLogEnabled(),
-                config.getVersion(),
-                config.getId());
-    }
-
+    // RowMapper for ServiceConfig
     private final RowMapper<ServiceConfig> serviceConfigRowMapper = (rs, rowNum) -> {
-        ServiceConfig sc = new ServiceConfig();
-        sc.setId(rs.getLong("id"));
-        sc.setServiceCode(rs.getString("service_code"));
-        sc.setTargetUrl(rs.getString("target_url"));
-        sc.setHttpMethod(rs.getString("http_method"));
-        sc.setHeaders(rs.getString("headers"));
-        sc.setPayloadMapping(rs.getString("payload_mapping"));
-        sc.setActive(rs.getBoolean("active"));
-        sc.setLogEnabled(rs.getBoolean("log_enabled"));
-        sc.setVersion(rs.getInt("version"));
-        sc.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        sc.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-        return sc;
+        ServiceConfig config = new ServiceConfig();
+        config.setId(rs.getLong("id"));
+        config.setServiceCode(rs.getString("service_code"));
+        config.setServiceType(rs.getString("service_type"));
+        config.setTargetUrl(rs.getString("target_url"));
+        config.setHttpMethod(rs.getString("http_method"));
+        config.setHeaders(rs.getString("headers"));
+        config.setPayloadTemplate(rs.getString("payload_template"));
+        config.setDbDatasource(rs.getString("db_datasource"));
+        config.setSqlStatement(rs.getString("sql_statement"));
+        config.setSqlType(rs.getString("sql_type"));
+        config.setLogEnabled(rs.getBoolean("log_enabled"));
+        config.setActive(rs.getBoolean("active"));
+        config.setVersion(rs.getInt("version"));
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (createdAt != null) config.setCreatedAt(createdAt.toLocalDateTime());
+        if (updatedAt != null) config.setUpdatedAt(updatedAt.toLocalDateTime());
+        return config;
     };
 }

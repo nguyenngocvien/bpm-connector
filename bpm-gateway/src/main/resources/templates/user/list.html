@@ -1,0 +1,29 @@
+<div class="content" th:fragment="content">
+    <h2 class="mb-3">User Management</h2>
+	<a th:href="@{/ui/user/add}" class="btn btn-primary mb-3">Add</a>
+
+	<table class="table table-hover table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th style="width: 150px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.username}">john_doe</td>
+                <td th:text="${user.role}">ADMIN</td>
+                <td>
+                    <a th:href="@{'/ui/user/edit/' + ${user.id}}" class="btn btn-sm btn-warning">Edit</a>
+                    <a th:href="@{'/ui/user/delete/' + ${user.id}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this user?')">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(users)}">
+                <td colspan="4" class="text-center text-muted">No users found.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

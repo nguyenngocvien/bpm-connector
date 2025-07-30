@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .sidebar {
+            width: 220px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 18px 30px;
+            background-color: #f8f9fa;
+        }
+        .content h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+	<div class="sidebar">
+	    <h3>Admin Menu</h3>
+	    <a th:href="@{/ui/user}" 
+	       th:classappend="${activeMenu} == 'user' ? 'bg-secondary fw-bold' : ''">User</a>
+
+	    <a th:href="@{/ui/datasource}" 
+	       th:classappend="${activeMenu} == 'datasource' ? 'bg-secondary fw-bold' : ''">Datasource</a>
+
+	    <a th:href="@{/ui/service}" 
+	       th:classappend="${activeMenu} == 'service' ? 'bg-secondary fw-bold' : ''">Service</a>
+	</div>
+    <div class="content" th:replace="${content}"></div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
+</html>
