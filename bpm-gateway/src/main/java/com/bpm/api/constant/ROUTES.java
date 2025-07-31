@@ -8,8 +8,9 @@ public class ROUTES {
     public static final String SQL = BASE + "/sql";
     public static final String ISRV_CONFIG = BASE + "/isrv-config";
     
-    public static final String UI = "/ui";
+    public static final String UI = "/admin";
     public static final String UI_AUTH_USER = UI + "/user";
-    public static final String UI_SERVICE_CONFIG = UI + "/service";
-    public static final String UI_DB_CONFIG = UI + "/datasource";
+    public static final String UI_SERVICE = UI + "/service";
+    public static final String UI_DATASOURCE = UI + "/datasource";
+    public static final String UI_TESTING = UI + "/test";
 }

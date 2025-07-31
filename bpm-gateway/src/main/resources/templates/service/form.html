@@ -1,75 +1,159 @@
 <div class="content" th:fragment="content">
-    <h2 th:text="${serviceConfig.id == null} ? 'Add Service Config' : 'Edit Service Config'"></h2>
-    <form th:action="@{/ui/service/save}" th:object="${serviceConfig}" method="post">
-        <input type="hidden" th:field="*{id}"/>
+    <h2 th:text="${serviceConfig.id == null} ? 'Add Service Config' : 'Edit Service Config'" class="mb-3"></h2>
+    <hr class="mb-4 mt-2" />
+
+    <form th:action="@{/admin/service/save}" th:object="${serviceConfig}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Service Code</label>
-                <input type="text" th:field="*{serviceCode}" class="form-control" required>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Service Type</label>
-                <input type="text" th:field="*{serviceType}" class="form-control" required>
+                <input type="text" th:field="*{serviceCode}" class="form-control" placeholder="Unique code" required>
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">Target URL</label>
-                <input type="url" th:field="*{targetUrl}" class="form-control" required>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">HTTP Method</label>
-                <select th:field="*{httpMethod}" class="form-select" required>
-					<option value="">-- Select Method --</option>
-					<option value="GET">GET</option>
-					<option value="POST">POST</option>
-					<option value="PUT">PUT</option>
-					<option value="DELETE">DELETE</option>
+                <label class="form-label">Service Type</label>
+                <select th:field="*{serviceType}" class="form-select" required id="serviceType">
+                    <option value="">-- Select Type --</option>
+                    <option value="DB">Database</option>
+                    <option value="REST">REST API</option>
+                    <option value="MAIL">Mail</option>
+                    <option value="FILE">File</option>
                 </select>
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">DB Datasource</label>
-                <input type="text" th:field="*{dbDatasource}" class="form-control">
+                <label class="form-label">Service Name</label>
+                <input type="text" th:field="*{serviceName}" class="form-control" placeholder="Service name" required>
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">SQL Type</label>
-                <input type="text" th:field="*{sqlType}" class="form-control">
-            </div>
-
-            <div class="col-md-12">
-                <label class="form-label">SQL Statement</label>
-                <textarea th:field="*{sqlStatement}" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="col-md-12">
-                <label class="form-label">Headers (JSON)</label>
-                <textarea th:field="*{headers}" class="form-control" rows="2"></textarea>
-            </div>
-
-            <div class="col-md-12">
-                <label class="form-label">Payload Template</label>
-                <textarea th:field="*{payloadTemplate}" class="form-control" rows="2"></textarea>
-            </div>
-
-            <div class="col-md-4">
                 <label class="form-label">Version</label>
                 <input type="number" th:field="*{version}" class="form-control" min="1" required>
             </div>
 
-            <div class="col-md-4 form-check mt-4">
+            <div class="col-md-12">
+                <label class="form-label">Service Description</label>
+                <textarea th:field="*{serviceDescription}" class="form-control" rows="3" placeholder="Optional description"></textarea>
+            </div>
+
+            <div class="col-md-6 form-check mt-3">
                 <input type="checkbox" th:field="*{logEnabled}" class="form-check-input" id="logEnabled">
                 <label class="form-check-label" for="logEnabled">Enable Logging</label>
             </div>
 
-            <div class="col-md-4 form-check mt-4">
+            <div class="col-md-6 form-check mt-3">
                 <input type="checkbox" th:field="*{active}" class="form-check-input" id="active">
                 <label class="form-check-label" for="active">Active</label>
             </div>
         </div>
 
+        <!-- DB Config Section -->
+        <div id="dbConfigSection" style="display:none;" class="mt-4 border rounded p-3">
+            <h5>Database Configuration</h5>
+            <div class="mb-3">
+                <label class="form-label">Datasource</label>
+                <input type="text" th:field="*{dbDatasource}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">SQL Statement</label>
+                <textarea th:field="*{sqlStatement}" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">SQL Type</label>
+                <input type="text" th:field="*{sqlType}" class="form-control">
+            </div>
+        </div>
+
+        <!-- REST Config Section -->
+        <div id="restConfigSection" style="display:none;" class="mt-4 border rounded p-3">
+            <h5>REST API Configuration</h5>
+            <div class="mb-3">
+                <label class="form-label">Target URL</label>
+                <input type="url" th:field="*{targetUrl}" class="form-control" placeholder="https://api.example.com">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">HTTP Method</label>
+                <select th:field="*{httpMethod}" class="form-select">
+                    <option value="">-- Select Method --</option>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Payload Template</label>
+                <textarea th:field="*{payloadTemplate}" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Headers (JSON)</label>
+                <textarea th:field="*{headers}" class="form-control" rows="2"></textarea>
+            </div>
+        </div>
+
+        <!-- Mail Config Section -->
+        <div id="mailConfigSection" style="display:none;" class="mt-4 border rounded p-3">
+            <h5>Mail Configuration</h5>
+            <div class="mb-3">
+                <label class="form-label">SMTP Server</label>
+                <input type="text" th:field="*{smtpServer}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">SMTP Port</label>
+                <input type="number" th:field="*{smtpPort}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email From</label>
+                <input type="email" th:field="*{mailFrom}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email To</label>
+                <input type="email" th:field="*{mailTo}" class="form-control">
+            </div>
+        </div>
+
+        <!-- File Config Section -->
+        <div id="fileConfigSection" style="display:none;" class="mt-4 border rounded p-3">
+            <h5>File Configuration</h5>
+            <div class="mb-3">
+                <label class="form-label">File Path</label>
+                <input type="text" th:field="*{filePath}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">File Action</label>
+                <input type="text" th:field="*{fileAction}" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">File Format</label>
+                <input type="text" th:field="*{fileFormat}" class="form-control">
+            </div>
+        </div>
+
         <div class="mt-4">
             <button type="submit" class="btn btn-success">Save</button>
-            <a th:href="@{/ui/service}" class="btn btn-secondary">Cancel</a>
+            <a th:href="@{/admin/service}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const serviceTypeField = document.getElementById('serviceType');
+            const dbSection = document.getElementById('dbConfigSection');
+            const restSection = document.getElementById('restConfigSection');
+            const mailSection = document.getElementById('mailConfigSection');
+            const fileSection = document.getElementById('fileConfigSection');
+
+            function updateSections() {
+                const type = serviceTypeField.value;
+                dbSection.style.display = type === 'DB' ? 'block' : 'none';
+                restSection.style.display = type === 'REST' ? 'block' : 'none';
+                mailSection.style.display = type === 'MAIL' ? 'block' : 'none';
+                fileSection.style.display = type === 'FILE' ? 'block' : 'none';
+            }
+
+            serviceTypeField.addEventListener('change', updateSections);
+            updateSections(); // initial call
+        });
+    </script>
 </div>

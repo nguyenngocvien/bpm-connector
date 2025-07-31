@@ -1,7 +1,7 @@
 package com.bpm.api.controller.web;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.entity.ServiceConfig;
+import com.bpm.core.model.service.ServiceConfig;
 import com.bpm.core.repository.ServiceConfigRepository;
 
 import org.springframework.stereotype.Controller;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping(ROUTES.UI_SERVICE_CONFIG)
+@RequestMapping(ROUTES.UI_SERVICE)
 public class ServiceConfigController {
 
     private final ServiceConfigRepository service;
@@ -37,7 +37,7 @@ public class ServiceConfigController {
     }
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable Long id, Model model) {
+    public String edit(@PathVariable("id") Long id, Model model) {
         ServiceConfig config = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
         model.addAttribute("serviceConfig", config);
         model.addAttribute("content", "service/form");
@@ -48,12 +48,12 @@ public class ServiceConfigController {
     @PostMapping("/save")
     public String save(@ModelAttribute ServiceConfig config) {
         service.save(config);
-        return "redirect:" + ROUTES.UI_SERVICE_CONFIG;
+        return "redirect:" + ROUTES.UI_SERVICE;
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
+    public String delete(@PathVariable("id") Long id) {
         service.deleteById(id);
-        return "redirect:" + ROUTES.UI_SERVICE_CONFIG;
+        return "redirect:" + ROUTES.UI_SERVICE;
     }
 }

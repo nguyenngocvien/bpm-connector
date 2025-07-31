@@ -1,7 +1,6 @@
 package com.bpm.core.cache;
 
-import com.bpm.core.entity.DbConfig;
-import com.bpm.core.util.DataSourceUtil;
+import com.bpm.core.model.db.DataSourceConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
@@ -10,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataSourceCache {
     private static final ConcurrentHashMap<String, DataSource> cache = new ConcurrentHashMap<>();
 
-    public static DataSource getOrCreate(DbConfig config) {
-        return cache.computeIfAbsent(config.getUrl(), k -> DataSourceUtil.createDataSource(config));
+    public static DataSource getOrCreate(DataSourceConfig config) {
+        return cache.computeIfAbsent(config.getUrl(), k -> config.toDataSource());
     }
 
     public static void clearCache() {

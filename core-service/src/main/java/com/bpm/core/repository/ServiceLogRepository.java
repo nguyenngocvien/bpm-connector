@@ -1,12 +1,12 @@
 package com.bpm.core.repository;
 
-import com.bpm.core.entity.ServiceLog;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import com.bpm.core.model.log.ServiceLog;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;

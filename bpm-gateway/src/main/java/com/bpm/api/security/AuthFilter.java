@@ -59,6 +59,6 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     private boolean isPublicPath(String path) {
-        return path.equals("/login") || path.startsWith("/ui") || path.startsWith("/css/") || path.startsWith("/js/");
+        return path.equals("/login") || path.startsWith("/admin") || path.startsWith("/css/") || path.startsWith("/js/");
     }
 }

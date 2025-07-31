@@ -1,0 +1,45 @@
+<div class="content" th:fragment="content">
+	<h2 class="mb-3">Service Testing</h2>
+	<hr class="mb-4 mt-2" />
+    <form id="serviceForm" hx-post="/admin/test" hx-target="#outputDiv" hx-swap="innerHTML" hx-indicator="#loadingIndicator" hx-on:error="document.getElementById('errorDiv').innerText = 'Something went wrong. Check your input.'" class="mt-4">
+        <div class="mb-3">
+            <label for="serviceType" class="form-label">Service Type</label>
+            <select id="serviceType" name="serviceType" class="form-select">
+                <option value="REST" th:selected="${serviceType} == 'REST'">REST</option>
+                <option value="SOAP" th:selected="${serviceType} == 'SOAP'">SOAP</option>
+                <option value="DB" th:selected="${serviceType} == 'DB'">DB</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="serviceCode" class="form-label">Service Code</label>
+            <input type="text" id="serviceCode" name="serviceCode" class="form-control" required th:value="${serviceCode}"/>
+        </div>
+
+        <div class="mb-3">
+            <label for="params" class="form-label">Input Params (JSON)</label>
+            <textarea id="params" name="params" class="form-control" rows="5" placeholder='{"key":"value"}'></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Execute</button>
+    </form>
+	
+	<div id="loadingIndicator" style="display:none;" class="mt-2 text-info">
+	    <div class="spinner-border" role="status">
+	      <span class="visually-hidden">Loading...</span>
+	    </div>
+	</div>
+	
+	<div id="errorDiv" class="mt-2 text-danger"></div>
+
+    <hr class="my-4" />
+
+    <div id="outputDiv">
+        <!-- Output will be rendered here -->
+    </div>
+</div>
+<script>
+    document.getElementById('serviceForm').addEventListener('htmx:beforeRequest', function() {
+        document.getElementById('errorDiv').innerText = '';
+    });
+</script>

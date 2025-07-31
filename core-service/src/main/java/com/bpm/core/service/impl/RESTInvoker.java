@@ -1,118 +1,162 @@
 package com.bpm.core.service.impl;
 
-import java.time.Duration;
-import java.util.Map;
-
-import com.bpm.core.entity.Response;
-import com.bpm.core.entity.ServiceConfig;
-import com.bpm.core.entity.ServiceLog;
+import com.bpm.core.cache.AuthServiceCache;
+import com.bpm.core.model.log.ServiceLog;
+import com.bpm.core.model.response.Response;
+import com.bpm.core.model.service.ServiceConfig;
+import com.bpm.core.model.rest.RestServiceConfig;
+import com.bpm.core.repository.RestServiceRepository;
 import com.bpm.core.repository.ServiceLogRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.bpm.core.service.ServiceInvoker;
+import com.bpm.core.util.RestHeaderUtil;
+import com.bpm.core.util.WebClientAuthUtil;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import reactor.core.publisher.Mono;
 
-@Service
-public class RESTInvoker {
+import java.time.Duration;
+import java.util.Map;
+import java.util.Optional;
 
-    private final WebClient webClient;
-    private final ObjectMapper objectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.jsonpath.JsonPath;
+
+@Service("restInvoker")
+public class RESTInvoker implements ServiceInvoker {
+
+    private final RestServiceRepository repository;
     private final ServiceLogRepository logRepository;
+    private final AuthServiceCache authCache;
+    private final ObjectMapper objectMapper;
 
-    public RESTInvoker(WebClient.Builder webClientBuilder,
-                       ObjectMapper objectMapper,
-                       ServiceLogRepository logRepository) {
-        this.webClient = webClientBuilder.build(); // WebClient từ Spring context
-        this.objectMapper = objectMapper;
+    public RESTInvoker(RestServiceRepository repository, ServiceLogRepository logRepository, AuthServiceCache authCache) {
+        this.repository = repository;
         this.logRepository = logRepository;
+        this.authCache = authCache;
+        this.objectMapper = new ObjectMapper();
     }
 
-    public Response<String> invoke(ServiceConfig config, String payloadJson) {
-        String methodStr = config.getHttpMethod().toUpperCase();
-        HttpMethod httpMethod;
-        String targetUrl = config.getTargetUrl();
-        Map<String, String> headers;
-
-        try {
-        	headers = objectMapper.readValue(config.getHeaders(), new TypeReference<Map<String, String>>() {});
-        } catch (Exception e) {
-            return Response.error("Invalid JSON format in headers: " + e.getMessage());
+    @Override
+    public Response<Object> invoke(ServiceConfig serviceConfig, Map<String, Object> inputParams) {
+        Optional<RestServiceConfig> optionalConfig = repository.findById(serviceConfig.getId());
+        if (!optionalConfig.isPresent()) {
+            return Response.error("REST config not found for ID: " + serviceConfig.getId());
         }
 
+        RestServiceConfig config = optionalConfig.get();
+
+        WebClient.Builder builder = WebClient.builder().baseUrl(config.getTargetUrl());
+        if (config.getAuthId() != null) {
+            authCache.getAuthById(config.getAuthId())
+                    .ifPresent(auth -> WebClientAuthUtil.applyAuth(builder, auth));
+        }
+
+        WebClient webClient = builder.build();
+        WebClient.RequestBodySpec request = webClient.method(HttpMethod.valueOf(config.getHttpMethod()))
+                .uri(uriBuilder -> {
+                    UriComponentsBuilder uriComp = UriComponentsBuilder.fromHttpUrl(config.getTargetUrl());
+                    if (config.getQueryParams() != null) {
+                        config.getQueryParams().forEach(q -> uriComp.queryParam(q.getParamName(), q.getParamValue()));
+                    }
+                    return uriComp.build().toUri();
+                })
+                .header(HttpHeaders.CONTENT_TYPE, config.getContentType());
+
+        // Headers
+        Map<String, String> headers = RestHeaderUtil.toHeaderMap(config.getHeaders());
+        headers.forEach(request::header);
+
+        // Body
+        String bodyStr = processPayloadTemplate(config.getPayloadTemplate(), inputParams);
+
         long start = System.currentTimeMillis();
-        String responseBody = null;
+        String responseString = null;
         int statusCode = 200;
-        String errorMessage = null;
         Long logId = null;
 
         try {
-            httpMethod = HttpMethod.valueOf(methodStr);
-        } catch (IllegalArgumentException ex) {
-            return Response.error("Unsupported HTTP method: " + methodStr);
-        }
+            Mono<String> responseMono = request.bodyValue(bodyStr)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .timeout(Duration.ofMillis(config.getTimeoutMs() != null ? config.getTimeoutMs() : 3000));
 
-        try {
-            WebClient.RequestBodySpec requestSpec = webClient.method(httpMethod)
-                    .uri(targetUrl)
-                    .headers(httpHeaders -> headers.forEach(httpHeaders::set));
+            responseString = responseMono.block();
 
-            Mono<ClientResponse> responseMono;
-            if (httpMethod == HttpMethod.POST || httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.PATCH) {
-                requestSpec.contentType(MediaType.APPLICATION_JSON);
-                responseMono = requestSpec.body(BodyInserters.fromValue(payloadJson))
-                        .exchangeToMono(Mono::just);
-            } else {
-                responseMono = requestSpec.exchangeToMono(Mono::just);
-            }
-
-            ClientResponse response = responseMono
-                    .block(Duration.ofSeconds(10));
-
-            if (response == null) {
-                statusCode = 500;
-                errorMessage = "No response received";
-                responseBody = errorMessage;
-            } else {
-                statusCode = response.statusCode().value();
-                responseBody = response.bodyToMono(String.class).block();
-                if (response.statusCode().isError()) {
-                    errorMessage = "HTTP error: " + statusCode + " - " + responseBody;
-                }
-            }
-
-        } catch (Exception ex) {
-            statusCode = 500;
-            responseBody = ex.getMessage();
-            errorMessage = "Call failed: " + responseBody;
-        } finally {
-            if (Boolean.TRUE.equals(config.getLogEnabled())) {
+            Object mappedResponse = mapResponse(responseString, config.getResponseMapping());
+            
+            // Log nếu cần
+            if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
                 ServiceLog log = new ServiceLog(
-                        config.getServiceCode(),
-                        payloadJson,
-                        payloadJson,
-                        responseBody,
+                        serviceConfig.getServiceCode(),
+                        inputParams.toString(),
+                        bodyStr,
+                        responseString,
                         statusCode,
                         (int) (System.currentTimeMillis() - start)
                 );
                 try {
                     logId = logRepository.insertLog(log);
-                } catch (Exception logEx) {
-                    // Optional: log error
-                }
+                } catch (Exception ignore) {}
             }
+
+            return Response.success(mappedResponse);
+
+        } catch (Exception ex) {
+            statusCode = 500;
+            String errMsg = ex.getMessage();
+            if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
+                ServiceLog log = new ServiceLog(
+                        serviceConfig.getServiceCode(),
+                        inputParams.toString(),
+                        bodyStr,
+                        errMsg,
+                        statusCode,
+                        (int) (System.currentTimeMillis() - start)
+                );
+                try {
+                    logId = logRepository.insertLog(log);
+                } catch (Exception ignore) {}
+            }
+            return Response.error(errMsg + (logId != null ? " [Log_ID: " + logId + "]" : ""));
+        }
+    }
+
+    private String processPayloadTemplate(String template, Map<String, Object> params) {
+        if (template == null || template.isEmpty()) return "";
+        String processed = template;
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            processed = processed.replace("${" + entry.getKey() + "}", entry.getValue().toString());
+        }
+        return processed;
+    }
+
+    /**
+     * Map JSON response to desired output based on responseMapping
+     * Supports: JSONPath (e.g., $.data.items)
+     */
+    private Object mapResponse(String responseStr, String mappingRule) {
+        if (mappingRule == null || mappingRule.isEmpty()) {
+            return responseStr;
         }
 
-        if (statusCode >= 200 && statusCode < 300) {
-            return Response.success(responseBody);
-        } else {
-            String msgWithLog = (logId != null) ? errorMessage + " [Log_ID: " + logId + "]" : errorMessage;
-            return Response.error(msgWithLog);
+        try {
+            JsonNode root = objectMapper.readTree(responseStr);
+
+            if (mappingRule.startsWith("$.") || mappingRule.startsWith("$[")) {
+                // JSONPath mapping
+                Object extracted = JsonPath.read(responseStr, mappingRule);
+                return extracted;
+            }
+
+            // Future: support JMESPath, SpEL...
+            return root;
+        } catch (Exception ex) {
+            return responseStr;  // fallback raw
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.bpm.core.entity;
+package com.bpm.core.model.response;
 
 public class Response<T> {
     private int code;

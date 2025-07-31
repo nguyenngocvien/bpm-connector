@@ -6,38 +6,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.bpm.core.entity.AuthUser;
-import com.bpm.core.repository.AuthUserRepository;
+import com.bpm.core.model.auth.AuthConfig;
+import com.bpm.core.model.auth.AuthType;
+import com.bpm.core.repository.AuthRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Component
 public class DefaultAdminInitializer implements CommandLineRunner {
 
-	@Autowired
-    private final AuthUserRepository authUserRepository;
-	
-	@Autowired
+    private final AuthRepository authRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DefaultAdminInitializer(AuthUserRepository authUserRepository,
-                                   PasswordEncoder passwordEncoder) {    	
-        this.authUserRepository = authUserRepository;
+    @Autowired
+    public DefaultAdminInitializer(AuthRepository authRepository, PasswordEncoder passwordEncoder) {
+        this.authRepository = authRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        String defaultUsername = "admin";
-        String defaultPassword = "123456";
-        String defaultRole = "ADMIN";
+        final String defaultUsername = "admin";
+        final String defaultRawPassword = "123456";
+        final String defaultRole = "ADMIN";
 
-        Optional<AuthUser> existingUser = authUserRepository.findByUsername(defaultUsername);
-
-        if (!existingUser.isPresent()) {
-            AuthUser user = new AuthUser(defaultUsername, defaultPassword, defaultRole);
-            authUserRepository.save(user, passwordEncoder);
+        Optional<AuthConfig> existing = authRepository.findByName(defaultUsername);
+        if (existing.isPresent()) {
+            System.out.println("[INFO] Default admin already exists.");
+            return;
         }
+
+        AuthConfig admin = new AuthConfig();
+        admin.setName(defaultUsername);
+        admin.setAuthType(AuthType.BASIC);
+        admin.setUsername(defaultUsername);
+        admin.setPassword(passwordEncoder.encode(defaultRawPassword));
+        admin.setRole(defaultRole);
+        admin.setActive(true);
+
+        authRepository.save(admin);
+        System.out.println("[INFO] Default admin user created.");
     }
 }
-

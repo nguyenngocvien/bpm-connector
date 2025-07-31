@@ -46,7 +46,7 @@ public class SecurityConfig {
                 )
                 .defaultAuthenticationEntryPointFor(
                     new LoginUrlAuthenticationEntryPoint("/login"),
-                    new AntPathRequestMatcher("/ui/**")
+                    new AntPathRequestMatcher("/admin/**")
                 )
             );
 

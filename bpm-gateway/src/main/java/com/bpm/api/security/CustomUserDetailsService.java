@@ -6,21 +6,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.bpm.core.entity.AuthUser;
-import com.bpm.core.repository.AuthUserRepository;
+import com.bpm.core.model.auth.AuthConfig;
+import com.bpm.core.repository.AuthRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final AuthUserRepository authUserRepository;
+    private final AuthRepository authUserRepository;
 
-    public CustomUserDetailsService(AuthUserRepository authUserRepository) {
+    public CustomUserDetailsService(AuthRepository authUserRepository) {
         this.authUserRepository = authUserRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AuthUser user = authUserRepository.findByUsername(username)
+        AuthConfig user = authUserRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         // Transfer AuthUser to UserDetails

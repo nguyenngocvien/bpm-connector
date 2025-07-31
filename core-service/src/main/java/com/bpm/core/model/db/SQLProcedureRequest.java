@@ -1,4 +1,4 @@
-package com.bpm.core.entity;
+package com.bpm.core.model.db;
 
 import java.util.List;
 import java.util.Map;

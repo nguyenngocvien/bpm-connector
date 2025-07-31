@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Admin Panel</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
         body {
             display: flex;
@@ -15,8 +16,11 @@
             width: 220px;
             background-color: #343a40;
             color: white;
-            padding: 20px 0;
+            padding: 20px 10px;
             flex-shrink: 0;
+			
+			display: flex;
+			flex-direction: column;
         }
         .sidebar h3 {
             text-align: center;
@@ -25,6 +29,7 @@
         .sidebar a {
             display: block;
             padding: 12px 20px;
+			border-radius: 5px;
             color: white;
             text-decoration: none;
             transition: background-color 0.2s ease-in-out;
@@ -45,16 +50,64 @@
 <body>
 	<div class="sidebar">
 	    <h3>Admin Menu</h3>
-	    <a th:href="@{/ui/user}" 
-	       th:classappend="${activeMenu} == 'user' ? 'bg-secondary fw-bold' : ''">User</a>
+		<!-- User -->
+		<a th:href="@{/admin/user}" 
+		   th:classappend="${activeMenu} == 'user' ? 'bg-secondary fw-bold' : ''"
+		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
+		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+		     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+		     <path d="M2 14s-1 0-1-1 1-4 7-4 7 3 7 4-1 1-1 1H2z"/>
+		   </svg>
+		   User
+		</a>
 
-	    <a th:href="@{/ui/datasource}" 
-	       th:classappend="${activeMenu} == 'datasource' ? 'bg-secondary fw-bold' : ''">Datasource</a>
+		<!-- Datasource -->
+		<a th:href="@{/admin/datasource}" 
+		   th:classappend="${activeMenu} == 'datasource' ? 'bg-secondary fw-bold' : ''"
+		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
+		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hdd-network" viewBox="0 0 16 16">
+		     <path d="M4.5 11a.5.5 0 0 1 0 1H3v1h10v-1h-1.5a.5.5 0 0 1 0-1h1.5V9H3v2h1.5z"/>
+		     <path d="M3 5V3h10v2H3z"/>
+		     <path fill-rule="evenodd" d="M2 1a1 1 0 0 0-1 1v4h14V2a1 1 0 0 0-1-1H2z"/>
+		   </svg>
+		   Datasource
+		</a>
 
-	    <a th:href="@{/ui/service}" 
-	       th:classappend="${activeMenu} == 'service' ? 'bg-secondary fw-bold' : ''">Service</a>
+		<!-- Service -->
+		<a th:href="@{/admin/service}" 
+		   th:classappend="${activeMenu} == 'service' ? 'bg-secondary fw-bold' : ''"
+		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
+		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+		     <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+		     <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-.356.471l-.292.16c-1.471.797-1.471 2.918 0 3.716l.292.16a.873.873 0 0 1 .356.471l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 .356-.471l.292-.16c1.471-.797 1.471-2.918 0-3.716l-.292-.16a.873.873 0 0 1-.356-.471l-.094-.319z"/>
+		   </svg>
+		   Service
+		</a>
+
+		<!-- Testing -->
+		<a th:href="@{/admin/test}" 
+		   th:classappend="${activeMenu} == 'test' ? 'bg-secondary fw-bold' : ''"
+		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
+		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-terminal" viewBox="0 0 16 16">
+		     <path d="M3.146 4.646a.5.5 0 0 1 .708 0L7 7.793 3.854 10.94a.5.5 0 0 1-.708-.708L5.793 8 3.146 5.354a.5.5 0 0 1 0-.708z"/>
+		     <path d="M9.5 10.5a.5.5 0 0 1 0-1H13a.5.5 0 0 1 0 1H9.5z"/>
+		     <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2z"/>
+		   </svg>
+		   Testing
+		</a>
+		
+		<!-- Logout-->
+		<a th:href="@{/logout}" class="mt-auto px-3 py-2 text-white bg-danger text-center d-flex align-items-center justify-content-center gap-2"
+		   style="text-decoration: none;">
+		    <!-- Icon Logout SVG -->
+		    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+		        <path fill-rule="evenodd" d="M10 12a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 1 1-.708-.708L14.293 12.5H10.5A.5.5 0 0 1 10 12z"/>
+		        <path fill-rule="evenodd" d="M4.5 15A1.5 1.5 0 0 1 3 13.5v-11A1.5 1.5 0 0 1 4.5 1h5A1.5 1.5 0 0 1 11 2.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 0 9.5 2h-5a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 1 0v3a1.5 1.5 0 0 1-1.5 1.5h-5z"/>
+		    </svg>
+		    Logout
+		</a>
 	</div>
-    <div class="content" th:replace="${content}"></div>
+    <div class="content" th:replace="~{${content}}"></div>
 </body>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
