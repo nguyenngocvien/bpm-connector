@@ -2,19 +2,17 @@
 	<h2 class="mb-3">Service Testing</h2>
 	<hr class="mb-4 mt-2" />
     <form id="serviceForm" hx-post="/admin/test" hx-target="#outputDiv" hx-swap="innerHTML" hx-indicator="#loadingIndicator" hx-on:error="document.getElementById('errorDiv').innerText = 'Something went wrong. Check your input.'" class="mt-4">
-        <div class="mb-3">
-            <label for="serviceType" class="form-label">Service Type</label>
-            <select id="serviceType" name="serviceType" class="form-select">
-                <option value="REST" th:selected="${serviceType} == 'REST'">REST</option>
-                <option value="SOAP" th:selected="${serviceType} == 'SOAP'">SOAP</option>
-                <option value="DB" th:selected="${serviceType} == 'DB'">DB</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="serviceCode" class="form-label">Service Code</label>
-            <input type="text" id="serviceCode" name="serviceCode" class="form-control" required th:value="${serviceCode}"/>
-        </div>
+		<div class="mb-3">
+		    <label for="serviceId" class="form-label">Service Name</label>
+		    <select id="serviceId" name="serviceId" class="form-select" required>
+		        <option value="">-- Select Service --</option>
+		        <option th:each="svc : ${serviceList}" 
+		                th:value="${svc.id}" 
+		                th:text="${svc.serviceName}" 
+		                th:selected="${svc.id} == ${selectedServiceId}">
+		        </option>
+		    </select>
+		</div>
 
         <div class="mb-3">
             <label for="params" class="form-label">Input Params (JSON)</label>

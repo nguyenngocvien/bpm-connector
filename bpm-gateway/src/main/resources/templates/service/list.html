@@ -15,8 +15,10 @@
                 <th>Log</th>
                 <th>Active</th>
                 <th>Version</th>
-                <th>Created</th>
+<!--                
+				<th>Created</th>
                 <th>Updated</th>
+-->
                 <th>Actions</th>
             </tr>
         </thead>
@@ -39,10 +41,10 @@
                 </td>
 
                 <td th:text="${config.version}"></td>
-
+<!--
                 <td th:text="${#temporals.format(config.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${#temporals.format(config.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
-
+-->
                 <td>
                     <div class="d-flex gap-1">
                         <a th:href="@{'/admin/service/edit/' + ${config.id}}" class="btn btn-sm btn-warning">Edit</a>

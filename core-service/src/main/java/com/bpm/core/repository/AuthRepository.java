@@ -54,7 +54,7 @@ public class AuthRepository {
 
         if (config.getId() == null) {
             // INSERT
-            String sql = "INSERT INTO core_service_auth (name, auth_type, username, password, token, api_key_header, api_key_value, oauth2_client_id, oauth2_client_secret, oauth2_token_url, role, scope, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO core_service_auth (name, auth_type, username, password, token, api_key_header, api_key_value, oauth2_client_id, oauth2_client_secret, oauth2_token_url, role, scope, active) VALUES (?, ?::auth_type_enum, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             return jdbcTemplate.update(sql,
                     config.getName(),
@@ -72,7 +72,7 @@ public class AuthRepository {
                     config.isActive());
         } else {
             // UPDATE
-            String sql = "UPDATE core_service_auth SET name = ?, auth_type = ?, username = ?, password = ?, token = ?, api_key_header = ?, api_key_value = ?, oauth2_client_id = ?, oauth2_client_secret = ?, oauth2_token_url = ?, role = ?, scope = ?, active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+            String sql = "UPDATE core_service_auth SET name = ?, auth_type = ?::auth_type_enum, username = ?, password = ?, token = ?, api_key_header = ?, api_key_value = ?, oauth2_client_id = ?, oauth2_client_secret = ?, oauth2_token_url = ?, role = ?, scope = ?, active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
 
             return jdbcTemplate.update(sql,
                     config.getName(),

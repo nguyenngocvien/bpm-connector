@@ -53,15 +53,15 @@
             <h5>Database Configuration</h5>
             <div class="mb-3">
                 <label class="form-label">Datasource</label>
-                <input type="text" th:field="*{dbDatasource}" class="form-control">
+                <input type="text" th:field="*{dbServiceConfig.dbDatasource}" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">SQL Statement</label>
-                <textarea th:field="*{sqlStatement}" class="form-control" rows="3"></textarea>
+                <textarea th:field="*{dbServiceConfig.sqlStatement}" class="form-control" rows="3"></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">SQL Type</label>
-                <input type="text" th:field="*{sqlType}" class="form-control">
+                <input type="text" th:field="*{dbServiceConfig.sqlType}" class="form-control">
             </div>
         </div>
 
@@ -70,11 +70,11 @@
             <h5>REST API Configuration</h5>
             <div class="mb-3">
                 <label class="form-label">Target URL</label>
-                <input type="url" th:field="*{targetUrl}" class="form-control" placeholder="https://api.example.com">
+                <input type="url" th:field="*{restServiceConfig.targetUrl}" class="form-control" placeholder="https://api.example.com">
             </div>
             <div class="mb-3">
                 <label class="form-label">HTTP Method</label>
-                <select th:field="*{httpMethod}" class="form-select">
+                <select th:field="*{restServiceConfig.httpMethod}" class="form-select">
                     <option value="">-- Select Method --</option>
                     <option value="GET">GET</option>
                     <option value="POST">POST</option>
@@ -84,11 +84,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Payload Template</label>
-                <textarea th:field="*{payloadTemplate}" class="form-control" rows="2"></textarea>
+                <textarea th:field="*{restServiceConfig.payloadTemplate}" class="form-control" rows="2"></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Headers (JSON)</label>
-                <textarea th:field="*{headers}" class="form-control" rows="2"></textarea>
+                <textarea th:field="*{restServiceConfig.headers}" class="form-control" rows="2"></textarea>
             </div>
         </div>
 
@@ -97,19 +97,19 @@
             <h5>Mail Configuration</h5>
             <div class="mb-3">
                 <label class="form-label">SMTP Server</label>
-                <input type="text" th:field="*{smtpServer}" class="form-control">
+                <input type="text" th:field="*{mailServiceConfig.smtpServer}" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">SMTP Port</label>
-                <input type="number" th:field="*{smtpPort}" class="form-control">
+                <input type="number" th:field="*{mailServiceConfig.smtpPort}" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">Email From</label>
-                <input type="email" th:field="*{mailFrom}" class="form-control">
+                <input type="email" th:field="*{mailServiceConfig.mailFrom}" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">Email To</label>
-                <input type="email" th:field="*{mailTo}" class="form-control">
+                <input type="email" th:field="*{mailServiceConfig.mailTo}" class="form-control">
             </div>
         </div>
 
@@ -118,15 +118,15 @@
             <h5>File Configuration</h5>
             <div class="mb-3">
                 <label class="form-label">File Path</label>
-                <input type="text" th:field="*{filePath}" class="form-control">
+                <input type="text" th:field="*{fileServiceConfig.filePath}" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">File Action</label>
-                <input type="text" th:field="*{fileAction}" class="form-control">
+                <input type="text" th:field="*{fileServiceConfig.fileAction}" class="form-control">
             </div>
             <div class="mb-3">
                 <label class="form-label">File Format</label>
-                <input type="text" th:field="*{fileFormat}" class="form-control">
+                <input type="text" th:field="*{fileServiceConfig.fileFormat}" class="form-control">
             </div>
         </div>
 

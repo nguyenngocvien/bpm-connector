@@ -51,14 +51,14 @@
 	<div class="sidebar">
 	    <h3>Admin Menu</h3>
 		<!-- User -->
-		<a th:href="@{/admin/user}" 
-		   th:classappend="${activeMenu} == 'user' ? 'bg-secondary fw-bold' : ''"
+		<a th:href="@{/admin/auth}" 
+		   th:classappend="${activeMenu} == 'auth' ? 'bg-secondary fw-bold' : ''"
 		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
 		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
 		     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
 		     <path d="M2 14s-1 0-1-1 1-4 7-4 7 3 7 4-1 1-1 1H2z"/>
 		   </svg>
-		   User
+		   Credentials
 		</a>
 
 		<!-- Datasource -->
@@ -70,7 +70,7 @@
 		     <path d="M3 5V3h10v2H3z"/>
 		     <path fill-rule="evenodd" d="M2 1a1 1 0 0 0-1 1v4h14V2a1 1 0 0 0-1-1H2z"/>
 		   </svg>
-		   Datasource
+		   Datasources
 		</a>
 
 		<!-- Service -->
@@ -81,7 +81,7 @@
 		     <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
 		     <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-.356.471l-.292.16c-1.471.797-1.471 2.918 0 3.716l.292.16a.873.873 0 0 1 .356.471l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 .356-.471l.292-.16c1.471-.797 1.471-2.918 0-3.716l-.292-.16a.873.873 0 0 1-.356-.471l-.094-.319z"/>
 		   </svg>
-		   Service
+		   Services
 		</a>
 
 		<!-- Testing -->

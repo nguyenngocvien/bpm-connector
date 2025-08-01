@@ -97,17 +97,18 @@ public class DBInvoker implements ServiceInvoker {
             resultData = errorMsg;
         } finally {
             if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
-                ServiceLog log = new ServiceLog(
-                        serviceConfig.getServiceCode(),
-                        inputParams.toString(),
-                        sql,
-                        resultData != null ? resultData.toString() : null,
-                        statusCode,
-                        (int) (System.currentTimeMillis() - start)
-                );
-                try {
-                    logId = logRepository.insertLog(log);
-                } catch (Exception ignore) {}
+            	ServiceLog log = new ServiceLog();
+            	log.setServiceCode(serviceConfig.getServiceCode());
+            	log.setRequestData(inputParams.toString());
+            	log.setMappedRequest(sql);
+            	log.setResponseData(resultData != null ? resultData.toString() : null);
+            	log.setStatusCode(statusCode);
+            	log.setDurationMs((int) (System.currentTimeMillis() - start));
+            	try {
+            	    logId = logRepository.insertLog(log);
+            	} catch (Exception e) {
+            	    System.err.println("Failed to insert log: " + e.getMessage());
+            	}
             }
         }
 

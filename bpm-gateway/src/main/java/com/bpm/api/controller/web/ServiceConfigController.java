@@ -1,6 +1,10 @@
 package com.bpm.api.controller.web;
 
 import com.bpm.api.constant.ROUTES;
+import com.bpm.core.model.db.DbServiceConfig;
+import com.bpm.core.model.file.FileServiceConfig;
+import com.bpm.core.model.mail.MailServiceConfig;
+import com.bpm.core.model.rest.RestServiceConfig;
 import com.bpm.core.model.service.ServiceConfig;
 import com.bpm.core.repository.ServiceConfigRepository;
 
@@ -30,7 +34,14 @@ public class ServiceConfigController {
 
     @GetMapping("/add")
     public String add(Model model) {
-        model.addAttribute("serviceConfig", new ServiceConfig());
+        ServiceConfig config = ServiceConfig.builder()
+                .dbServiceConfig(new DbServiceConfig())
+                .restServiceConfig(new RestServiceConfig())
+                .mailServiceConfig(new MailServiceConfig())
+                .fileServiceConfig(new FileServiceConfig())
+                .build();
+
+        model.addAttribute("serviceConfig", config);
         model.addAttribute("content", "service/form");
         model.addAttribute("activeMenu", "service");
         return "main";
@@ -38,21 +49,33 @@ public class ServiceConfigController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        ServiceConfig config = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
-        model.addAttribute("serviceConfig", config);
+        ServiceConfig serviceConfig = service.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Service ID: " + id));
+
+        //Initial child object if null
+        if (serviceConfig.getDbServiceConfig() == null) serviceConfig.setDbServiceConfig(new DbServiceConfig());
+        if (serviceConfig.getRestServiceConfig() == null) serviceConfig.setRestServiceConfig(new RestServiceConfig());
+        if (serviceConfig.getMailServiceConfig() == null) serviceConfig.setMailServiceConfig(new MailServiceConfig());
+        if (serviceConfig.getFileServiceConfig() == null) serviceConfig.setFileServiceConfig(new FileServiceConfig());
+
+        model.addAttribute("serviceConfig", serviceConfig);
         model.addAttribute("content", "service/form");
         model.addAttribute("activeMenu", "service");
         return "main";
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute ServiceConfig config) {
+    public String save(@ModelAttribute("serviceConfig") ServiceConfig config) {
         service.save(config);
         return "redirect:" + ROUTES.UI_SERVICE;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
+        if (!service.existsById(id)) {
+            // Optional: log warning
+            return "redirect:" + ROUTES.UI_SERVICE + "?error=NotFound";
+        }
         service.deleteById(id);
         return "redirect:" + ROUTES.UI_SERVICE;
     }

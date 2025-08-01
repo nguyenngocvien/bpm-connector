@@ -1,5 +1,5 @@
 <div class="content" th:fragment="content">
-    <h2 class="mb-3">Datasource Management</h2>
+    <h2 class="mb-3">Datasource Configurations</h2>
     <hr class="mb-4 mt-2" />
     <a th:href="@{/admin/datasource/add}" class="btn btn-primary mb-3">Add New Datasource</a>
 
@@ -13,7 +13,9 @@
                     <th>URL</th>
                     <th>Driver</th>
                     <th>Active</th>
+<!--
                     <th>Created At</th>
+-->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -28,14 +30,18 @@
                         <span th:if="${db.active}" class="badge bg-success">Yes</span>
                         <span th:if="${!db.active}" class="badge bg-secondary">No</span>
                     </td>
-                    <td th:text="${#temporals.format(db.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+<!--
+					<td th:text="${#temporals.format(db.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+-->
                     <td>
-                        <a th:href="@{'/admin/datasource/edit/' + ${db.id}}" class="btn btn-sm btn-warning me-1">Edit</a>
-                        <a th:href="@{'/admin/datasource/delete/' + ${db.id}}"
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('Are you sure you want to delete this datasource?');">
-                           Delete
-                        </a>
+						<div class="d-flex gap-1">
+							<a th:href="@{'/admin/datasource/edit/' + ${db.id}}" class="btn btn-sm btn-warning me-1">Edit</a>
+	                        <a th:href="@{'/admin/datasource/delete/' + ${db.id}}"
+	                           class="btn btn-sm btn-danger"
+	                           onclick="return confirm('Are you sure you want to delete this datasource?');">
+	                           Delete
+	                        </a>
+						</div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(dbConfigs)}">

@@ -21,28 +21,28 @@ public class AuthController {
 
     @GetMapping
     public String list(Model model) {
-        List<AuthConfig> users = service.findAll();
-        model.addAttribute("users", users);
-        model.addAttribute("content", "user/list");
-        model.addAttribute("activeMenu", "user");
+        List<AuthConfig> authList = service.findAll();
+        model.addAttribute("authList", authList);
+        model.addAttribute("content", "auth/list");
+        model.addAttribute("activeMenu", "auth");
         return "main";
     }
 
     @GetMapping("/add")
     public String add(Model model) {
-        model.addAttribute("user", new AuthConfig());
-        model.addAttribute("content", "user/form");
-        model.addAttribute("activeMenu", "user");
+        model.addAttribute("authConfig", new AuthConfig());
+        model.addAttribute("content", "auth/form");
+        model.addAttribute("activeMenu", "auth");
         return "main";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
-        AuthConfig user = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
-        user.setPassword(""); // clear password for editing
-        model.addAttribute("user", user);
-        model.addAttribute("content", "user/form");
-        model.addAttribute("activeMenu", "user");
+        AuthConfig authConfig = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
+        authConfig.setPassword(""); // clear password for editing
+        model.addAttribute("authConfig", authConfig);
+        model.addAttribute("content", "auth/form");
+        model.addAttribute("activeMenu", "auth");
         return "main";
     }
 

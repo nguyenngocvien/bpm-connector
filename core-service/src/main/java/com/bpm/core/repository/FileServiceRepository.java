@@ -36,6 +36,9 @@ public class FileServiceRepository {
     }
 
     public int save(FileServiceConfig config) {
+        LocalDateTime now = LocalDateTime.now();
+        config.setUpdatedAt(now);
+
         if (existsById(config.getConfigId())) {
             // UPDATE
             String sql = ""
@@ -58,11 +61,12 @@ public class FileServiceRepository {
                     config.getRetryBackoffMs(),
                     config.getTimeoutMs(),
                     config.getActive(),
-                    Timestamp.valueOf(LocalDateTime.now()),
+                    Timestamp.valueOf(config.getUpdatedAt()),
                     config.getConfigId()
             );
         } else {
             // INSERT
+            config.setCreatedAt(now);
             String sql = ""
                     + "INSERT INTO core_service_file ("
                     + "config_id, file_path, file_action, file_format, file_template,"
@@ -70,7 +74,7 @@ public class FileServiceRepository {
                     + "retry_count, retry_backoff_ms, timeout_ms,"
                     + "active, created_at, updated_at"
                     + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            LocalDateTime now = LocalDateTime.now();
+            
             return jdbcTemplate.update(sql,
                     config.getConfigId(),
                     config.getFilePath(),
@@ -84,8 +88,8 @@ public class FileServiceRepository {
                     config.getRetryBackoffMs(),
                     config.getTimeoutMs(),
                     config.getActive(),
-                    Timestamp.valueOf(now),
-                    Timestamp.valueOf(now)
+                    Timestamp.valueOf(config.getCreatedAt()),
+                    Timestamp.valueOf(config.getUpdatedAt())
             );
         }
     }
@@ -101,23 +105,25 @@ public class FileServiceRepository {
         return count != null && count > 0;
     }
 
-    // --- RowMapper
-    private final RowMapper<FileServiceConfig> rowMapper = (rs, rowNum) -> FileServiceConfig.builder()
-            .configId(rs.getLong("config_id"))
-            .filePath(rs.getString("file_path"))
-            .fileAction(rs.getString("file_action"))
-            .fileFormat(rs.getString("file_format"))
-            .fileTemplate(rs.getString("file_template"))
-            .fileNamePattern(rs.getString("file_name_pattern"))
-            .fileEncoding(rs.getString("file_encoding"))
-            .extraConfig(rs.getString("extra_config"))
-            .retryCount(rs.getInt("retry_count"))
-            .retryBackoffMs(rs.getInt("retry_backoff_ms"))
-            .timeoutMs(rs.getInt("timeout_ms"))
-            .active(rs.getBoolean("active"))
-            .createdAt(toLocalDateTime(rs.getTimestamp("created_at")))
-            .updatedAt(toLocalDateTime(rs.getTimestamp("updated_at")))
-            .build();
+    // --- RowMapper (sử dụng constructor mặc định + setter)
+    private final RowMapper<FileServiceConfig> rowMapper = (rs, rowNum) -> {
+        FileServiceConfig config = new FileServiceConfig();
+        config.setConfigId(rs.getLong("config_id"));
+        config.setFilePath(rs.getString("file_path"));
+        config.setFileAction(rs.getString("file_action"));
+        config.setFileFormat(rs.getString("file_format"));
+        config.setFileTemplate(rs.getString("file_template"));
+        config.setFileNamePattern(rs.getString("file_name_pattern"));
+        config.setFileEncoding(rs.getString("file_encoding"));
+        config.setExtraConfig(rs.getString("extra_config"));
+        config.setRetryCount(rs.getInt("retry_count"));
+        config.setRetryBackoffMs(rs.getInt("retry_backoff_ms"));
+        config.setTimeoutMs(rs.getInt("timeout_ms"));
+        config.setActive(rs.getBoolean("active"));
+        config.setCreatedAt(toLocalDateTime(rs.getTimestamp("created_at")));
+        config.setUpdatedAt(toLocalDateTime(rs.getTimestamp("updated_at")));
+        return config;
+    };
 
     private static LocalDateTime toLocalDateTime(Timestamp timestamp) {
         return timestamp != null ? timestamp.toLocalDateTime() : null;

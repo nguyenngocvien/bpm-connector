@@ -75,27 +75,69 @@
                 </div>
             </div>
         </div>
-
-        <div class="mt-4">
-            <button type="submit" class="btn btn-success">Save</button>
-            <a th:href="@{/admin/datasource}" class="btn btn-secondary">Cancel</a>
-        </div>
+		<!-- Toast Container -->
+		<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1055;"></div>
+		<div class="mt-4">
+		    <button type="submit" class="btn btn-success">Save</button>
+		    <button type="button" class="btn btn-info ms-2" onclick="testConnection()">Test Connection</button>
+		    <span id="testResult" class="ms-3 text-muted"></span>
+		    <a th:href="@{/admin/datasource}" class="btn btn-secondary ms-2">Cancel</a>
+		</div>
     </form>
+	<script>
+	    // Bootstrap validation (giữ nguyên phần này)
+	    (function () {
+	        'use strict';
+	        var forms = document.querySelectorAll('.needs-validation');
+	        Array.prototype.slice.call(forms).forEach(function (form) {
+	            form.addEventListener('submit', function (event) {
+	                if (!form.checkValidity()) {
+	                    event.preventDefault();
+	                    event.stopPropagation();
+	                }
+	                form.classList.add('was-validated');
+	            }, false);
+	        });
+	    })();
 
-    <script>
-        // Bootstrap validation script
-        (function () {
-            'use strict';
-            var forms = document.querySelectorAll('.needs-validation');
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        })();
-    </script>
+	    // Test connection
+		function testConnection() {
+	        const form = document.querySelector('form');
+	        const formData = new FormData(form);
+	        const json = {};
+
+	        formData.forEach((value, key) => {
+	            json[key] = value;
+	        });
+
+	        fetch('/admin/datasource/test', {
+	            method: 'POST',
+	            headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify(json)
+	        })
+	        .then(res => res.json())
+	        .then(data => {
+	            showToast(data.success ? 'Connection successful!' : ('Connection failed: ' + data.message), data.success);
+	        })
+	        .catch(err => {
+	            showToast('Error: ' + err.message, false);
+	        });
+	    }
+
+	    function showToast(message, isSuccess) {
+	        const toastId = 'toast_' + Date.now();
+	        const toastHTML = `
+	            <div id="${toastId}" class="toast align-items-center text-white ${isSuccess ? 'bg-success' : 'bg-danger'} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+	                <div class="d-flex">
+	                    <div class="toast-body">${message}</div>
+	                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+	                </div>
+	            </div>
+	        `;
+	        const container = document.getElementById('toastContainer');
+	        container.insertAdjacentHTML('beforeend', toastHTML);
+	        const toastElement = new bootstrap.Toast(document.getElementById(toastId), { delay: 4000 });
+	        toastElement.show();
+	    }
+	</script>
 </div>

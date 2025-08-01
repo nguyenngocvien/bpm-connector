@@ -1,9 +1,6 @@
 package com.bpm.core.repository;
 
-import com.bpm.core.model.rest.RestHeader;
-import com.bpm.core.model.rest.RestPathParam;
-import com.bpm.core.model.rest.RestQueryParam;
-import com.bpm.core.model.rest.RestServiceConfig;
+import com.bpm.core.model.rest.*;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -43,7 +40,11 @@ public class RestServiceRepository {
 
     public int save(RestServiceConfig config) {
         if (config.getId() == null) {
-            String sql = "INSERT INTO core_service_rest (target_url, http_method, content_type, timeout_ms, retry_count, retry_backoff_ms, payload_template, response_mapping, auth_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+            String sql = ""
+                    + "INSERT INTO core_service_rest "
+                    + "(target_url, http_method, content_type, timeout_ms, retry_count, retry_backoff_ms, payload_template, response_mapping, auth_id)"
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+            
             Long newId = jdbcTemplate.queryForObject(sql, Long.class,
                     config.getTargetUrl(),
                     config.getHttpMethod(),
@@ -56,7 +57,11 @@ public class RestServiceRepository {
                     config.getAuthId());
             config.setId(newId);
         } else {
-            String sql = "UPDATE core_service_rest SET target_url = ?, http_method = ?, content_type = ?, timeout_ms = ?, retry_count = ?, retry_backoff_ms = ?, payload_template = ?, response_mapping = ?, auth_id = ? WHERE id = ?";
+            String sql = ""
+            		+ "UPDATE core_service_rest SET "
+            		+ "target_url = ?, http_method = ?, content_type = ?, timeout_ms = ?, retry_count = ?, retry_backoff_ms = ?," 
+                    + "payload_template = ?, response_mapping = ?, auth_id = ? WHERE id = ?";
+            
             jdbcTemplate.update(sql,
                     config.getTargetUrl(),
                     config.getHttpMethod(),
@@ -88,8 +93,7 @@ public class RestServiceRepository {
         jdbcTemplate.update("DELETE FROM core_service_rest_header WHERE rest_config_id = ?", config.getId());
         if (config.getHeaders() != null) {
             for (RestHeader header : config.getHeaders()) {
-                jdbcTemplate.update("INSERT INTO core_service_rest_header (rest_config_id, header_name, header_value) VALUES (?, ?, ?)",
-                        config.getId(), header.getHeaderName(), header.getHeaderValue());
+                jdbcTemplate.update("INSERT INTO core_service_rest_header (rest_config_id, header_name, header_value) VALUES (?, ?, ?)", config.getId(), header.getHeaderName(), header.getHeaderValue());
             }
         }
     }
@@ -98,8 +102,7 @@ public class RestServiceRepository {
         jdbcTemplate.update("DELETE FROM core_service_rest_query_param WHERE rest_config_id = ?", config.getId());
         if (config.getQueryParams() != null) {
             for (RestQueryParam param : config.getQueryParams()) {
-                jdbcTemplate.update("INSERT INTO core_service_rest_query_param (rest_config_id, param_name, param_value) VALUES (?, ?, ?)",
-                        config.getId(), param.getParamName(), param.getParamValue());
+                jdbcTemplate.update("INSERT INTO core_service_rest_query_param (rest_config_id, param_name, param_value) VALUES (?, ?, ?)", config.getId(), param.getParamName(), param.getParamValue());
             }
         }
     }
@@ -108,8 +111,7 @@ public class RestServiceRepository {
         jdbcTemplate.update("DELETE FROM core_service_rest_path_param WHERE rest_config_id = ?", config.getId());
         if (config.getPathParams() != null) {
             for (RestPathParam param : config.getPathParams()) {
-                jdbcTemplate.update("INSERT INTO core_service_rest_path_param (rest_config_id, param_name, param_value) VALUES (?, ?, ?)",
-                        config.getId(), param.getParamName(), param.getParamValue());
+                jdbcTemplate.update("INSERT INTO core_service_rest_path_param (rest_config_id, param_name, param_value) VALUES (?, ?, ?)", config.getId(), param.getParamName(), param.getParamValue());
             }
         }
     }
@@ -117,19 +119,22 @@ public class RestServiceRepository {
     private void loadDetails(RestServiceConfig config) {
         List<RestHeader> headers = jdbcTemplate.query(
                 "SELECT * FROM core_service_rest_header WHERE rest_config_id = ?",
-                (rs, rowNum) -> new RestHeader(rs.getLong("id"), rs.getString("header_name"), rs.getString("header_value")),
+                (rs, rowNum) -> new RestHeader(rs.getLong("id"), rs.getLong("rest_config_id"),
+                        rs.getString("header_name"), rs.getString("header_value")),
                 config.getId());
         config.setHeaders(headers);
 
         List<RestQueryParam> queryParams = jdbcTemplate.query(
                 "SELECT * FROM core_service_rest_query_param WHERE rest_config_id = ?",
-                (rs, rowNum) -> new RestQueryParam(rs.getLong("id"), rs.getString("param_name"), rs.getString("param_value")),
+                (rs, rowNum) -> new RestQueryParam(rs.getLong("id"), rs.getLong("rest_config_id"),
+                        rs.getString("param_name"), rs.getString("param_value")),
                 config.getId());
         config.setQueryParams(queryParams);
 
         List<RestPathParam> pathParams = jdbcTemplate.query(
                 "SELECT * FROM core_service_rest_path_param WHERE rest_config_id = ?",
-                (rs, rowNum) -> new RestPathParam(rs.getLong("id"), rs.getString("param_name"), rs.getString("param_value")),
+                (rs, rowNum) -> new RestPathParam(rs.getLong("id"), rs.getLong("rest_config_id"),
+                        rs.getString("param_name"), rs.getString("param_value")),
                 config.getId());
         config.setPathParams(pathParams);
     }
@@ -137,18 +142,21 @@ public class RestServiceRepository {
     private static class RestServiceRowMapper implements RowMapper<RestServiceConfig> {
         @Override
         public RestServiceConfig mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return RestServiceConfig.builder()
-                    .id(rs.getLong("id"))
-                    .targetUrl(rs.getString("target_url"))
-                    .httpMethod(rs.getString("http_method"))
-                    .contentType(rs.getString("content_type"))
-                    .timeoutMs(rs.getInt("timeout_ms"))
-                    .retryCount(rs.getInt("retry_count"))
-                    .retryBackoffMs(rs.getInt("retry_backoff_ms"))
-                    .payloadTemplate(rs.getString("payload_template"))
-                    .responseMapping(rs.getString("response_mapping"))
-                    .authId(rs.getObject("auth_id") != null ? rs.getInt("auth_id") : null)
-                    .build();
+            RestServiceConfig config = new RestServiceConfig();
+            config.setId(rs.getLong("id"));
+            config.setTargetUrl(rs.getString("target_url"));
+            config.setHttpMethod(rs.getString("http_method"));
+            config.setContentType(rs.getString("content_type"));
+            config.setTimeoutMs(rs.getInt("timeout_ms"));
+            config.setRetryCount(rs.getInt("retry_count"));
+            config.setRetryBackoffMs(rs.getInt("retry_backoff_ms"));
+            config.setPayloadTemplate(rs.getString("payload_template"));
+            config.setResponseMapping(rs.getString("response_mapping"));
+            Object authIdObj = rs.getObject("auth_id");
+            config.setAuthId(authIdObj != null ? rs.getInt("auth_id") : null);
+            config.setCreatedAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null);
+            config.setUpdatedAt(rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
+            return config;
         }
     }
 }
