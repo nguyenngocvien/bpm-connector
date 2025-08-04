@@ -4,6 +4,15 @@ spring:
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver
+    hikari:
+        minimum-idle: 0               # Không giữ connection thừa
+        maximum-pool-size: 5          # Pool nhỏ, vừa đủ
+        idle-timeout: 10000           # 10s timeout
+        max-lifetime: 30000           # 30s max sống
+        connection-timeout: 3000      # 3s timeout kết nối
+        validation-timeout: 2000      # 2s timeout khi test connection
+        connection-test-query: SELECT 1
+        initialization-fail-timeout: 0
   
   flyway:
     enabled: true

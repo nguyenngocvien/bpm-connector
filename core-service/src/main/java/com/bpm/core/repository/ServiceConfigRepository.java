@@ -74,7 +74,6 @@ public class ServiceConfigRepository {
                 config.setId(keyHolder.getKey().longValue());
                 return 1; // 1 row inserted
             }
-            return 0;
 
         } else {
             // UPDATE
@@ -92,6 +91,7 @@ public class ServiceConfigRepository {
                     config.getVersion(),
                     config.getId());
         }
+        return 0;
     }
 
     public int deleteById(Long id) {

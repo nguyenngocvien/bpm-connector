@@ -1,13 +1,18 @@
 <div class="content" th:fragment="content">
     <h2 class="mb-3">Service Configurations</h2>
     <hr class="mb-4 mt-2" />
+	<a th:href="@{/admin/service/add}" class="btn btn-primary mb-3 d-inline-flex align-items-center gap-2">
+	    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+	        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+	        <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0-1A6 6 0 1 1 8 2a6 6 0 0 1 0 12z"/>
+	    </svg>
+	    Add
+	</a>
 
-    <a th:href="@{/admin/service/add}" class="btn btn-primary mb-3">Add New Service</a>
-
-    <table class="table table-hover table-bordered table-striped align-middle">
-        <thead class="table-dark">
+    <table class="table table-dark table-hover align-middle">
+        <thead>
             <tr>
-                <th>ID</th>
+                <th>#</th>
                 <th>Code</th>
                 <th>Name</th>
                 <th>Description</th>
@@ -45,16 +50,19 @@
                 <td th:text="${#temporals.format(config.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${#temporals.format(config.updatedAt, 'yyyy-MM-dd HH:mm')}"></td>
 -->
+				<!-- Details SVG Icon -->
                 <td>
-                    <div class="d-flex gap-1">
-                        <a th:href="@{'/admin/service/edit/' + ${config.id}}" class="btn btn-sm btn-warning">Edit</a>
-                        <a th:href="@{'/admin/service/delete/' + ${config.id}}"
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('Are you sure to delete this service config?')">Delete</a>
-                        <a th:href="@{'/admin/test?serviceCode=' + ${config.serviceCode} + '&serviceType=' + ${config.serviceType}}"
-                           class="btn btn-sm btn-info">Test</a>
-                    </div>
+                    <a th:href="@{'/admin/service/edit/' + ${config.id}}" class="text-info" title="View Details">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+					         class="bi bi-pencil-square" viewBox="0 0 16 16">
+					        <path d="M15.502 1.94a.5.5 0 0 1 0 .706l-1.05 1.05-2.121-2.121 1.05-1.05a.5.5 0 0 1 .707 0l1.414 1.414zm-1.75 2.456L9.708 8.44a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l4.043-4.043-2.121-2.121z"/>
+					        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5V6a.5.5 0 0 0-1 0v7.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H10a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+					    </svg>
+                    </a>
                 </td>
+            </tr>
+			<tr th:if="${#lists.isEmpty(serviceConfigs)}">
+                <td colspan="7" class="text-center">No service configurations found.</td>
             </tr>
         </tbody>
     </table>

@@ -1,4 +1,4 @@
-CREATE TABLE core_service_rest (
+CREATE TABLE IF NOT EXISTS core_service_rest (
     id BIGINT PRIMARY KEY REFERENCES core_service_config(id) ON DELETE CASCADE,
 
     target_url TEXT NOT NULL,
@@ -12,32 +12,12 @@ CREATE TABLE core_service_rest (
     payload_template TEXT,
     response_mapping TEXT,
 
+    headers TEXT,           -- JSON array [{"name":"Authorization","value":"Bearer token"}]
+    query_params TEXT,      -- JSON array [{"name":"q","value":"value"}]
+    path_params TEXT,       -- JSON array [{"name":"id","value":"123"}]
+
     auth_id INTEGER REFERENCES core_service_auth(id) ON DELETE SET NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE core_service_rest_header (
-    id SERIAL PRIMARY KEY,
-    rest_config_id BIGINT REFERENCES core_service_rest(id) ON DELETE CASCADE,
-    
-    header_name VARCHAR(100) NOT NULL,
-    header_value VARCHAR(500) NOT NULL
-);
-
-CREATE TABLE core_service_rest_query_param (
-    id SERIAL PRIMARY KEY,
-    rest_config_id BIGINT REFERENCES core_service_rest(id) ON DELETE CASCADE,
-
-    param_name VARCHAR(100) NOT NULL,
-    param_value VARCHAR(500) NOT NULL
-);
-
-CREATE TABLE core_service_rest_path_param (
-    id SERIAL PRIMARY KEY,
-    rest_config_id BIGINT REFERENCES core_service_rest(id) ON DELETE CASCADE,
-
-    param_name VARCHAR(100) NOT NULL,
-    param_value VARCHAR(500) NOT NULL
 );

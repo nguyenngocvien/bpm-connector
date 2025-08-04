@@ -16,12 +16,12 @@ import lombok.Builder.Default;
 public class DbServiceConfig {
 
     private Long id;
-    private String dbDatasource;
+    private Long dbSourceId;
     private String sqlStatement;
     private String sqlType; // QUERY, UPDATE, PROC
-
-    private String inputParams;      // JSON or comma-separated
-    private String outputMapping;    // JSON or another mapping
+    
+    private String inputParams;
+    private String outputMapping;
 
     @Default
     private Integer timeoutMs = 3000;

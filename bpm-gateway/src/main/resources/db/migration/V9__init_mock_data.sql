@@ -22,36 +22,13 @@ VALUES
 (4, 'svc_file_1', 'File Service 1', 'Export data to CSV', 'FILE', true, true, 1),
 (5, 'svc_soap_1', 'SOAP Service 1', 'Legacy SOAP integration', 'SOAP', false, true, 1);
 
-INSERT INTO core_service_db (id, db_datasource, sql_statement, sql_type, input_params, output_mapping, timeout_ms, retry_count, retry_backoff_ms, transactional, fetch_size, result_type, enabled)
+INSERT INTO core_service_db (id, ds_id, sql_statement, sql_type, input_params, output_mapping, timeout_ms, retry_count, retry_backoff_ms, transactional, fetch_size, result_type, enabled)
 VALUES
-(2, 'ds_main', 'SELECT * FROM customers WHERE status = ?', 'QUERY', 'status', 'id:customerId,name:customerName', 3000, 1, 1000, true, 100, 'LIST', true);
-
-INSERT INTO core_service_db_param (db_config_id, param_name, param_type, param_mode, param_order)
-VALUES
-(2, 'status', 'STRING', 'IN', 1);
-
-INSERT INTO core_service_db_output_map (db_config_id, column_name, output_field)
-VALUES
-(2, 'id', 'customerId'),
-(2, 'name', 'customerName');
+(2, 1, 'SELECT * FROM customers WHERE status = ?', 'QUERY', 'status', 'id:customerId,name:customerName', 3000, 1, 1000, true, 100, 'LIST', true);
 
 INSERT INTO core_service_rest (id, target_url, http_method, content_type, timeout_ms, retry_count, retry_backoff_ms, payload_template, response_mapping, auth_id)
 VALUES
 (1, 'https://api.example.com/v1/data', 'GET', 'application/json', 5000, 2, 1500, null, '{"data": "result"}', null);
-
-INSERT INTO core_service_rest_header (rest_config_id, header_name, header_value)
-VALUES
-(1, 'Authorization', 'Bearer dummy-token'),
-(1, 'Accept', 'application/json');
-
-INSERT INTO core_service_rest_query_param (rest_config_id, param_name, param_value)
-VALUES
-(1, 'limit', '100'),
-(1, 'offset', '0');
-
-INSERT INTO core_service_rest_path_param (rest_config_id, param_name, param_value)
-VALUES
-(1, 'resourceId', '12345');
 
 INSERT INTO core_service_mail (
     config_id, smtp_server, smtp_port, username, password, use_tls,

@@ -73,9 +73,15 @@
             <label class="form-check-label" for="activeCheckbox">Active</label>
         </div>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-success">Save</button>
-            <a th:href="@{/admin/auth}" class="btn btn-secondary">Cancel</a>
+        <div class="mt-4 d-flex gap-2">
+			<a th:if="${authConfig.id != null}"
+		       th:href="@{'/admin/auth/delete/' + ${authConfig.id}}"
+		       class="btn btn-danger"
+		       onclick="return confirm('Are you sure to delete this service config?')">
+				Delete
+		    </a>
+			<button type="submit" class="btn btn-success">Save</button>
+			<a th:href="@{/admin/auth}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

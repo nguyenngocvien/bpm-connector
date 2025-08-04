@@ -35,12 +35,16 @@ public class RestServiceConfig {
     private String payloadTemplate;
     private String responseMapping;
 
+    private String headers;
+    private String queryParams;
+    private String pathParams;
+    
     private Integer authId;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private List<RestHeader> headers;
-    private List<RestQueryParam> queryParams;
-    private List<RestPathParam> pathParams;
+    private List<NameValuePair> headerList;
+    private List<NameValuePair> queryParamList;
+    private List<NameValuePair> pathParamList;
 }

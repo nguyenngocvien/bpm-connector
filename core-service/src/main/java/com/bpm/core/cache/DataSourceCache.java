@@ -10,7 +10,7 @@ public class DataSourceCache {
     private static final ConcurrentHashMap<String, DataSource> cache = new ConcurrentHashMap<>();
 
     public static DataSource getOrCreate(DataSourceConfig config) {
-        return cache.computeIfAbsent(config.getUrl(), k -> config.toDataSource());
+        return cache.computeIfAbsent(config.getJdbcUrl(), k -> config.toDataSource());
     }
 
     public static void clearCache() {

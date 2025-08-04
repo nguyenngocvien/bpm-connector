@@ -17,8 +17,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="url" class="form-label">Database URL</label>
-            <input type="text" th:field="*{url}" class="form-control" id="url" placeholder="jdbc:mysql://..." required />
+            <label for="jdbcUrl" class="form-label">JDBC URL</label>
+            <input type="text" th:field="*{jdbcUrl}" class="form-control" id="jdbcUrl" placeholder="jdbc:mysql://..." required />
             <div class="invalid-feedback">Please provide a valid JDBC URL.</div>
         </div>
 
@@ -75,13 +75,17 @@
                 </div>
             </div>
         </div>
-		<!-- Toast Container -->
-		<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1055;"></div>
-		<div class="mt-4">
-		    <button type="submit" class="btn btn-success">Save</button>
-		    <button type="button" class="btn btn-info ms-2" onclick="testConnection()">Test Connection</button>
-		    <span id="testResult" class="ms-3 text-muted"></span>
-		    <a th:href="@{/admin/datasource}" class="btn btn-secondary ms-2">Cancel</a>
+		<span id="testResult" class="mt-4 text-muted"></span>
+		<div class="mt-4 d-flex gap-2">
+			<button type="button" class="btn btn-info" onclick="testConnection()">Test Connection</button>
+			<a th:if="${dbConfig.id != null}"
+		       th:href="@{'/admin/datasource/delete/' + ${dbConfig.id}}"
+		       class="btn btn-danger "
+		       onclick="return confirm('Are you sure to delete this service config?')">
+				Delete
+		    </a>
+			<button type="submit" class="btn btn-success">Save</button>
+			<a th:href="@{/admin/datasource}" class="btn btn-secondary">Cancel</a>
 		</div>
     </form>
 	<script>
@@ -102,42 +106,36 @@
 
 	    // Test connection
 		function testConnection() {
-	        const form = document.querySelector('form');
-	        const formData = new FormData(form);
-	        const json = {};
+		    const form = document.querySelector('form');
+		    const formData = new FormData(form);
+		    const json = {};
 
-	        formData.forEach((value, key) => {
-	            json[key] = value;
-	        });
+		    formData.forEach((value, key) => {
+		        json[key] = value;
+		    });
 
-	        fetch('/admin/datasource/test', {
-	            method: 'POST',
-	            headers: { 'Content-Type': 'application/json' },
-	            body: JSON.stringify(json)
-	        })
-	        .then(res => res.json())
-	        .then(data => {
-	            showToast(data.success ? 'Connection successful!' : ('Connection failed: ' + data.message), data.success);
-	        })
-	        .catch(err => {
-	            showToast('Error: ' + err.message, false);
-	        });
-	    }
-
-	    function showToast(message, isSuccess) {
-	        const toastId = 'toast_' + Date.now();
-	        const toastHTML = `
-	            <div id="${toastId}" class="toast align-items-center text-white ${isSuccess ? 'bg-success' : 'bg-danger'} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
-	                <div class="d-flex">
-	                    <div class="toast-body">${message}</div>
-	                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-	                </div>
-	            </div>
-	        `;
-	        const container = document.getElementById('toastContainer');
-	        container.insertAdjacentHTML('beforeend', toastHTML);
-	        const toastElement = new bootstrap.Toast(document.getElementById(toastId), { delay: 4000 });
-	        toastElement.show();
-	    }
+		    fetch('/admin/datasource/test', {
+		        method: 'POST',
+		        headers: { 'Content-Type': 'application/json' },
+		        body: JSON.stringify(json)
+		    })
+		    .then(res => res.json())
+		    .then(data => {
+		        const testResultEl = document.getElementById('testResult');
+		        if (data.success) {
+		            testResultEl.textContent = 'Connection successful';
+		            testResultEl.className = 'mt-4 text-success fw-bold';
+		        } else {
+		            testResultEl.textContent = 'Connection failed: ' + data.message;
+		            testResultEl.className = 'mt-4 text-danger fw-bold';
+		        }
+		    })
+		    .catch(err => {
+		        const testResultEl = document.getElementById('testResult');
+		        testResultEl.textContent = 'Error: ' + err.message;
+		        testResultEl.className = 'mt-4 text-danger fw-bold';
+		    });
+		}
 	</script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </div>

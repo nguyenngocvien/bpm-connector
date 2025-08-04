@@ -51,7 +51,7 @@ public class DataSourceRepository {
             return jdbcTemplate.update(sql,
                     config.getName(),
                     config.getDescription(),
-                    config.getUrl(),
+                    config.getJdbcUrl(),
                     config.getUsername(),
                     config.getPassword(),
                     config.getDriverClassName(),
@@ -67,7 +67,7 @@ public class DataSourceRepository {
             return jdbcTemplate.update(sql,
                     config.getName(),
                     config.getDescription(),
-                    config.getUrl(),
+                    config.getJdbcUrl(),
                     config.getUsername(),
                     config.getPassword(),
                     config.getDriverClassName(),
@@ -91,7 +91,7 @@ public class DataSourceRepository {
             .id(rs.getInt("id"))
             .name(rs.getString("name"))
             .description(rs.getString("description"))
-            .url(rs.getString("url"))
+            .jdbcUrl(rs.getString("url"))
             .username(rs.getString("username"))
             .password(rs.getString("password"))
             .driverClassName(rs.getString("driver_class_name"))

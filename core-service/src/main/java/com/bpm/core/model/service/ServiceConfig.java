@@ -10,7 +10,6 @@ import com.bpm.core.model.rest.RestServiceConfig;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.AllArgsConstructor;
 
 @Data
@@ -20,15 +19,10 @@ import lombok.AllArgsConstructor;
 public class ServiceConfig {
 
     private Long id;
-
-    @NonNull
     private String serviceCode;
-    
     private String serviceName;
-    private String serviceDescription;
-
-    @NonNull
     private ServiceType serviceType; // REST, SOAP, DB, MAIL, FILE
+    private String serviceDescription;
 
     @Builder.Default
     private Boolean logEnabled = true;
@@ -41,7 +35,7 @@ public class ServiceConfig {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    
     private DbServiceConfig dbServiceConfig;
     private RestServiceConfig restServiceConfig;
     private MailServiceConfig mailServiceConfig;

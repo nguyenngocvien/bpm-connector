@@ -5,9 +5,9 @@ import com.bpm.core.model.db.DataSourceConfig;
 import com.bpm.core.model.db.DbOutputMapping;
 import com.bpm.core.model.db.DbParamConfig;
 import com.bpm.core.model.db.DbServiceConfig;
-import com.bpm.core.model.log.ServiceLog;
 import com.bpm.core.model.response.Response;
 import com.bpm.core.model.service.ServiceConfig;
+import com.bpm.core.model.service.ServiceLog;
 import com.bpm.core.repository.DataSourceRepository;
 import com.bpm.core.repository.DbServiceRepository;
 import com.bpm.core.repository.ServiceLogRepository;
@@ -47,12 +47,12 @@ public class DBInvoker implements ServiceInvoker {
         DbServiceConfig config = repository.findById(serviceConfig.getId())
                 .orElseThrow(() -> new RuntimeException("DB config not found for ID: " + serviceConfig.getId()));
         
-        DataSourceConfig ds = dsRepository.findByName(config.getDbDatasource())
-                .orElseThrow(() -> new RuntimeException("Data source not found for name: " + config.getDbDatasource()));
+        DataSourceConfig ds = dsRepository.findById(config.getDbSourceId())
+                .orElseThrow(() -> new RuntimeException("Data source not found for name: " + config.getDbSourceId()));
 
         DataSource dataSource = DataSourceCache.getOrCreate(ds);
         if (dataSource == null) {
-            return Response.error("Datasource not found: " + config.getDbDatasource());
+            return Response.error("Datasource not found: " + config.getDbSourceId());
         }
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);

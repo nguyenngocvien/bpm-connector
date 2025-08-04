@@ -23,20 +23,20 @@ public class DataSourceConfig {
     private String name;
     private String description;
 
-    private String url;
+    private String jdbcUrl;
     private String username;
     private String password;
 
     private String driverClassName;
 
     @Default
-    private Integer maxPoolSize = 10;
+    private Integer maxPoolSize = 1; //Pool keep 1 connection
 
     @Default
-    private Integer minIdle = 2;
+    private Integer minIdle = 0;
 
     @Default
-    private Integer connectionTimeoutMs = 30000;
+    private Integer connectionTimeoutMs = 3000; // 3s timeout when get connection
 
     @Default
     private Integer idleTimeoutMs = 600000;
@@ -52,7 +52,7 @@ public class DataSourceConfig {
 
     public HikariConfig toHikariConfig() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(this.url);
+        config.setJdbcUrl(this.jdbcUrl);
         config.setUsername(this.username);
         config.setPassword(this.password);
         config.setDriverClassName(this.driverClassName);
@@ -62,6 +62,8 @@ public class DataSourceConfig {
         if (this.connectionTimeoutMs != null) config.setConnectionTimeout(this.connectionTimeoutMs);
         if (this.idleTimeoutMs != null) config.setIdleTimeout(this.idleTimeoutMs);
         if (this.maxLifetimeMs != null) config.setMaxLifetime(this.maxLifetimeMs);
+        
+        config.setValidationTimeout(2000);
 
         config.setPoolName("ds-" + this.name);
 
