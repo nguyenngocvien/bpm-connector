@@ -66,5 +66,12 @@ public class JsonUtil {
                 .replace("\r", "\\r");
     }
 
+    public static String toPrettyString(Object object) {
+        try {
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return "{}";
+        }
+    }
 }
 

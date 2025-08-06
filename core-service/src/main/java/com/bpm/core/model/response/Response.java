@@ -1,5 +1,7 @@
 package com.bpm.core.model.response;
 
+import com.bpm.core.util.JsonUtil;
+
 public class Response<T> {
     private int code;
     private String message;
@@ -68,9 +70,8 @@ public class Response<T> {
     public Long getLogId() { return logId; }
     public void setLogId(Long logId) { this.logId = logId; }
 	
-	@Override
+    @Override
     public String toString() {
-        String msgWithLogId = message + " LogID: " + (logId != null ? logId : "null");
-        return "{" + code + ", " + msgWithLogId + ", " + data + "}";
+        return JsonUtil.toString(this);
     }
 }

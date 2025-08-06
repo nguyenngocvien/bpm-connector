@@ -34,7 +34,11 @@ public class RestServiceRepository {
         }
     }
 
-    public int save(RestServiceConfig config) {
+    public void save(RestServiceConfig config, Long serviceId) {
+    	
+    	if (config == null) return;
+    	config.setId(serviceId);
+    	
         // Serialize JSON fields before saving
         config.setHeaders(RestServiceConfigParser.toJson(config.getHeaderList()));
         config.setQueryParams(RestServiceConfigParser.toJson(config.getQueryParamList()));
@@ -51,7 +55,7 @@ public class RestServiceRepository {
                 + "headers_json = EXCLUDED.headers_json, query_params_json = EXCLUDED.query_params_json, path_params_json = EXCLUDED.path_params_json, "
                 + "updated_at = CURRENT_TIMESTAMP";
 
-        return jdbcTemplate.update(sql,
+        jdbcTemplate.update(sql,
                 config.getId(),
                 config.getTargetUrl(),
                 config.getHttpMethod(),

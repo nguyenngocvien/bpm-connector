@@ -5,12 +5,8 @@ import com.bpm.core.model.service.ServiceType;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -51,36 +47,32 @@ public class ServiceConfigRepository {
 
     public int save(ServiceConfig config) {
         if (config.getId() == null) {
-            // INSERT
+            // INSERT with RETURNING id
             String sql = "INSERT INTO core_service_config "
                        + "(service_code, service_name, service_description, service_type, log_enabled, active, version, created_at, updated_at) "
-                       + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+                       + "VALUES (?, ?, ?, ?::service_type_enum, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
+                       + "RETURNING id";
 
-            KeyHolder keyHolder = new GeneratedKeyHolder();
+            Long newId = jdbcTemplate.queryForObject(sql,
+                    (rs, rowNum) -> rs.getLong("id"),  // RowMapper for id only
+                    config.getServiceCode(),
+                    config.getServiceName(),
+                    config.getServiceDescription(),
+                    config.getServiceType().name(),
+                    Boolean.TRUE.equals(config.getLogEnabled()),
+                    Boolean.TRUE.equals(config.getActive()),
+                    config.getVersion()
+            );
 
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, config.getServiceCode());
-                ps.setString(2, config.getServiceName());
-                ps.setString(3, config.getServiceDescription());
-                ps.setString(4, config.getServiceType().name());
-                ps.setBoolean(5, Boolean.TRUE.equals(config.getLogEnabled()));
-                ps.setBoolean(6, Boolean.TRUE.equals(config.getActive()));
-                ps.setInt(7, config.getVersion());
-                return ps;
-            }, keyHolder);
-
-            if (keyHolder.getKey() != null) {
-                config.setId(keyHolder.getKey().longValue());
-                return 1; // 1 row inserted
-            }
-
+            config.setId(newId);
+            return 1; // 1 row inserted
         } else {
             // UPDATE
             String sql = "UPDATE core_service_config SET "
-                       + "service_code = ?, service_name = ?, service_description = ?, service_type = ?, "
+                       + "service_code = ?, service_name = ?, service_description = ?, service_type = ?::service_type_enum, "
                        + "log_enabled = ?, active = ?, version = ?, updated_at = CURRENT_TIMESTAMP "
                        + "WHERE id = ?";
+
             return jdbcTemplate.update(sql,
                     config.getServiceCode(),
                     config.getServiceName(),
@@ -91,7 +83,6 @@ public class ServiceConfigRepository {
                     config.getVersion(),
                     config.getId());
         }
-        return 0;
     }
 
     public int deleteById(Long id) {

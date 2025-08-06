@@ -40,7 +40,9 @@ public class ServiceConfigController {
     	config.setRestServiceConfig(new RestServiceConfig());
     	config.setMailServiceConfig(new MailServiceConfig());
     	config.setFileServiceConfig(new FileServiceConfig());
+    	List<DataSourceConfig> datasourceList = store.datasources().findAll();
         model.addAttribute("serviceConfig", config);
+        model.addAttribute("datasourceList", datasourceList);
         model.addAttribute("content", "service/form");
         model.addAttribute("activeMenu", "service");
         return "main";
@@ -80,6 +82,14 @@ public class ServiceConfigController {
     @PostMapping("/save")
     public String save(@ModelAttribute("serviceConfig") ServiceConfig config) {
         store.serviceConfigs().save(config);
+        
+        if ("DB".equals(config.getServiceType().name()) && config.getDbServiceConfig() != null) {
+            store.dbServices().save(config.getDbServiceConfig(), config.getId());
+        }
+        else if ("REST".equals(config.getServiceType().name()) && config.getRestServiceConfig() != null) {
+            store.restServices().save(config.getRestServiceConfig(), config.getId());
+        }
+        
         return "redirect:" + ROUTES.UI_SERVICE;
     }
 

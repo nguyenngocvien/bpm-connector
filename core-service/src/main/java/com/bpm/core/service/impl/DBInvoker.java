@@ -5,6 +5,7 @@ import com.bpm.core.model.db.DataSourceConfig;
 import com.bpm.core.model.db.DbOutputMapping;
 import com.bpm.core.model.db.DbParamConfig;
 import com.bpm.core.model.db.DbServiceConfig;
+import com.bpm.core.model.db.SqlType;
 import com.bpm.core.model.response.Response;
 import com.bpm.core.model.service.ServiceConfig;
 import com.bpm.core.model.service.ServiceLog;
@@ -21,6 +22,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
+
 import java.sql.Types;
 import java.util.*;
 
@@ -76,12 +78,12 @@ public class DBInvoker implements ServiceInvoker {
 
             resultData = txTemplate.execute(status -> {
                 try {
-                    if ("QUERY".equals(sqlType)) {
+                    if (SqlType.QUERY.getLabel().equals(sqlType)) {
                         return executeQuery(jdbcTemplate, sql, config.getParamList(), inputParams, resultType, config.getOutputMappingList());
-                    } else if ("UPDATE".equals(sqlType)) {
+                    } else if (SqlType.UPDATE.getLabel().equals(sqlType)) {
                         int updateCount = executeUpdate(jdbcTemplate, sql, config.getParamList(), inputParams);
                         return Collections.singletonMap("rowsAffected", updateCount);
-                    } else if ("PROC".equals(sqlType)) {
+                    } else if (SqlType.STORED_PROC.getLabel().equals(sqlType)) {
                         return executeStoredProc(jdbcTemplate, sql, config.getParamList(), inputParams, config.getOutputMappingList());
                     } else {
                         throw new UnsupportedOperationException("Unknown sqlType: " + sqlType);

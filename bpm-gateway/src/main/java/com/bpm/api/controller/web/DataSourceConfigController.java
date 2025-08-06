@@ -2,7 +2,7 @@ package com.bpm.api.controller.web;
 
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.model.db.DataSourceConfig;
-import com.bpm.core.repository.DataSourceRepository;
+import com.bpm.core.repository.Store;
 import com.bpm.core.util.DataSourceTestUtil;
 
 import org.springframework.http.ResponseEntity;
@@ -18,15 +18,15 @@ import java.util.Map;
 @RequestMapping(ROUTES.UI_DATASOURCE)
 public class DataSourceConfigController {
 
-    private final DataSourceRepository service;
+    private final Store store;
 
-    public DataSourceConfigController(DataSourceRepository service) {
-        this.service = service;
+    public DataSourceConfigController(Store store) {
+        this.store = store;
     }
 
     @GetMapping
     public String list(Model model) {
-        List<DataSourceConfig> configs = service.findAll();
+        List<DataSourceConfig> configs = store.datasources().findAll();
         model.addAttribute("dbConfigs", configs);
         model.addAttribute("content", "db/list");
         model.addAttribute("activeMenu", "datasource");
@@ -43,7 +43,7 @@ public class DataSourceConfigController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        DataSourceConfig config = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
+        DataSourceConfig config = store.datasources().findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
         model.addAttribute("dbConfig", config);
         model.addAttribute("content", "db/form");
         model.addAttribute("activeMenu", "datasource");
@@ -52,13 +52,13 @@ public class DataSourceConfigController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute DataSourceConfig config) {
-        service.save(config);
+    	store.datasources().save(config);
         return "redirect:" + ROUTES.UI_DATASOURCE;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-        service.deleteById(id);
+    	store.datasources().deleteById(id);
         return "redirect:" + ROUTES.UI_DATASOURCE;
     }
     

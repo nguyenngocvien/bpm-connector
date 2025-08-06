@@ -49,6 +49,9 @@ public class ServiceTestController {
                                  @RequestParam String params,
                                  Model model) {
 
+//    	System.out.println(">>> Invoking Service ID = " + serviceId);
+    	System.out.println(">>> Params = " + params);
+    	
         ServiceConfig config = repository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Service ID"));
 
@@ -66,8 +69,10 @@ public class ServiceTestController {
                 res = Response.error("Invalid JSON or invocation failure: " + e.getMessage());
             }
         }
-
-        model.addAttribute("outputJson", res.toString());
+        
+        String jsonOutput = JsonUtil.toPrettyString(res);
+        model.addAttribute("outputJson", jsonOutput);
+        
         return "service/response :: result";
     }
 

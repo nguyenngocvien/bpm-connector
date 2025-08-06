@@ -23,16 +23,20 @@
             background-color: var(--bg-dark);
             color: var(--text-color);
         }
-
-        .sidebar {
-            width: 220px;
-            background-color: var(--bg-sidebar);
-            padding: 20px 10px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #2d2d2d;
-        }
+		
+		.sidebar {
+		    position: fixed; /* ✨ FIXED */
+		    top: 0;
+		    left: 0;
+		    bottom: 0;
+		    width: 220px;
+		    background-color: var(--bg-sidebar);
+		    padding: 20px 10px;
+		    display: flex;
+		    flex-direction: column;
+		    border-right: 1px solid #2d2d2d;
+		    overflow-y: auto; /* scroll riêng sidebar nếu cần */
+		}
 
         .sidebar h3 {
             text-align: center;
@@ -60,11 +64,14 @@
             background-color: #dc3545 !important;
         }
 
-        .content {
-            flex-grow: 1;
-            padding: 20px 30px;
-            background-color: var(--bg-dark);
-        }
+		.content {
+		    margin-left: 220px; /* Để tránh bị sidebar đè lên */
+		    flex-grow: 1;
+		    padding: 20px 30px;
+		    background-color: var(--bg-dark);
+		    min-height: 100vh;
+		    overflow-y: auto; /* content scroll */
+		}
 
         .table-dark th,
         .table-dark td {

@@ -61,4 +61,21 @@
 	    <artifactId>flyway-core</artifactId>
 	</dependency>
   </dependencies>
+  <build>
+    <plugins>
+        <!-- Compiler plugin để bật flag -parameters -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.10.1</version> <!-- hoặc version mới hơn -->
+            <configuration>
+                <compilerArgs>
+                    <arg>-parameters</arg>
+                </compilerArgs>
+                <source>1.8</source> <!-- hoặc 21, tùy Java version -->
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
 </project>

@@ -2,7 +2,7 @@ package com.bpm.api.controller.web;
 
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.model.auth.AuthConfig;
-import com.bpm.core.repository.AuthRepository;
+import com.bpm.core.repository.Store;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,15 +13,15 @@ import java.util.List;
 @RequestMapping(ROUTES.UI_AUTH_USER)
 public class AuthController {
 
-    private final AuthRepository service;
+    private final Store store;
 
-    public AuthController(AuthRepository service) {
-        this.service = service;
+    public AuthController(Store store) {
+        this.store = store;
     }
 
     @GetMapping
     public String list(Model model) {
-        List<AuthConfig> authList = service.findAll();
+        List<AuthConfig> authList = store.auths().findAll();
         model.addAttribute("authList", authList);
         model.addAttribute("content", "auth/list");
         model.addAttribute("activeMenu", "auth");
@@ -38,7 +38,7 @@ public class AuthController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
-        AuthConfig authConfig = service.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
+        AuthConfig authConfig = store.auths().findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
         authConfig.setPassword(""); // clear password for editing
         model.addAttribute("authConfig", authConfig);
         model.addAttribute("content", "auth/form");
@@ -48,13 +48,13 @@ public class AuthController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute AuthConfig auth) {
-        service.save(auth);
+    	store.auths().save(auth);
         return "redirect:" + ROUTES.UI_AUTH_USER;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-        service.deleteById(id);
+    	store.auths().deleteById(id);
         return "redirect:" + ROUTES.UI_AUTH_USER;
     }
 }

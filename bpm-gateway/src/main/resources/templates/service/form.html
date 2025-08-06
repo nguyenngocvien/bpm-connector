@@ -1,16 +1,15 @@
 <div class="content" th:fragment="content">
     <h2 th:text="${serviceConfig.id == null} ? 'Add Service Config' : 'Edit Service Config'" class="mb-3"></h2>
     <hr class="mb-4 mt-2" />
-
+ 
     <form th:action="@{/admin/service/save}" th:object="${serviceConfig}" method="post">
-        <input type="hidden" th:field="*{id}" />
-
+		<input type="hidden" th:if="${serviceConfig.id != null}" th:field="*{id}" />
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Service Code</label>
                 <input type="text" th:field="*{serviceCode}" class="form-control" placeholder="Unique code" required>
             </div>
-			<div class="col-md-6">
+            <div class="col-md-6">
                 <label class="form-label">Service Name</label>
                 <input type="text" th:field="*{serviceName}" class="form-control" placeholder="Service name" required>
             </div>
@@ -28,282 +27,282 @@
                 <label class="form-label">Version</label>
                 <input type="number" th:field="*{version}" class="form-control" min="1" required>
             </div>
-
+ 
             <div class="col-md-12">
                 <label class="form-label">Service Description</label>
                 <textarea th:field="*{serviceDescription}" class="form-control" rows="3" placeholder="Optional description"></textarea>
             </div>
-
+ 
             <div class="col-md-6 form-check mt-3">
                 <input type="checkbox" th:field="*{logEnabled}" class="form-check-input" id="logEnabled">
                 <label class="form-check-label" for="logEnabled">Enable Logging</label>
             </div>
-
+ 
             <div class="col-md-6 form-check mt-3">
                 <input type="checkbox" th:field="*{active}" class="form-check-input" id="active">
                 <label class="form-check-label" for="active">Active</label>
             </div>
         </div>
-
-		<!-- DB Config Section -->
-		<div id="dbConfigSection" style="display:none;" class="mt-4 border rounded p-3">
-		    <h5>Database Configuration</h5>
-
-		    <!-- Datasource Dropdown -->
-		    <div class="mb-3">
-		        <label class="form-label">Datasource</label>
-		        <div class="input-group">
-		            <select th:field="*{dbServiceConfig.dbSourceId}" class="form-select" required>
-		                <option value="" disabled>-- Select Datasource --</option>
-		                <option th:each="ds : ${datasourceList}" th:value="${ds.id}" th:text="${ds.name}"></option>
-		            </select>
-		            <a th:href="@{/admin/datasource/add}" class="btn btn-outline-primary" title="Add Datasource">
-		                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-		                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-		                </svg>
-		            </a>
-		        </div>
-		    </div>
-
-		    <!-- SQL Statement -->
-		    <div class="mb-3">
-		        <label class="form-label">SQL Statement</label>
-		        <textarea th:field="*{dbServiceConfig.sqlStatement}" class="form-control" rows="3" required></textarea>
-		    </div>
-
-		    <!-- SQL Type -->
-		    <div class="mb-3">
-		        <label class="form-label">SQL Type</label>
-		        <select th:field="*{dbServiceConfig.sqlType}" class="form-select" required>
-		            <option value="" disabled>-- Select SQL Type --</option>
-		            <option th:each="type : ${T(com.bpm.core.model.db.SqlType).values()}"
-		                    th:value="${type}" th:text="${type.label}"></option>
-		        </select>
-		    </div>
-
-		    <!-- Advanced Settings -->
-		    <div class="row g-3">
-		        <div class="col-md-4">
-		            <label class="form-label">Timeout (ms)</label>
-		            <input type="number" th:field="*{dbServiceConfig.timeoutMs}" class="form-control" min="0" />
-		        </div>
-		        <div class="col-md-4">
-		            <label class="form-label">Retry Count</label>
-		            <input type="number" th:field="*{dbServiceConfig.retryCount}" class="form-control" min="0" />
-		        </div>
-		        <div class="col-md-4">
-		            <label class="form-label">Retry Backoff (ms)</label>
-		            <input type="number" th:field="*{dbServiceConfig.retryBackoffMs}" class="form-control" min="0" />
-		        </div>
-
-		        <div class="col-md-4 form-check mt-3">
-		            <input type="checkbox" th:field="*{dbServiceConfig.transactional}" class="form-check-input" id="transactional">
-		            <label class="form-check-label" for="transactional">Transactional</label>
-		        </div>
-		        <div class="col-md-4">
-		            <label class="form-label">Fetch Size</label>
-		            <input type="number" th:field="*{dbServiceConfig.fetchSize}" class="form-control" min="1" />
-		        </div>
-		        <div class="col-md-4">
-		            <label class="form-label">Result Type</label>
-		            <select th:field="*{dbServiceConfig.resultType}" class="form-select">
-		                <option value="LIST">LIST</option>
-		                <option value="SINGLE">SINGLE</option>
-		                <option value="NONE">NONE</option>
-		            </select>
-		        </div>
-		    </div>
-
-		    <!-- Parameter List -->
-		    <div class="mt-4">
-		        <div class="d-flex justify-content-between align-items-center mb-2">
-		            <h6 class="mb-0">Parameter List</h6>
-		            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addParamRow()">+ Add Param</button>
-		        </div>
-		        <table class="table table-bordered table-sm" id="paramTable">
-		            <thead class="table-light">
-		                <tr>
-		                    <th>#</th>
-		                    <th>Param Name</th>
-		                    <th>Type</th>
-		                    <th>Mode</th>
-		                    <th>Order</th>
-		                    <th></th>
-		                </tr>
-		            </thead>
-		            <tbody id="paramListBody">
-		                <tr th:each="param, iterStat : *{dbServiceConfig.paramList}">
-		                    <td th:text="${iterStat.index + 1}"></td>
-		                    <td><input type="text" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramName}" class="form-control" /></td>
-		                    <td><input type="text" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramType}" class="form-control" /></td>
-		                    <td>
-		                        <select th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramMode}" class="form-select">
-		                            <option value="IN">IN</option>
-		                            <option value="OUT">OUT</option>
-		                        </select>
-		                    </td>
-		                    <td><input type="number" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramOrder}" class="form-control" /></td>
-		                    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
-		                </tr>
-		            </tbody>
-		        </table>
-		    </div>
-
-		    <!-- Output Mapping List -->
-		    <div class="mt-4">
-		        <div class="d-flex justify-content-between align-items-center mb-2">
-		            <h6 class="mb-0">Output Mapping List</h6>
-		            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addMappingRow()">+ Add Mapping</button>
-		        </div>
-		        <table class="table table-bordered table-sm" id="mappingTable">
-		            <thead class="table-light">
-		                <tr>
-		                    <th>#</th>
-		                    <th>Column Name</th>
-		                    <th>Output Field</th>
-		                    <th></th>
-		                </tr>
-		            </thead>
-		            <tbody id="mappingListBody">
-		                <tr th:each="map, iterStat : *{dbServiceConfig.outputMappingList}">
-		                    <td th:text="${iterStat.index + 1}"></td>
-		                    <td><input type="text" th:field="*{dbServiceConfig.outputMappingList[__${iterStat.index}__].columnName}" class="form-control" /></td>
-		                    <td><input type="text" th:field="*{dbServiceConfig.outputMappingList[__${iterStat.index}__].outputField}" class="form-control" /></td>
-		                    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
-		                </tr>
-		            </tbody>
-		        </table>
-		    </div>
-		</div>
-
+ 
+        <!-- DB Config Section -->
+        <div id="dbConfigSection" style="display:none;" class="mt-4 border rounded p-3">
+            <h5>Database Configuration</h5>
+ 
+            <!-- Datasource Dropdown -->
+            <div class="mb-3">
+                <label class="form-label">Datasource</label>
+                <div class="input-group">
+                    <select th:field="*{dbServiceConfig.dbSourceId}" class="form-select" required>
+                        <option value="" disabled>-- Select Datasource --</option>
+                        <option th:each="ds : ${datasourceList}" th:value="${ds.id}" th:text="${ds.name}"></option>
+                    </select>
+                    <a th:href="@{/admin/datasource/add}" class="btn btn-outline-primary" title="Add Datasource">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+ 
+            <!-- SQL Statement -->
+            <div class="mb-3">
+                <label class="form-label">SQL Statement</label>
+                <textarea th:field="*{dbServiceConfig.sqlStatement}" class="form-control" rows="3" required></textarea>
+            </div>
+ 
+            <!-- SQL Type -->
+            <div class="mb-3">
+                <label class="form-label">SQL Type</label>
+                <select th:field="*{dbServiceConfig.sqlType}" class="form-select" required>
+                    <option value="" disabled>-- Select SQL Type --</option>
+                    <option th:each="type : ${T(com.bpm.core.model.db.SqlType).values()}"
+                            th:value="${type}" th:text="${type.label}"></option>
+                </select>
+            </div>
+ 
+            <!-- Advanced Settings -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Timeout (ms)</label>
+                    <input type="number" th:field="*{dbServiceConfig.timeoutMs}" class="form-control" min="0" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Retry Count</label>
+                    <input type="number" th:field="*{dbServiceConfig.retryCount}" class="form-control" min="0" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Retry Backoff (ms)</label>
+                    <input type="number" th:field="*{dbServiceConfig.retryBackoffMs}" class="form-control" min="0" />
+                </div>
+ 
+                <div class="col-md-4 form-check mt-3">
+                    <input type="checkbox" th:field="*{dbServiceConfig.transactional}" class="form-check-input" id="transactional">
+                    <label class="form-check-label" for="transactional">Transactional</label>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Fetch Size</label>
+                    <input type="number" th:field="*{dbServiceConfig.fetchSize}" class="form-control" min="1" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Result Type</label>
+                    <select th:field="*{dbServiceConfig.resultType}" class="form-select">
+                        <option value="LIST">LIST</option>
+                        <option value="SINGLE">SINGLE</option>
+                        <option value="NONE">NONE</option>
+                    </select>
+                </div>
+            </div>
+ 
+            <!-- Parameter List -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Parameter List</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addParamRow()">+ Add Param</button>
+                </div>
+                <table class="table table-dark table-bordered table-sm" id="paramTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Param Name</th>
+                            <th>Type</th>
+                            <th>Mode</th>
+                            <th>Order</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="paramListBody">
+                        <tr th:each="item, iterStat : *{dbServiceConfig.paramList}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td><input type="text" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramName}" class="form-control" /></td>
+                            <td><input type="text" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramType}" class="form-control" /></td>
+                            <td>
+                                <select th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramMode}" class="form-select">
+                                    <option value="IN">IN</option>
+                                    <option value="OUT">OUT</option>
+                                </select>
+                            </td>
+                            <td><input type="number" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramOrder}" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+ 
+            <!-- Output Mapping List -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Output Mapping List</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addMappingRow()">+ Add Mapping</button>
+                </div>
+                <table class="table table-dark table-bordered table-sm" id="mappingTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Column Name</th>
+                            <th>Output Field</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="mappingListBody">
+                        <tr th:each="map, iterStat : *{dbServiceConfig.outputMappingList}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td><input type="text" th:field="*{dbServiceConfig.outputMappingList[__${iterStat.index}__].columnName}" class="form-control" /></td>
+                            <td><input type="text" th:field="*{dbServiceConfig.outputMappingList[__${iterStat.index}__].outputField}" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+ 
         <!-- REST Config Section -->
-		<div id="restConfigSection" style="display:none;" class="mt-4 border rounded p-3">
-		    <h5>REST API Configuration</h5>
-
-		    <!-- Target URL -->
-		    <div class="mb-3">
-		        <label class="form-label">Target URL</label>
-		        <input type="url" th:field="*{restServiceConfig.targetUrl}" class="form-control" placeholder="https://api.example.com">
-		    </div>
-
-		    <!-- HTTP Method -->
-		    <div class="mb-3">
-		        <label class="form-label">HTTP Method</label>
-		        <select th:field="*{restServiceConfig.httpMethod}" class="form-select">
-		            <option value="">-- Select Method --</option>
-		            <option value="GET">GET</option>
-		            <option value="POST">POST</option>
-		            <option value="PUT">PUT</option>
-		            <option value="DELETE">DELETE</option>
-		        </select>
-		    </div>
-
-		    <!-- Content-Type -->
-		    <div class="mb-3">
-		        <label class="form-label">Content-Type</label>
-		        <input type="text" th:field="*{restServiceConfig.contentType}" class="form-control" placeholder="application/json">
-		    </div>
-
-		    <!-- Payload Template -->
-		    <div class="mb-3">
-		        <label class="form-label">Payload Template</label>
-		        <textarea th:field="*{restServiceConfig.payloadTemplate}" class="form-control" rows="3" placeholder='{"key":"${value}"}'></textarea>
-		    </div>
-
-		    <!-- Response Mapping -->
-		    <div class="mb-3">
-		        <label class="form-label">Response Mapping (JsonPath)</label>
-		        <input type="text" th:field="*{restServiceConfig.responseMapping}" class="form-control" placeholder="$.data.items">
-		    </div>
-
-		    <!-- Auth ID (optional dropdown) -->
-		    <div class="mb-3">
-		        <label class="form-label">Authentication</label>
-		        <select th:field="*{restServiceConfig.authId}" class="form-select">
-		            <option value="">-- No Authentication --</option>
-		            <option th:each="auth : ${authList}" th:value="${auth.id}" th:text="${auth.name}"></option>
-		        </select>
-		    </div>
-
-		    <!-- Header List -->
-		    <div class="mt-4">
-		        <div class="d-flex justify-content-between align-items-center mb-2">
-		            <h6 class="mb-0">Headers</h6>
-		            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addHeaderRow()">+ Add Header</button>
-		        </div>
-		        <table class="table table-bordered table-sm">
-		            <thead class="table-light">
-		                <tr>
-		                    <th>#</th>
-		                    <th>Header Name</th>
-		                    <th>Header Value</th>
-		                    <th></th>
-		                </tr>
-		            </thead>
-		            <tbody id="headerListBody">
-						<tr id="headerRowTemplate" style="display: none;">
-						    <td>#</td>
-						    <td><input type="text" name="restServiceConfig.headerList[__INDEX__].name" class="form-control" /></td>
-						    <td><input type="text" name="restServiceConfig.headerList[__INDEX__].value" class="form-control" /></td>
-						    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
-						</tr>
-		            </tbody>
-		        </table>
-		    </div>
-
-		    <!-- Query Params -->
-		    <div class="mt-4">
-		        <div class="d-flex justify-content-between align-items-center mb-2">
-		            <h6 class="mb-0">Query Parameters</h6>
-		            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addQueryParamRow()">+ Add Query Param</button>
-		        </div>
-		        <table class="table table-bordered table-sm">
-		            <thead class="table-light">
-		                <tr>
-		                    <th>#</th>
-		                    <th>Param Name</th>
-		                    <th>Param Value</th>
-		                    <th></th>
-		                </tr>
-		            </thead>
-		            <tbody id="queryParamListBody">
-		                <tr th:each="param, iterStat : *{restServiceConfig.queryParamList}">
-		                    <td th:text="${iterStat.index + 1}"></td>
-		                    <td><input type="text" th:field="*{restServiceConfig.queryParamList[__${iterStat.index}__].name}" class="form-control" /></td>
-		                    <td><input type="text" th:field="*{restServiceConfig.queryParamList[__${iterStat.index}__].value}" class="form-control" /></td>
-		                    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
-		                </tr>
-		            </tbody>
-		        </table>
-		    </div>
-
-		    <!-- Path Params -->
-		    <div class="mt-4">
-		        <div class="d-flex justify-content-between align-items-center mb-2">
-		            <h6 class="mb-0">Path Parameters</h6>
-		            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addPathParamRow()">+ Add Path Param</button>
-		        </div>
-		        <table class="table table-bordered table-sm">
-		            <thead class="table-light">
-		                <tr>
-		                    <th>#</th>
-		                    <th>Param Name</th>
-		                    <th>Param Value</th>
-		                    <th></th>
-		                </tr>
-		            </thead>
-		            <tbody id="pathParamListBody">
-		                <tr th:each="param, iterStat : *{restServiceConfig.pathParamList}">
-		                    <td th:text="${iterStat.index + 1}"></td>
-		                    <td><input type="text" th:field="*{restServiceConfig.pathParamList[__${iterStat.index}__].name}" class="form-control" /></td>
-		                    <td><input type="text" th:field="*{restServiceConfig.pathParamList[__${iterStat.index}__].value}" class="form-control" /></td>
-		                    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
-		                </tr>
-		            </tbody>
-		        </table>
-		    </div>
-		</div>
-
+        <div id="restConfigSection" style="display:none;" class="mt-4 border rounded p-3">
+            <h5>REST API Configuration</h5>
+ 
+            <!-- Target URL -->
+            <div class="mb-3">
+                <label class="form-label">Target URL</label>
+                <input type="url" th:field="*{restServiceConfig.targetUrl}" class="form-control" placeholder="https://api.example.com">
+            </div>
+ 
+            <!-- HTTP Method -->
+            <div class="mb-3">
+                <label class="form-label">HTTP Method</label>
+                <select th:field="*{restServiceConfig.httpMethod}" class="form-select">
+                    <option value="">-- Select Method --</option>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+ 
+            <!-- Content-Type -->
+            <div class="mb-3">
+                <label class="form-label">Content-Type</label>
+                <input type="text" th:field="*{restServiceConfig.contentType}" class="form-control" placeholder="application/json">
+            </div>
+ 
+            <!-- Payload Template -->
+            <div class="mb-3">
+                <label class="form-label">Payload Template</label>
+                <textarea th:field="*{restServiceConfig.payloadTemplate}" class="form-control" rows="3" placeholder='{"key":"${value}"}'></textarea>
+            </div>
+ 
+            <!-- Response Mapping -->
+            <div class="mb-3">
+                <label class="form-label">Response Mapping (JsonPath)</label>
+                <input type="text" th:field="*{restServiceConfig.responseMapping}" class="form-control" placeholder="$.data.items">
+            </div>
+ 
+            <!-- Auth ID (optional dropdown) -->
+            <div class="mb-3">
+                <label class="form-label">Authentication</label>
+                <select th:field="*{restServiceConfig.authId}" class="form-select">
+                    <option value="">-- No Authentication --</option>
+                    <option th:each="auth : ${authList}" th:value="${auth.id}" th:text="${auth.name}"></option>
+                </select>
+            </div>
+ 
+            <!-- Header List -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Headers</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addHeaderRow()">+ Add Header</button>
+                </div>
+                <table class="table table-dark table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Header Name</th>
+                            <th>Header Value</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="headerListBody">
+                        <tr th:each="item, iterStat : *{restServiceConfig.headerList}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td><input type="text" th:field="*{restServiceConfig.headerList[__${iterStat.index}__].name}" class="form-control" /></td>
+                            <td><input type="text" th:field="*{restServiceConfig.headerList[__${iterStat.index}__].value}" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+ 
+            <!-- Query Params -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Query Parameters</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addQueryParamRow()">+ Add Query Param</button>
+                </div>
+                <table class="table table-dark table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Param Name</th>
+                            <th>Param Value</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="queryParamListBody">
+                        <tr th:each="item, iterStat : *{restServiceConfig.queryParamList}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td><input type="text" th:field="*{restServiceConfig.queryParamList[__${iterStat.index}__].name}" class="form-control" /></td>
+                            <td><input type="text" th:field="*{restServiceConfig.queryParamList[__${iterStat.index}__].value}" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+ 
+            <!-- Path Params -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Path Parameters</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addPathParamRow()">+ Add Path Param</button>
+                </div>
+                <table class="table table-dark table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Param Name</th>
+                            <th>Param Value</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="pathParamListBody">
+                        <tr th:each="item, iterStat : *{restServiceConfig.pathParamList}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td><input type="text" th:field="*{restServiceConfig.pathParamList[__${iterStat.index}__].name}" class="form-control" /></td>
+                            <td><input type="text" th:field="*{restServiceConfig.pathParamList[__${iterStat.index}__].value}" class="form-control" /></td>
+                            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+ 
         <!-- Mail Config Section -->
         <div id="mailConfigSection" style="display:none;" class="mt-4 border rounded p-3">
             <h5>Mail Configuration</h5>
@@ -324,7 +323,7 @@
                 <input type="email" th:field="*{mailServiceConfig.mailTo}" class="form-control">
             </div>
         </div>
-
+ 
         <!-- File Config Section -->
         <div id="fileConfigSection" style="display:none;" class="mt-4 border rounded p-3">
             <h5>File Configuration</h5>
@@ -341,24 +340,24 @@
                 <input type="text" th:field="*{fileServiceConfig.fileFormat}" class="form-control">
             </div>
         </div>
-
-		<div class="mt-4 d-flex gap-2">
-		    <a th:if="${serviceConfig.id != null}"
-		       th:href="@{'/admin/test?serviceCode=' + ${serviceConfig.serviceCode} + '&serviceType=' + ${serviceConfig.serviceType}}"
-		       class="btn btn-info">
-		        Test
-		    </a>
-			<a th:if="${serviceConfig.id != null}"
-		       th:href="@{'/admin/service/delete/' + ${serviceConfig.id}}"
-		       class="btn btn-danger"
-		       onclick="return confirm('Are you sure to delete this service config?')">
-				Delete
-		    </a>
-			<button type="submit" class="btn btn-success">Save</button>
-			<a th:href="@{/admin/service}" class="btn btn-secondary">Cancel</a>
-		</div>
+ 
+        <div class="mt-4 d-flex gap-2">
+            <a th:if="${serviceConfig.id != null}"
+               th:href="@{'/admin/test?serviceCode=' + ${serviceConfig.serviceCode} + '&serviceType=' + ${serviceConfig.serviceType}}"
+               class="btn btn-info">
+                Test
+            </a>
+            <a th:if="${serviceConfig.id != null}"
+               th:href="@{'/admin/service/delete/' + ${serviceConfig.id}}"
+               class="btn btn-danger"
+               onclick="return confirm('Are you sure to delete this service config?')">
+                Delete
+            </a>
+            <button type="submit" class="btn btn-success">Save</button>
+            <a th:href="@{/admin/service}" class="btn btn-secondary">Cancel</a>
+        </div>
     </form>
-
+ 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const serviceTypeField = document.getElementById('serviceType');
@@ -366,7 +365,7 @@
             const restSection = document.getElementById('restConfigSection');
             const mailSection = document.getElementById('mailConfigSection');
             const fileSection = document.getElementById('fileConfigSection');
-
+ 
             function updateSections() {
                 const type = serviceTypeField.value;
                 dbSection.style.display = type === 'DB' ? 'block' : 'none';
@@ -374,90 +373,126 @@
                 mailSection.style.display = type === 'MAIL' ? 'block' : 'none';
                 fileSection.style.display = type === 'FILE' ? 'block' : 'none';
             }
-
+ 
             serviceTypeField.addEventListener('change', updateSections);
             updateSections(); // initial call
         });
-		
+    </script>
+	<script>
 		function addParamRow() {
-	        const table = document.getElementById('paramListBody');
-	        const newRow = table.rows[0].cloneNode(true);
-	        newRow.querySelectorAll('input, select').forEach(input => {
-	            input.value = '';
-	        });
-	        table.appendChild(newRow);
-	        updateParamIndexes();
-	    }
-
-	    function addMappingRow() {
-	        const table = document.getElementById('mappingListBody');
-	        const newRow = table.rows[0].cloneNode(true);
-	        newRow.querySelectorAll('input').forEach(input => {
-	            input.value = '';
-	        });
-	        table.appendChild(newRow);
-	        updateMappingIndexes();
-	    }
-
-	    function removeRow(btn) {
-	        const row = btn.closest('tr');
-	        const table = row.parentNode;
-	        if (table.rows.length > 1) {
-	            table.removeChild(row);
-	        }
-	        updateParamIndexes();
-	        updateMappingIndexes();
-	    }
-
-	    function updateParamIndexes() {
-	        const rows = document.querySelectorAll('#paramListBody tr');
-	        rows.forEach((row, index) => {
-	            row.querySelector('td:first-child').innerText = index + 1;
-	        });
-	    }
-
-	    function updateMappingIndexes() {
-	        const rows = document.querySelectorAll('#mappingListBody tr');
-	        rows.forEach((row, index) => {
-	            row.querySelector('td:first-child').innerText = index + 1;
-	        });
-	    }
-		
-		function addRow(tableBodyId, nameField, valueField) {
-		    const tbody = document.getElementById(tableBodyId);
-		    const row = document.createElement('tr');
+		    const tbody = document.getElementById("paramListBody");
+		    const index = tbody.children.length;
+	
+		    const row = document.createElement("tr");
 		    row.innerHTML = `
-		        <td>${tbody.children.length + 1}</td>
-		        <td><input type="text" name="${nameField}" class="form-control" /></td>
-		        <td><input type="text" name="${valueField}" class="form-control" /></td>
+		        <td>${index + 1}</td>
+		        <td><input type="text" name="dbServiceConfig.paramList[${index}].paramName" class="form-control" /></td>
+		        <td><input type="text" name="dbServiceConfig.paramList[${index}].paramType" class="form-control" /></td>
+		        <td>
+		            <select name="dbServiceConfig.paramList[${index}].paramMode" class="form-select">
+		                <option value="IN">IN</option>
+		                <option value="OUT">OUT</option>
+		            </select>
+		        </td>
+		        <td><input type="number" name="dbServiceConfig.paramList[${index}].paramOrder" class="form-control" /></td>
 		        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
 		    `;
 		    tbody.appendChild(row);
 		}
-		
-		function addHeaderRow() {
-		    const tbody = document.getElementById("headerListBody");
-		    const template = document.getElementById("headerRowTemplate");
-		    const clone = template.cloneNode(true);
+	
+		function addMappingRow() {
+		    const tbody = document.getElementById("mappingListBody");
 		    const index = tbody.children.length;
-		    clone.innerHTML = clone.innerHTML.replace(/__INDEX__/g, index);
-		    clone.style.display = "";
-		    tbody.appendChild(clone);
-		    updateHeaderIndexes();
+	
+		    const row = document.createElement("tr");
+		    row.innerHTML = `
+		        <td>${index + 1}</td>
+		        <td><input type="text" name="dbServiceConfig.outputMappingList[${index}].columnName" class="form-control" /></td>
+		        <td><input type="text" name="dbServiceConfig.outputMappingList[${index}].outputField" class="form-control" /></td>
+		        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+		    `;
+		    tbody.appendChild(row);
 		}
-
-		function updateHeaderIndexes() {
-		    const rows = document.querySelectorAll("#headerListBody tr");
-		    rows.forEach((row, idx) => {
-		        row.querySelector("td:first-child").innerText = idx + 1;
+	
+		function removeRow(button) {
+		    const row = button.closest("tr");
+		    row.remove();
+	
+		    // Re-index lại thứ tự hiển thị số thứ tự (#) nếu cần
+		    reindexTable("paramListBody");
+		    reindexTable("mappingListBody");
+		}
+	
+		function reindexTable(tbodyId) {
+		    const tbody = document.getElementById(tbodyId);
+		    Array.from(tbody.children).forEach((row, index) => {
+		        row.children[0].innerText = index + 1; // cập nhật cột #
 		    });
 		}
-
+	</script>
+	<script>
+		// ==== HEADER LIST ====
+		function addHeaderRow() {
+		    const tbody = document.getElementById("headerListBody");
+		    const index = tbody.children.length;
+	
+		    const row = document.createElement("tr");
+		    row.innerHTML = `
+		        <td>${index + 1}</td>
+		        <td><input type="text" name="restServiceConfig.headerList[${index}].name" class="form-control" /></td>
+		        <td><input type="text" name="restServiceConfig.headerList[${index}].value" class="form-control" /></td>
+		        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+		    `;
+		    tbody.appendChild(row);
+		    reindexTable("headerListBody");
+		}
+	
+		// ==== QUERY PARAMS ====
 		function addQueryParamRow() {
-		    addRow("queryParamListBody", "restServiceConfig.queryParamList[].name", "restServiceConfig.queryParamList[].value");
+		    const tbody = document.getElementById("queryParamListBody");
+		    const index = tbody.children.length;
+	
+		    const row = document.createElement("tr");
+		    row.innerHTML = `
+		        <td>${index + 1}</td>
+		        <td><input type="text" name="restServiceConfig.queryParamList[${index}].name" class="form-control" /></td>
+		        <td><input type="text" name="restServiceConfig.queryParamList[${index}].value" class="form-control" /></td>
+		        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+		    `;
+		    tbody.appendChild(row);
+		    reindexTable("queryParamListBody");
 		}
+	
+		// ==== PATH PARAMS ====
 		function addPathParamRow() {
-		    addRow("pathParamListBody", "restServiceConfig.pathParamList[].name", "restServiceConfig.pathParamList[].value");
+		    const tbody = document.getElementById("pathParamListBody");
+		    const index = tbody.children.length;
+	
+		    const row = document.createElement("tr");
+		    row.innerHTML = `
+		        <td>${index + 1}</td>
+		        <td><input type="text" name="restServiceConfig.pathParamList[${index}].name" class="form-control" /></td>
+		        <td><input type="text" name="restServiceConfig.pathParamList[${index}].value" class="form-control" /></td>
+		        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">Remove</button></td>
+		    `;
+		    tbody.appendChild(row);
+		    reindexTable("pathParamListBody");
 		}
-    </script>
+	
+		// ==== REMOVE ROW (chung) ====
+		function removeRow(button) {
+		    const row = button.closest("tr");
+		    const tbody = row.parentNode;
+		    row.remove();
+		    reindexTable(tbody.id);
+		}
+	
+		// ==== RE-INDEX TABLE (#) ====
+		function reindexTable(tbodyId) {
+		    const tbody = document.getElementById(tbodyId);
+		    Array.from(tbody.children).forEach((row, index) => {
+		        row.children[0].innerText = index + 1;
+		    });
+		}
+	</script>
 </div>

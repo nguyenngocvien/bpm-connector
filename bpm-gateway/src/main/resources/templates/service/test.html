@@ -13,11 +13,29 @@
 		        </option>
 		    </select>
 		</div>
+		<div class="mb-3">
+		    <div class="d-flex justify-content-between align-items-center mb-1">
+		        <label for="params" class="form-label mb-0">Input Params (JSON)</label>
+		        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="prettyPrintParams()">
+		            Pretty Print
+		        </button>
+		    </div>
+		    
+		    <textarea id="params" name="params" class="form-control font-monospace" rows="5" placeholder='{"key":"value"}'></textarea>
+		</div>
 
-        <div class="mb-3">
-            <label for="params" class="form-label">Input Params (JSON)</label>
-            <textarea id="params" name="params" class="form-control" rows="5" placeholder='{"key":"value"}'></textarea>
-        </div>
+		<!-- Script for Pretty Print -->
+		<script>
+		function prettyPrintParams() {
+		    const textarea = document.getElementById('params');
+		    try {
+		        const json = JSON.parse(textarea.value);
+		        textarea.value = JSON.stringify(json, null, 2);
+		    } catch (e) {
+		        alert('Invalid JSON. Cannot pretty print.');
+		    }
+		}
+		</script>
 
         <button type="submit" class="btn btn-primary">Execute</button>
     </form>

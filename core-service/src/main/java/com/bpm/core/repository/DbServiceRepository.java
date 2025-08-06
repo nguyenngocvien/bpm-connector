@@ -61,8 +61,11 @@ public class DbServiceRepository {
             .updatedAt(rs.getTimestamp("updated_at").toLocalDateTime())
             .build();
 
-    public int save(DbServiceConfig config) {
-    	
+    public void save(DbServiceConfig config, Long serviceId) {
+    	if (config == null) return;
+
+    	config.setId(serviceId);
+        
     	String inputJson = DbServiceConfigParser.toInputParamsJson(config.getParamList());
     	String outputJson = DbServiceConfigParser.toOutputMappingJson(config.getOutputMappingList());
 
@@ -79,7 +82,7 @@ public class DbServiceRepository {
                 + "retry_count = EXCLUDED.retry_count, retry_backoff_ms = EXCLUDED.retry_backoff_ms, transactional = EXCLUDED.transactional, "
                 + "fetch_size = EXCLUDED.fetch_size, result_type = EXCLUDED.result_type, enabled = EXCLUDED.enabled, updated_at = CURRENT_TIMESTAMP";
 
-        return jdbcTemplate.update(sql,
+        jdbcTemplate.update(sql,
                 config.getId(),
                 config.getDbSourceId(),
                 config.getSqlStatement(),
