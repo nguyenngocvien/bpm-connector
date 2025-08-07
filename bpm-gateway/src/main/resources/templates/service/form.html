@@ -32,22 +32,23 @@
                 <label class="form-label">Service Description</label>
                 <textarea th:field="*{serviceDescription}" class="form-control" rows="3" placeholder="Optional description"></textarea>
             </div>
- 
-            <div class="col-md-6 form-check mt-3">
-                <input type="checkbox" th:field="*{logEnabled}" class="form-check-input" id="logEnabled">
-                <label class="form-check-label" for="logEnabled">Enable Logging</label>
-            </div>
- 
-            <div class="col-md-6 form-check mt-3">
-                <input type="checkbox" th:field="*{active}" class="form-check-input" id="active">
-                <label class="form-check-label" for="active">Active</label>
-            </div>
+			<div class="col-md-6 mt-3">
+			    <div class="form-check form-switch toggle-switch">
+			        <input class="form-check-input" type="checkbox" th:field="*{active}" id="active">
+			        <label class="form-check-label ms-2" for="active">Active</label>
+			    </div>
+			</div>
+			<div class="col-md-6 mt-3">
+			    <div class="form-check form-switch toggle-switch">
+			        <input class="form-check-input" type="checkbox" th:field="*{logEnabled}" id="logEnabled">
+			        <label class="form-check-label ms-2" for="logEnabled">Enable Logging</label>
+			    </div>
+			</div>
         </div>
  
         <!-- DB Config Section -->
-        <div id="dbConfigSection" style="display:none;" class="mt-4 border rounded p-3">
-            <h5>Database Configuration</h5>
- 
+		<div id="dbConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+		    <h5 class="section-label">Database Configuration</h6> 
             <!-- Datasource Dropdown -->
             <div class="mb-3">
                 <label class="form-label">Datasource</label>
@@ -94,11 +95,13 @@
                     <label class="form-label">Retry Backoff (ms)</label>
                     <input type="number" th:field="*{dbServiceConfig.retryBackoffMs}" class="form-control" min="0" />
                 </div>
- 
-                <div class="col-md-4 form-check mt-3">
-                    <input type="checkbox" th:field="*{dbServiceConfig.transactional}" class="form-check-input" id="transactional">
-                    <label class="form-check-label" for="transactional">Transactional</label>
-                </div>
+				<div class="col-md-4 form-check mt-3">
+				    <div class="form-check form-switch toggle-switch">
+				        <input class="form-check-input" type="checkbox" th:field="*{dbServiceConfig.transactional}" id="transactional">
+				        <label class="form-check-label" for="transactional">Transactional</label>
+				    </div>
+				</div>
+				
                 <div class="col-md-4">
                     <label class="form-label">Fetch Size</label>
                     <input type="number" th:field="*{dbServiceConfig.fetchSize}" class="form-control" min="1" />
@@ -119,7 +122,7 @@
                     <h6 class="mb-0">Parameter List</h6>
                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addParamRow()">+ Add Param</button>
                 </div>
-                <table class="table table-dark table-bordered table-sm" id="paramTable">
+                <table class="table table-dark table-bordered table-sm no-input-border" id="paramTable">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -154,7 +157,7 @@
                     <h6 class="mb-0">Output Mapping List</h6>
                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addMappingRow()">+ Add Mapping</button>
                 </div>
-                <table class="table table-dark table-bordered table-sm" id="mappingTable">
+                <table class="table table-dark table-bordered table-sm no-input-border" id="mappingTable">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -176,8 +179,8 @@
         </div>
  
         <!-- REST Config Section -->
-        <div id="restConfigSection" style="display:none;" class="mt-4 border rounded p-3">
-            <h5>REST API Configuration</h5>
+		<div id="restConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+			<h5 class="section-label">REST API Configuration</h6>
  
             <!-- Target URL -->
             <div class="mb-3">
@@ -230,7 +233,7 @@
                     <h6 class="mb-0">Headers</h6>
                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addHeaderRow()">+ Add Header</button>
                 </div>
-                <table class="table table-dark table-bordered table-sm">
+                <table class="table table-dark table-bordered table-sm no-input-border">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -256,7 +259,7 @@
                     <h6 class="mb-0">Query Parameters</h6>
                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addQueryParamRow()">+ Add Query Param</button>
                 </div>
-                <table class="table table-dark table-bordered table-sm">
+                <table class="table table-dark table-bordered table-sm no-input-border">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -282,7 +285,7 @@
                     <h6 class="mb-0">Path Parameters</h6>
                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addPathParamRow()">+ Add Path Param</button>
                 </div>
-                <table class="table table-dark table-bordered table-sm">
+                <table class="table table-dark table-bordered table-sm no-input-border">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -304,8 +307,8 @@
         </div>
  
         <!-- Mail Config Section -->
-        <div id="mailConfigSection" style="display:none;" class="mt-4 border rounded p-3">
-            <h5>Mail Configuration</h5>
+		<div id="mailConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+			<h5 class="section-label">Mail Configuration</h6>
             <div class="mb-3">
                 <label class="form-label">SMTP Server</label>
                 <input type="text" th:field="*{mailServiceConfig.smtpServer}" class="form-control">
@@ -325,8 +328,8 @@
         </div>
  
         <!-- File Config Section -->
-        <div id="fileConfigSection" style="display:none;" class="mt-4 border rounded p-3">
-            <h5>File Configuration</h5>
+		<div id="fileConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+					<h5 class="section-label">File Configuration</h6>
             <div class="mb-3">
                 <label class="form-label">File Path</label>
                 <input type="text" th:field="*{fileServiceConfig.filePath}" class="form-control">

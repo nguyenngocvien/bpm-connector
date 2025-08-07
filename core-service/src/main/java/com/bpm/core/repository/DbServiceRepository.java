@@ -3,6 +3,7 @@ package com.bpm.core.repository;
 import com.bpm.core.model.db.DbOutputMapping;
 import com.bpm.core.model.db.DbParamConfig;
 import com.bpm.core.model.db.DbServiceConfig;
+import com.bpm.core.model.db.SqlType;
 import com.bpm.core.util.DbServiceConfigParser;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -47,7 +48,7 @@ public class DbServiceRepository {
             .id(rs.getLong("id"))
             .dbSourceId(rs.getLong("ds_id"))
             .sqlStatement(rs.getString("sql_statement"))
-            .sqlType(rs.getString("sql_type"))
+            .sqlType(SqlType.valueOf(rs.getString("sql_type")))
             .inputParams(rs.getString("input_params"))
             .outputMapping(rs.getString("output_mapping"))
             .timeoutMs(rs.getInt("timeout_ms"))

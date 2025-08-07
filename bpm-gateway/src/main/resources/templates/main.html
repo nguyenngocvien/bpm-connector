@@ -132,6 +132,59 @@
         .table td, .table th {
             vertical-align: middle;
         }
+		
+		.section-label {
+	        position: absolute;
+	        top: -12px;
+	        left: 15px;
+	        padding: 0 8px;
+	        font-weight: 600;
+	        font-size: 0.95rem;
+	        color: var(--text-color);
+	    }
+		
+		.no-input-border input,
+		.no-input-border select {
+		    border: none !important;
+		    background-color: transparent;
+		    box-shadow: none;
+		}
+		
+		/* Custom toggle with ON/OFF text */
+		.toggle-switch .form-check-input {
+		    width: 3.5rem;
+		    height: 1.5rem;
+		    position: relative;
+		    background-color: #dc3545; /* đỏ mặc định (OFF) */
+		    border-color: #dc3545;
+		    transition: background-color 0.3s ease;
+		}
+
+		/* Khi bật ON: đổi sang xanh */
+		.toggle-switch .form-check-input:checked {
+		    background-color: #198754 !important; /* xanh Bootstrap */
+		    border-color: #198754 !important;
+		}
+
+		/* Thêm chữ ON/OFF */
+		.toggle-switch .form-check-input::before {
+		    content: "OFF";
+		    position: absolute;
+		    left: 1.6rem;
+		    top: 50%;
+		    transform: translateY(-50%);
+		    color: white;
+		    font-size: 0.6rem;
+		    font-weight: bold;
+		    transition: all 0.2s ease-in-out;
+		    z-index: 2;
+		}
+
+		.toggle-switch .form-check-input:checked::before {
+		    content: "ON";
+		    left: 0.4rem;
+		}
+
     </style>
 </head>
 <body>
@@ -139,7 +192,7 @@
 	    <h3>Dashboard</h3>
 		<!-- User -->
 		<a th:href="@{/admin/auth}" 
-		   th:classappend="${activeMenu} == 'auth' ? 'bg-secondary fw-bold' : ''"
+		   th:classappend="${activeMenu} == 'auth' ? 'bg-secondary bg-opacity-25 fw-bold' : ''"
 		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
 		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
 		     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -150,7 +203,7 @@
 
 		<!-- Datasource -->
 		<a th:href="@{/admin/datasource}" 
-		   th:classappend="${activeMenu} == 'datasource' ? 'bg-secondary fw-bold' : ''"
+		   th:classappend="${activeMenu} == 'datasource' ? 'bg-secondary bg-opacity-25 fw-bold' : ''"
 		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
 		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hdd-network" viewBox="0 0 16 16">
 		     <path d="M4.5 11a.5.5 0 0 1 0 1H3v1h10v-1h-1.5a.5.5 0 0 1 0-1h1.5V9H3v2h1.5z"/>
@@ -162,7 +215,7 @@
 
 		<!-- Service -->
 		<a th:href="@{/admin/service}" 
-		   th:classappend="${activeMenu} == 'service' ? 'bg-secondary fw-bold' : ''"
+		   th:classappend="${activeMenu} == 'service' ? 'bg-secondary bg-opacity-25 fw-bold' : ''"
 		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
 		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
 		     <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
@@ -173,7 +226,7 @@
 
 		<!-- Testing -->
 		<a th:href="@{/admin/test}" 
-		   th:classappend="${activeMenu} == 'test' ? 'bg-secondary fw-bold' : ''"
+		   th:classappend="${activeMenu} == 'test' ? 'bg-secondary bg-opacity-25 fw-bold' : ''"
 		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
 		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-terminal" viewBox="0 0 16 16">
 		     <path d="M3.146 4.646a.5.5 0 0 1 .708 0L7 7.793 3.854 10.94a.5.5 0 0 1-.708-.708L5.793 8 3.146 5.354a.5.5 0 0 1 0-.708z"/>

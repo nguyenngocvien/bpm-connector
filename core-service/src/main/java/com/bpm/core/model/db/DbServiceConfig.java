@@ -18,7 +18,7 @@ public class DbServiceConfig {
     private Long id;
     private Long dbSourceId;
     private String sqlStatement;
-    private String sqlType; // QUERY, UPDATE, PROC
+    private SqlType sqlType; // QUERY, UPDATE, PROC
     
     private String inputParams;
     private String outputMapping;

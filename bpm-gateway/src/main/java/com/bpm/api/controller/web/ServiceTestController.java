@@ -11,22 +11,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bpm.api.constant.ROUTES;
+import com.bpm.core.model.db.DbServiceConfig;
 import com.bpm.core.model.response.Response;
 import com.bpm.core.model.service.ServiceConfig;
 import com.bpm.core.model.service.ServiceType;
-import com.bpm.core.repository.ServiceConfigRepository;
+import com.bpm.core.repository.Store;
 import com.bpm.core.service.ServiceInvoker;
+import com.bpm.core.util.DbServiceConfigParser;
 import com.bpm.core.util.JsonUtil;
 
 @Controller
 @RequestMapping(ROUTES.UI_TESTING)
 public class ServiceTestController {
 
-    private final ServiceConfigRepository repository;
+    private final Store repository;
     private final Map<String, ServiceInvoker> invokerMap;
 
     @Autowired
-    public ServiceTestController(ServiceConfigRepository repository, Map<String, ServiceInvoker> invokerMap) {
+    public ServiceTestController(Store repository, Map<String, ServiceInvoker> invokerMap) {
         this.repository = repository;
         this.invokerMap = invokerMap;
     }
@@ -39,9 +41,27 @@ public class ServiceTestController {
         model.addAttribute("activeMenu", "test");
 
         model.addAttribute("serviceId", serviceId);
-        model.addAttribute("serviceList", repository.findAll());
+        model.addAttribute("serviceList", repository.serviceConfigs().findAll());
 
         return "main";
+    }
+    
+    @GetMapping("/load-params")
+    public String loadParamsByServiceId(@RequestParam("serviceId") Long serviceId, Model model) {
+    	ServiceConfig config = repository.serviceConfigs().findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Service ID"));
+    	
+    	String input = "";
+    	
+        if (ServiceType.DB.equals(config.getServiceType())) {
+			DbServiceConfig dbConfig = repository.dbServices().findById(serviceId)
+					.orElseThrow(() -> new IllegalArgumentException("Invalid Service ID"));
+			
+			input = DbServiceConfigParser.convertParamArrayToJsonObject(dbConfig.getParamList());
+		}
+        
+        model.addAttribute("inputJson", input);
+        return "service/param-textarea :: textarea";
     }
 
     @PostMapping
@@ -49,10 +69,9 @@ public class ServiceTestController {
                                  @RequestParam String params,
                                  Model model) {
 
-//    	System.out.println(">>> Invoking Service ID = " + serviceId);
-    	System.out.println(">>> Params = " + params);
+    	System.out.println(">>> Invoking Service ID = " + serviceId);
     	
-        ServiceConfig config = repository.findById(serviceId)
+        ServiceConfig config = repository.serviceConfigs().findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Service ID"));
 
         String invokerKey = getInvokerKey(config.getServiceType()); // e.g., "dbInvoker"
@@ -69,9 +88,7 @@ public class ServiceTestController {
                 res = Response.error("Invalid JSON or invocation failure: " + e.getMessage());
             }
         }
-        
-        String jsonOutput = JsonUtil.toPrettyString(res);
-        model.addAttribute("outputJson", jsonOutput);
+        model.addAttribute("outputJson", res.toString());
         
         return "service/response :: result";
     }

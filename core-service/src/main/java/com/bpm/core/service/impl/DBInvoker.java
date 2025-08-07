@@ -9,9 +9,7 @@ import com.bpm.core.model.db.SqlType;
 import com.bpm.core.model.response.Response;
 import com.bpm.core.model.service.ServiceConfig;
 import com.bpm.core.model.service.ServiceLog;
-import com.bpm.core.repository.DataSourceRepository;
-import com.bpm.core.repository.DbServiceRepository;
-import com.bpm.core.repository.ServiceLogRepository;
+import com.bpm.core.repository.Store;
 import com.bpm.core.service.ServiceInvoker;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +28,7 @@ import java.util.*;
 public class DBInvoker implements ServiceInvoker {
 
     @Autowired
-    private DbServiceRepository repository;
-    
-    @Autowired
-    private DataSourceRepository dsRepository;
-
-    @Autowired
-    private ServiceLogRepository logRepository;
+    private Store repository;
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -46,10 +38,10 @@ public class DBInvoker implements ServiceInvoker {
 
     @Override
     public Response<Object> invoke(ServiceConfig serviceConfig, Map<String, Object> inputParams) {
-        DbServiceConfig config = repository.findById(serviceConfig.getId())
+        DbServiceConfig config = repository.dbServices().findById(serviceConfig.getId())
                 .orElseThrow(() -> new RuntimeException("DB config not found for ID: " + serviceConfig.getId()));
         
-        DataSourceConfig ds = dsRepository.findById(config.getDbSourceId())
+        DataSourceConfig ds = repository.datasources().findById(config.getDbSourceId())
                 .orElseThrow(() -> new RuntimeException("Data source not found for name: " + config.getDbSourceId()));
 
         DataSource dataSource = DataSourceCache.getOrCreate(ds);
@@ -62,7 +54,7 @@ public class DBInvoker implements ServiceInvoker {
         jdbcTemplate.setQueryTimeout(config.getTimeoutMs() != null ? config.getTimeoutMs() / 1000 : DEFAULT_TIMEOUT_SECONDS);
 
         String sql = config.getSqlStatement();
-        String sqlType = config.getSqlType().toUpperCase();
+        SqlType sqlType = config.getSqlType();
         boolean transactional = Boolean.TRUE.equals(config.getTransactional());
         String resultType = config.getResultType() != null ? config.getResultType() : "LIST";
 
@@ -78,12 +70,12 @@ public class DBInvoker implements ServiceInvoker {
 
             resultData = txTemplate.execute(status -> {
                 try {
-                    if (SqlType.QUERY.getLabel().equals(sqlType)) {
+                    if (SqlType.QUERY.equals(sqlType)) {
                         return executeQuery(jdbcTemplate, sql, config.getParamList(), inputParams, resultType, config.getOutputMappingList());
-                    } else if (SqlType.UPDATE.getLabel().equals(sqlType)) {
+                    } else if (SqlType.UPDATE.equals(sqlType)) {
                         int updateCount = executeUpdate(jdbcTemplate, sql, config.getParamList(), inputParams);
                         return Collections.singletonMap("rowsAffected", updateCount);
-                    } else if (SqlType.STORED_PROC.getLabel().equals(sqlType)) {
+                    } else if (SqlType.STORED_PROC.equals(sqlType)) {
                         return executeStoredProc(jdbcTemplate, sql, config.getParamList(), inputParams, config.getOutputMappingList());
                     } else {
                         throw new UnsupportedOperationException("Unknown sqlType: " + sqlType);
@@ -107,7 +99,7 @@ public class DBInvoker implements ServiceInvoker {
             	log.setStatusCode(statusCode);
             	log.setDurationMs((int) (System.currentTimeMillis() - start));
             	try {
-            	    logId = logRepository.insertLog(log);
+            	    logId = repository.log().insertLog(log);
             	} catch (Exception e) {
             	    System.err.println("Failed to insert log: " + e.getMessage());
             	}

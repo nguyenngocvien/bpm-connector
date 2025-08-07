@@ -72,6 +72,7 @@ public class Response<T> {
 	
     @Override
     public String toString() {
-        return JsonUtil.toString(this);
+        String fullMessage = (logId != null ? "LOG_ID:" + logId + ". " : "") + (message != null ? message : "");
+        return JsonUtil.toString(new Wrapper<>(code, fullMessage, data));
     }
 }

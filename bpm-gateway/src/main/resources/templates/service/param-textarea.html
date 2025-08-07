@@ -1,0 +1,8 @@
+<div th:fragment="textarea">
+    <textarea id="params"
+              name="params"
+              class="form-control font-monospace"
+              rows="5"
+              placeholder='{"key":"value"}'
+              th:utext="${inputJson}">[[${inputJson}]]</textarea>
+</div>

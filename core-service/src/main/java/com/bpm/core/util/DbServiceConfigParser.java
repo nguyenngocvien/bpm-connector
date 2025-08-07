@@ -6,7 +6,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DbServiceConfigParser {
 
@@ -52,5 +54,40 @@ public class DbServiceConfigParser {
             e.printStackTrace();
             return "[]";
         }
+    }
+    
+    public static String convertParamArrayToJsonObject(List<DbParamConfig> paramList) {
+    	Map<String, Object> result = new LinkedHashMap<>();
+    	for (DbParamConfig param : paramList) {
+            String name = param.getParamName();
+            String type = param.getParamType().toUpperCase();
+
+            Object defaultValue;
+            switch (type) {
+                case "VARCHAR":
+                case "TEXT":
+                case "STRING":
+                    defaultValue = "";
+                    break;
+                case "INT":
+                case "INTEGER":
+                case "LONG":
+                case "FLOAT":
+                case "DOUBLE":
+                case "DECIMAL":
+                    defaultValue = null;
+                    break;
+                case "BOOLEAN":
+                case "BOOL":
+                    defaultValue = false;
+                    break;
+                default:
+                    defaultValue = null;
+            }
+
+            result.put(name, defaultValue);
+        }
+
+        return JsonUtil.toPrettyString(result);
     }
 }

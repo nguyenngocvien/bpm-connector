@@ -4,7 +4,8 @@
     <form id="serviceForm" hx-post="/admin/test" hx-target="#outputDiv" hx-swap="innerHTML" hx-indicator="#loadingIndicator" hx-on:error="document.getElementById('errorDiv').innerText = 'Something went wrong. Check your input.'" class="mt-4">
 		<div class="mb-3">
 		    <label for="serviceId" class="form-label">Service Name</label>
-		    <select id="serviceId" name="serviceId" class="form-select" required>
+		    <select id="serviceId" name="serviceId" class="form-select" required hx-get="/admin/test/load-params" hx-target="#inputTextarea" hx-swap="outerHTML">
+
 		        <option value="">-- Select Service --</option>
 		        <option th:each="svc : ${serviceList}" 
 		                th:value="${svc.id}" 
@@ -16,12 +17,20 @@
 		<div class="mb-3">
 		    <div class="d-flex justify-content-between align-items-center mb-1">
 		        <label for="params" class="form-label mb-0">Input Params (JSON)</label>
-		        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="prettyPrintParams()">
+				<button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1" onclick="prettyPrintParams()">
+		            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code-slash" viewBox="0 0 16 16">
+		                <path d="M10.478 1.647a.5.5 0 0 1 .379.595l-2.5 10.5a.5.5 0 0 1-.974-.224l2.5-10.5a.5.5 0 0 1 .595-.379zM5.854 4.146a.5.5 0 1 1 .707.708L3.707 7.707l2.854 2.853a.5.5 0 0 1-.707.707l-3-3a.5.5 0 0 1 0-.707l3-3zm4.292 0a.5.5 0 0 1 .707 0l3 3a.5.5 0 0 1 0 .707l-3 3a.5.5 0 0 1-.707-.707L12.293 7.707 9.439 4.854a.5.5 0 0 1 0-.708z"/>
+		            </svg>
 		            Pretty Print
 		        </button>
 		    </div>
-		    
-		    <textarea id="params" name="params" class="form-control font-monospace" rows="5" placeholder='{"key":"value"}'></textarea>
+			<div id="inputTextarea">
+				<textarea id="params"
+			              name="params"
+			              class="form-control font-monospace"
+			              rows="5"
+			              placeholder='{"key":"value"}'></textarea>
+			</div>
 		</div>
 
 		<!-- Script for Pretty Print -->
@@ -36,8 +45,12 @@
 		    }
 		}
 		</script>
-
-        <button type="submit" class="btn btn-primary">Execute</button>
+		<button type="submit" class="btn btn-primary d-flex align-items-center gap-1">
+		    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
+		        <path d="M11.596 8.697l-6.363 3.692A.5.5 0 0 1 4 12.045V3.955a.5.5 0 0 1 .767-.424l6.363 3.692a.5.5 0 0 1 0 .848z"/>
+		    </svg>
+		    Execute
+		</button>
     </form>
 	
 	<div id="loadingIndicator" style="display:none;" class="mt-2 text-info">

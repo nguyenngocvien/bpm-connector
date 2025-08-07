@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class Store {
 	private final AuthRepository authRepository;
 	private final ServiceConfigRepository serviceConfigRepository;
+	private final ServiceLogRepository logRepository;
     private final DataSourceRepository datasourceRepository;
     private final DbServiceRepository dbServiceRepository;
     private final RestServiceRepository restServiceRepository;
@@ -16,6 +17,7 @@ public class Store {
     @Autowired
     public Store(AuthRepository authRepository,
     				ServiceConfigRepository serviceConfigRepository,
+    				ServiceLogRepository logRepository,
     				DataSourceRepository datasourceRepository,
     				DbServiceRepository dbServiceRepository,
     				RestServiceRepository restServiceRepository,
@@ -24,6 +26,7 @@ public class Store {
     	
     	this.authRepository = authRepository;
         this.serviceConfigRepository = serviceConfigRepository;
+        this.logRepository = logRepository;
         this.datasourceRepository = datasourceRepository;
         this.dbServiceRepository = dbServiceRepository;
         this.restServiceRepository = restServiceRepository;
@@ -37,6 +40,10 @@ public class Store {
 
     public ServiceConfigRepository serviceConfigs() {
         return serviceConfigRepository;
+    }
+    
+    public ServiceLogRepository log() {
+        return logRepository;
     }
 
     public DataSourceRepository datasources() {
