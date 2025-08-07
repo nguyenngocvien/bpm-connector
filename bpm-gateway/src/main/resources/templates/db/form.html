@@ -30,6 +30,7 @@
 
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
+			<input type="hidden" id="existingPassword" name="existingPassword" th:value="${dbConfig.password}" />
             <input type="password" th:field="*{password}" class="form-control" id="password" th:required="${dbConfig.id == null}" />
             <div class="invalid-feedback">Please enter password.</div>
             <small class="form-text text-muted" th:if="${dbConfig.id != null}">Leave blank to keep current password</small>
@@ -113,6 +114,11 @@
 		    formData.forEach((value, key) => {
 		        json[key] = value;
 		    });
+			
+			if (!json['password'] || json['password'].trim() === '') {
+		        const existingPassword = document.getElementById('existingPassword').value;
+		        json['password'] = existingPassword;
+		    }
 
 		    fetch('/admin/datasource/test', {
 		        method: 'POST',

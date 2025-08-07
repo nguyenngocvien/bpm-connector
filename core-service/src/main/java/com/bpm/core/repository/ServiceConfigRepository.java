@@ -26,6 +26,13 @@ public class ServiceConfigRepository {
         return jdbcTemplate.query(sql, serviceConfigRowMapper);
     }
 
+    
+    public List<ServiceConfig> searchByKeyword(String keyword) {
+        String sql = "SELECT * FROM core_service_config WHERE service_code ILIKE ? OR service_name ILIKE ?";
+        String like = "%" + keyword + "%";
+        return jdbcTemplate.query(sql, serviceConfigRowMapper, like, like);
+    }
+    
     public Optional<ServiceConfig> findById(Long id) {
         String sql = "SELECT * FROM core_service_config WHERE id = ?";
         try {

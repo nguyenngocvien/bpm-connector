@@ -26,8 +26,16 @@ public class ServiceConfigController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        List<ServiceConfig> configs = store.serviceConfigs().findAll();
+    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    	
+        List<ServiceConfig> configs;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            configs = store.serviceConfigs().searchByKeyword(keyword);
+        } else {
+            configs = store.serviceConfigs().findAll();
+        }
+        
+        model.addAttribute("keyword", keyword);
         model.addAttribute("serviceConfigs", configs);
         model.addAttribute("content", "service/list");
         model.addAttribute("activeMenu", "service");
