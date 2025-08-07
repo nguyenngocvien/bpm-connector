@@ -9,6 +9,7 @@ import com.bpm.core.model.rest.RestServiceConfig;
 import com.bpm.core.model.service.ServiceConfig;
 import com.bpm.core.repository.Store;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -101,5 +102,24 @@ public class ServiceConfigController {
         }
         store.serviceConfigs().deleteById(id);
         return "redirect:" + ROUTES.UI_SERVICE;
+    }
+    
+
+    @PostMapping("/{id}/toggle-log")
+    public ResponseEntity<?> toggleLog(@PathVariable Long id, @RequestParam boolean enabled) {
+        if (!store.serviceConfigs().existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        store.serviceConfigs().enableLog(id, enabled);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/toggle-active")
+    public ResponseEntity<?> toggleActive(@PathVariable Long id, @RequestParam boolean active) {
+        if (!store.serviceConfigs().existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        store.serviceConfigs().setActive(id, active);
+        return ResponseEntity.ok().build();
     }
 }

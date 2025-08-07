@@ -17,8 +17,8 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Type</th>
+				<th>Active</th>
                 <th>Log</th>
-                <th>Active</th>
                 <th>Version</th>
 <!--                
 				<th>Created</th>
@@ -34,17 +34,28 @@
                 <td th:text="${config.serviceName}"></td>
                 <td th:text="${config.serviceDescription}"></td>
                 <td th:text="${config.serviceType}"></td>
-
-                <td>
-                    <span th:classappend="${config.logEnabled} ? 'badge bg-info' : 'badge bg-secondary'"
-                          th:text="${config.logEnabled} ? 'Yes' : 'No'"></span>
-                </td>
-
-                <td>
-                    <span th:classappend="${config.active} ? 'badge bg-success' : 'badge bg-secondary'"
-                          th:text="${config.active} ? 'Yes' : 'No'"></span>
-                </td>
-
+				<td>
+				    <div class="form-check form-switch toggle-switch">
+				        <input type="checkbox"
+				               class="form-check-input"
+				               name="active"
+				               th:checked="${config.active}"
+				               th:attr="data-id=${config.id}"
+				               th:classappend="${config.active} ? 'border-success' : 'border-danger'"
+				               onchange="toggleActive(this)" />
+				    </div>
+				</td>
+				<td>
+				    <div class="form-check form-switch toggle-switch">
+				        <input type="checkbox"
+				               class="form-check-input"
+				               name="logEnabled"
+				               th:checked="${config.logEnabled}"
+				               th:attr="data-id=${config.id}"
+				               th:classappend="${config.logEnabled} ? 'border-success' : 'border-danger'"
+				               onchange="toggleLog(this)" />
+				    </div>
+				</td>
                 <td th:text="${config.version}"></td>
 <!--
                 <td th:text="${#temporals.format(config.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
@@ -67,3 +78,37 @@
         </tbody>
     </table>
 </div>
+<script>
+function toggleLog(checkbox) {
+    const id = checkbox.getAttribute("data-id");
+    const enabled = checkbox.checked;
+
+    fetch(`/admin/service/${id}/toggle-log`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `enabled=${enabled}`
+    }).then(response => {
+        if (!response.ok) {
+            alert("Failed to toggle logEnabled");
+        }
+    });
+}
+
+function toggleActive(checkbox) {
+    const id = checkbox.getAttribute("data-id");
+    const active = checkbox.checked;
+    fetch(`/admin/service/${id}/toggle-active`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `active=${active}`
+    }).then(response => {
+        if (!response.ok) {
+            alert("Failed to toggle active");
+        }
+    });
+}
+</script>

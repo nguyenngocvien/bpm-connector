@@ -45,6 +45,16 @@ public class ServiceConfigRepository {
             return Optional.empty();
         }
     }
+    
+    public int enableLog(Long id, boolean enabled) {
+        String sql = "UPDATE core_service_config SET log_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+        return jdbcTemplate.update(sql, enabled, id);
+    }
+
+    public int setActive(Long id, boolean active) {
+        String sql = "UPDATE core_service_config SET active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+        return jdbcTemplate.update(sql, active, id);
+    }
 
     public int save(ServiceConfig config) {
         if (config.getId() == null) {
