@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://10.6.18.22:5432/coresys
+    url: jdbc:postgresql://10.6.18.24:5432/coresys
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver

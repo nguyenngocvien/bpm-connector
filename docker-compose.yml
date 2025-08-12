@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://10.6.18.22:5432/coresys
+      SPRING_DATASOURCE_URL: jdbc:postgresql://10.6.18.24:5432/coresys
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
