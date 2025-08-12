@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://10.6.18.22:5432/coresys}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      minimum-idle: 0
+      maximum-pool-size: 5
+      idle-timeout: 10000
+      max-lifetime: 30000
+      connection-timeout: 3000
+      validation-timeout: 2000
+      connection-test-query: SELECT 1
+      initialization-fail-timeout: 0
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    clean-disabled: true
+    out-of-order: false
+    placeholders.enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+auth:
+  jwt:
+    secret: ${AUTH_JWT_SECRET:mySuperSecretKey1234567890123456}
+
+server:
+  port: ${SERVER_PORT:8080}

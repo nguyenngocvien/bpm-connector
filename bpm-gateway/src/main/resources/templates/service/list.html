@@ -2,13 +2,7 @@
     <h2 class="mb-3">Service Configurations</h2>
     <hr class="mb-4 mt-2" />
 	<div class="d-flex justify-content-start align-items-center mb-3 gap-2">
-	    <a th:href="@{/admin/service/add}" class="btn btn-primary d-inline-flex align-items-center gap-2">
-	        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-	            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-	            <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0-1A6 6 0 1 1 8 2a6 6 0 0 1 0 12z"/>
-	        </svg>
-	        Add
-	    </a>
+		<a class="btn btn-sm btn-outline-secondary mb-3 p-2" th:href="@{/admin/service/add}">+ Add Service</a>
 		<form method="get" th:action="@{/admin/service}" class="d-flex" role="search">
 	        <input name="keyword" class="form-control" type="search" placeholder="Search..." aria-label="Search" th:value="${keyword}" >
 	    </form>
@@ -78,7 +72,7 @@
                 </td>
             </tr>
 			<tr th:if="${#lists.isEmpty(serviceConfigs)}">
-                <td colspan="7" class="text-center">No service configurations found.</td>
+                <td colspan="9" class="text-center">No service configurations found.</td>
             </tr>
         </tbody>
     </table>

@@ -34,29 +34,9 @@ spring:
 #     name: admin
 #     password: secret
 
-  mail:
-    host: smtp.example.com
-    port: 587
-    username: your-email@example.com
-    password: your-password
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
-
-mail:
-  from: your-email@example.com
-
 auth:
   jwt:
     secret: mySuperSecretKey1234567890123456
-
-fincore:
-  base-url: http://fincore-service
-  timeout: 3000
-
-payment:
-  base-url: http://payment-service
-  timeout: 5000
 
 server:
   port: 8080

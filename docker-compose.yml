@@ -1,39 +1,16 @@
-version: "3.8"
-
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    environment:
-      POSTGRES_DB: bpmdb
-      POSTGRES_USER: bpmuser
-      POSTGRES_PASSWORD: bpm123
-    ports:
-      - "5432:5432"
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    networks:
-      - bpm-net
-
-  main-app:
+  bpm-gateway:
     build:
-      context: ./main-app
+      context: .             # Thư mục chứa Dockerfile (ở project root bpm-connector)
       dockerfile: Dockerfile
-    container_name: main-app
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bpmdb
-      SPRING_DATASOURCE_USERNAME: bpmuser
-      SPRING_DATASOURCE_PASSWORD: bpm123
-    depends_on:
-      - postgres
+    container_name: bpm-gateway
     ports:
       - "8080:8080"
-    networks:
-      - bpm-net
-
-volumes:
-  pg_data:
-
-networks:
-  bpm-net:
-    driver: bridge
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://10.6.18.22:5432/coresys
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      AUTH_JWT_SECRET: mySuperSecretKey1234567890123456
+      SERVER_PORT: 8080
+    restart: unless-stopped
