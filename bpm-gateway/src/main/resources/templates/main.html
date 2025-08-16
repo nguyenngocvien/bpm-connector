@@ -184,12 +184,61 @@
 		    content: "ON";
 		    left: 0.4rem;
 		}
+		
+		/* Dashboard */
+		.card {
+            background-color: #202020;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #58a6ff;
+        }
+        .stat-card {
+            background-color: #353535;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            flex: 1;
+            margin: 0.5rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+			color: white;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #8b949e;
+        }
+        .success {
+            color: #3fb950;
+        }
+        .failed {
+            color: #f85149;
+        }
 
     </style>
 </head>
 <body>
 	<div class="sidebar">
-	    <h3>Dashboard</h3>
+	    <h3>API Connector</h3>
+		
+		<!-- Dashboard -->
+		<a th:href="@{/admin}" 
+		   th:classappend="${activeMenu} == 'dashboard' ? 'bg-secondary bg-opacity-25 fw-bold' : ''"
+		   class="d-flex align-items-center gap-2 px-3 py-2 text-white text-decoration-none">
+
+		   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
+		        class="bi bi-speedometer2" viewBox="0 0 16 16">
+		     <path d="M8 4a.5.5 0 0 1 .5.5V8a.5.5 0 0 1-.276.447l-2.5 1.25a.5.5 0 1 1-.448-.894L7.5 7.803V4.5A.5.5 0 0 1 8 4z"/>
+		     <path fill-rule="evenodd" d="M6.664 15.89A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/>
+		   </svg>
+		   Dashboard
+		</a>
+		
 		<!-- User -->
 		<a th:href="@{/admin/auth}" 
 		   th:classappend="${activeMenu} == 'auth' ? 'bg-secondary bg-opacity-25 fw-bold' : ''"

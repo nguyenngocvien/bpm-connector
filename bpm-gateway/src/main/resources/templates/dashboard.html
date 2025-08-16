@@ -1,0 +1,71 @@
+<div class="content" th:fragment="content">
+    <h2 class="mb-3">Dashboard</h2>
+	<hr class="mb-4 mt-2" />
+	<!-- Datasources -->
+    <div class="card p-3">
+        <div class="card-title">Data Sources</div>
+        <div class="d-flex">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${dashboard.totalDatasources}">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success" th:text="${dashboard.datasourceSuccess}">0</div>
+                <div class="stat-label">Success</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value failed" th:text="${dashboard.datasourceFailed}">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Servers -->
+    <div class="card p-3">
+        <div class="card-title">Servers</div>
+        <div class="d-flex">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${dashboard.totalServers}">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success" th:text="${dashboard.serverSuccess}">0</div>
+                <div class="stat-label">Success</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value failed" th:text="${dashboard.serverFailed}">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services -->
+    <div class="card p-3">
+        <div class="card-title">Services</div>
+        <div class="d-flex">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${dashboard.totalServices}">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success" th:text="${dashboard.serviceActive}">0</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value failed" th:text="${dashboard.serviceFailed}">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mail (placeholder, có thể expand sau) -->
+    <div class="card p-3">
+        <div class="card-title">Mail</div>
+        <div class="d-flex">
+            <div class="stat-card">
+                <div class="stat-value">--</div>
+                <div class="stat-label">Coming Soon</div>
+            </div>
+        </div>
+    </div>
+</div>
