@@ -32,8 +32,8 @@ docker-build:
   image: docker:24
   services:
     - name: docker:dind
-    entrypoint: ["/bin/sh", "-c"]
-    command: ["dockerd --insecure-registry=$HARBOR_REGISTRY"]
+      entrypoint: ["/bin/sh", "-c"]
+      command: ["dockerd --insecure-registry=$HARBOR_REGISTRY"]
   tags:
     - docker
   variables:
