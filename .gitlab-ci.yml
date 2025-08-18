@@ -7,7 +7,7 @@ variables:
   MAVEN_CLI_OPTS: "-B -Dmaven.test.skip=true"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   IMAGE_TAG: ${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-  IMAGE_NAME: harbor.local/bpm/$CI_PROJECT_NAME
+  IMAGE_NAME: $HARBOR_PROJECT/$CI_PROJECT_NAME
 
 cache:
   key: maven-cache
@@ -40,22 +40,17 @@ docker-build:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_BUILDKIT: 1
   before_script:
-    - echo "10.6.18.24 harbor.local" >> /etc/hosts
-    - echo $HARBOR_PASS | docker login harbor.local -u $HARBOR_USER --password-stdin
+    - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
   script:
     - docker pull $IMAGE_NAME:cache || true
     - docker build \
-        --cache-from=$IMAGE_NAME:cache \
+        --cache-from=$HARBOR_REGISTRY/$IMAGE_NAME:cache \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
-        -t $IMAGE_NAME:$IMAGE_TAG \
-        -t $IMAGE_NAME:cache \
+        -t $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
+        -t $HARBOR_REGISTRY/$IMAGE_NAME:cache \
         .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
-    - docker push $IMAGE_NAME:cache
-    - if [[ "$CI_COMMIT_BRANCH" == "develop" ]]; then
-        docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest &&
-        docker push $IMAGE_NAME:latest;
-      fi
+    - docker push $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+    - docker push $HARBOR_REGISTRY/$IMAGE_NAME:cache
     - echo "IMAGE_TAG=$IMAGE_TAG" > image_tag.env
   artifacts:
     reports:
