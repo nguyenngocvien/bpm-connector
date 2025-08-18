@@ -35,10 +35,12 @@ docker-build:
   tags:
     - docker
   variables:
+    DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
     DOCKER_BUILDKIT: 1
   before_script:
+    - echo "10.6.18.24 harbor.local" >> /etc/hosts
     - echo $HARBOR_PASS | docker login harbor.local -u $HARBOR_USER --password-stdin
   script:
     - docker pull $IMAGE_NAME:cache || true
