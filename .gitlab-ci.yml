@@ -24,7 +24,7 @@ build:
     - mvn $MAVEN_CLI_OPTS clean package
   artifacts:
     paths:
-      - **/target/*.jar
+      - bpm-gateway/target/*.jar
 
 
 docker-build:
