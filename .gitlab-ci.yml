@@ -33,8 +33,6 @@ docker-build:
   services:
     - name: docker:24-dind
       alias: docker
-      entrypoint: ["/bin/sh", "-c"]
-      command: ["dockerd --insecure-registry=$HARBOR_REGISTRY"]
   tags:
     - docker
   variables:
@@ -42,6 +40,7 @@ docker-build:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
     DOCKER_BUILDKIT: 1
+    DOCKER_INSECURE_REGISTRY: $HARBOR_REGISTRY
   before_script:
     - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
   script:
