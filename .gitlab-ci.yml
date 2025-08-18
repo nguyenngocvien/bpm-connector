@@ -7,7 +7,7 @@ variables:
   MAVEN_CLI_OPTS: "-B -Dmaven.test.skip=true"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   IMAGE_TAG: ${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-  IMAGE_NAME: harbor.local/vcorestack/$CI_PROJECT_NAME
+  IMAGE_NAME: harbor.local/bpm/$CI_PROJECT_NAME
 
 cache:
   key: maven-cache
@@ -75,7 +75,7 @@ update-manifest:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
         DEPLOY_ENV=prod
-      elif [[ "$CI_COMMIT_BRANCH" == "develop" ]]; then
+      elif [[ "$CI_COMMIT_BRANCH" == "dev" ]]; then
         DEPLOY_ENV=dev
       elif [[ "$CI_COMMIT_BRANCH" =~ ^release-.*$ ]]; then
         DEPLOY_ENV=staging
