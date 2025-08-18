@@ -60,7 +60,6 @@ docker-build:
       dotenv: image_tag.env
     paths:
       - image_tag.env
-  privileged: true
 
 update-manifest:
   stage: update-manifest
