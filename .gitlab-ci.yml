@@ -30,33 +30,31 @@ build:
 docker-build:
   stage: docker
   image: docker:24
-  services:
-    - name: docker:24-dind
-      alias: docker
-      command: ["--insecure-registry=$HARBOR_REGISTRY"]
   tags:
     - docker
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
     DOCKER_BUILDKIT: 1
-    DOCKER_INSECURE_REGISTRY: $HARBOR_REGISTRY
-    DOCKER_OPTS: "--insecure-registry=$HARBOR_REGISTRY"
+    DOCKER_TLS_CERTDIR: ""
   before_script:
+    # Login Harbor
     - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
+    # Create cert foler (optional)
     - mkdir -p /etc/docker/certs.d/$HARBOR_REGISTRY
     - cp /certs/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
   script:
+    # Pull cache image 
     - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
+    # Build image with cache
     - docker build \
         --cache-from=$HARBOR_REGISTRY/$IMAGE_NAME:cache \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         -t $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
         -t $HARBOR_REGISTRY/$IMAGE_NAME:cache \
         .
+    # Push image
     - docker push $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
     - docker push $HARBOR_REGISTRY/$IMAGE_NAME:cache
+    # Export IMAGE_TAG for using later
     - echo "IMAGE_TAG=$IMAGE_TAG" > image_tag.env
   artifacts:
     reports:
