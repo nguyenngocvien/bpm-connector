@@ -41,7 +41,7 @@ docker-build:
     # Copy cert
     - cp /cert/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
     # Login Harbor
-    - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
+    - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin --tlsverify=false
   script:
     # Pull cache image 
     - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
