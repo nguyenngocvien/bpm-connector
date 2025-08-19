@@ -70,6 +70,13 @@ update-manifest:
     - apk add --no-cache git yq
     - git config --global user.name "CI Bot"
     - git config --global user.email "ci-bot@gitlab.local"
+    
+    # Setup SSH key
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H gitlab.local >> ~/.ssh/known_hosts
+    
     - |
       if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
         DEPLOY_ENV=prod
@@ -84,7 +91,7 @@ update-manifest:
       echo "DEPLOY_ENV=$DEPLOY_ENV" > deploy_env.env
   script:
     - source deploy_env.env
-    - git clone http://gitlab.local/cicd/deployment-manifests.git
+    - git clone git@gitlab.local:cicd/deployment-manifests.git
     - cd deployment-manifests
     - yq e -i ".image.tag = \"$IMAGE_TAG\"" charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git add charts/bpm-connector/values-${DEPLOY_ENV}.yaml
