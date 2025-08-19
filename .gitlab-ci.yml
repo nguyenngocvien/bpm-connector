@@ -34,7 +34,6 @@ docker-build:
     - name: docker:24-dind
       alias: docker
       command: ["--insecure-registry=$HARBOR_REGISTRY"]
-      privileged: true
   tags:
     - docker
   variables:
