@@ -41,7 +41,7 @@ docker-build:
     # Create cert foler (optional)
     - mkdir -p /etc/docker/certs.d/$HARBOR_REGISTRY
     # Copy cert
-    - cp /certs/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
+    - cp /cert/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
   script:
     # Pull cache image 
     - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
