@@ -46,12 +46,7 @@ docker-build:
     # Pull cache image 
     - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
     # Build image with cache
-    - docker build \
-        --cache-from=$HARBOR_REGISTRY/$IMAGE_NAME:cache \
-        --build-arg BUILDKIT_INLINE_CACHE=1 \
-        -t $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
-        -t $HARBOR_REGISTRY/$IMAGE_NAME:cache \
-        .
+    - docker build --cache-from=$HARBOR_REGISTRY/$IMAGE_NAME:cache --build-arg BUILDKIT_INLINE_CACHE=1 -t $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG -t $HARBOR_REGISTRY/$IMAGE_NAME:cache .
     # Push image
     - docker push $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
     - docker push $HARBOR_REGISTRY/$IMAGE_NAME:cache
