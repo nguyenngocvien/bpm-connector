@@ -6,7 +6,7 @@ stages:
 variables:
   MAVEN_CLI_OPTS: "-B -Dmaven.test.skip=true"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  IMAGE_TAG: ${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+  IMAGE_TAG: "${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
   IMAGE_NAME: $HARBOR_PROJECT/$CI_PROJECT_NAME
 
 cache:
@@ -46,6 +46,7 @@ docker-build:
     # Pull cache image 
     - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
     # Build image with cache
+    - echo "IMAGE_TAG=$IMAGE_TAG"
     - docker build --cache-from=$HARBOR_REGISTRY/$IMAGE_NAME:cache --build-arg BUILDKIT_INLINE_CACHE=1 -t $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG -t $HARBOR_REGISTRY/$IMAGE_NAME:cache .
     # Push image
     - docker push $HARBOR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
