@@ -40,6 +40,7 @@ docker-build:
     - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
     # Create cert foler (optional)
     - mkdir -p /etc/docker/certs.d/$HARBOR_REGISTRY
+    # Copy cert
     - cp /certs/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
   script:
     # Pull cache image 
