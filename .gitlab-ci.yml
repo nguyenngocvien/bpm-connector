@@ -36,12 +36,12 @@ docker-build:
     DOCKER_BUILDKIT: 1
     DOCKER_TLS_CERTDIR: ""
   before_script:
-    # Login Harbor
-    - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
     # Create cert foler (optional)
     - mkdir -p /etc/docker/certs.d/$HARBOR_REGISTRY
     # Copy cert
     - cp /cert/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
+    # Login Harbor
+    - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
   script:
     # Pull cache image 
     - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
