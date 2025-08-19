@@ -33,6 +33,8 @@ docker-build:
   services:
     - name: docker:24-dind
       alias: docker
+      command: ["--insecure-registry=$HARBOR_REGISTRY"]
+      privileged: true
   tags:
     - docker
   variables:
@@ -41,10 +43,13 @@ docker-build:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_BUILDKIT: 1
     DOCKER_INSECURE_REGISTRY: $HARBOR_REGISTRY
+    DOCKER_OPTS: "--insecure-registry=$HARBOR_REGISTRY"
   before_script:
     - echo $HARBOR_PASS | docker login $HARBOR_REGISTRY -u $HARBOR_USER --password-stdin
+    - mkdir -p /etc/docker/certs.d/$HARBOR_REGISTRY
+    - cp /certs/ca.crt /etc/docker/certs.d/$HARBOR_REGISTRY/ca.crt || true
   script:
-    - docker pull $IMAGE_NAME:cache || true
+    - docker pull $HARBOR_REGISTRY/$IMAGE_NAME:cache || true
     - docker build \
         --cache-from=$HARBOR_REGISTRY/$IMAGE_NAME:cache \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
@@ -85,12 +90,12 @@ update-manifest:
       echo "DEPLOY_ENV=$DEPLOY_ENV" > deploy_env.env
   script:
     - source deploy_env.env
-    - git clone http://gitlab.local/cicd/deployment-manifests.git
+    - git clone http://gitlab/cicd/deployment-manifests.git
     - cd deployment-manifests
     - yq e -i ".image.tag = \"$IMAGE_TAG\"" charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git add charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git commit -m "Update bpm-connector image tag to $IMAGE_TAG for ${DEPLOY_ENV}"
-    - git push http://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.local/cicd/deployment-manifests.git HEAD:main
+    - git push http://gitlab-ci-token:$CI_JOB_TOKEN@gitlab/cicd/deployment-manifests.git HEAD:main
   only:
     - main
     - develop
