@@ -91,7 +91,8 @@ update-manifest:
       echo "DEPLOY_ENV=$DEPLOY_ENV" > deploy_env.env
   script:
     - source deploy_env.env
-    - git clone git@gitlab.local:cicd/deployment-manifests.git
+    # - git clone git@gitlab.local:cicd/deployment-manifests.git
+    - git clone http://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.local/cicd/deployment-manifests.git
     - cd deployment-manifests
     - yq e -i ".image.tag = \"$IMAGE_TAG\"" charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git add charts/bpm-connector/values-${DEPLOY_ENV}.yaml
@@ -99,5 +100,5 @@ update-manifest:
     - git push http://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.local/cicd/deployment-manifests.git HEAD:main
   only:
     - main
-    - develop
+    - dev
     - /^release-.*$/
