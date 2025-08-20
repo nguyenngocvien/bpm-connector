@@ -1,7 +1,7 @@
 stages:
   - build
-  - docker
-  - update-manifest
+  - push
+  - deploy
 
 variables:
   MAVEN_CLI_OPTS: "-B -Dmaven.test.skip=true"
@@ -26,11 +26,13 @@ build:
       - bpm-gateway/target/*.jar
 
 
-docker-build:
-  stage: docker
+docker-build-push:
+  stage: push
   image: docker:24
   tags:
-    - docker
+    - push
+  dependencies:
+    - build
   variables:
     DOCKER_BUILDKIT: 1
     DOCKER_TLS_CERTDIR: ""
@@ -63,9 +65,9 @@ update-manifest:
   stage: update-manifest
   image: alpine:3.20
   tags:
-    - build
+    - deploy
   dependencies:
-    - docker-build
+    - docker-build-push
   before_script:
     - apk add --no-cache git yq
     - git config --global user.name "CI Bot"
@@ -91,13 +93,14 @@ update-manifest:
       echo "DEPLOY_ENV=$DEPLOY_ENV" > deploy_env.env
   script:
     - source deploy_env.env
+    - source ../image_tag.env
     # - git clone git@gitlab.local:cicd/deployment-manifests.git
-    - git clone http://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.local/cicd/deployment-manifests.git
+    - git clone --depth 1 http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab/cicd/deployment-manifests.git
     - cd deployment-manifests
     - yq e -i ".image.tag = \"$IMAGE_TAG\"" charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git add charts/bpm-connector/values-${DEPLOY_ENV}.yaml
-    - git commit -m "Update bpm-connector image tag to $IMAGE_TAG for ${DEPLOY_ENV}"
-    - git push http://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.local/cicd/deployment-manifests.git HEAD:main
+    - git diff --cached --quiet || git commit -m "Update bpm-connector image tag to $IMAGE_TAG for ${DEPLOY_ENV}"
+    - git push http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab/cicd/deployment-manifests.git HEAD:main
   only:
     - main
     - dev
