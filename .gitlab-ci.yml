@@ -62,7 +62,7 @@ docker-build-push:
       - image_tag.env
 
 update-manifest:
-  stage: update-manifest
+  stage: deploy
   image: alpine:3.20
   tags:
     - deploy
