@@ -95,12 +95,12 @@ update-manifest:
     - source deploy_env.env
     - source image_tag.env
     # - git clone git@gitlab.local:cicd/deployment-manifests.git
-    - git clone --depth 1 http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab/cicd/deployment-manifests.git
+    - git clone --depth 1 http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab.local/cicd/deployment-manifests.git
     - cd deployment-manifests
     - yq e -i ".image.tag = \"$IMAGE_TAG\"" charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git add charts/bpm-connector/values-${DEPLOY_ENV}.yaml
     - git diff --cached --quiet || git commit -m "Update bpm-connector image tag to $IMAGE_TAG for ${DEPLOY_ENV}"
-    - git push http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab/cicd/deployment-manifests.git HEAD:main
+    - git push http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab.local/cicd/deployment-manifests.git HEAD:main
   only:
     - main
     - dev
