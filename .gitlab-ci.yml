@@ -93,7 +93,7 @@ update-manifest:
       echo "DEPLOY_ENV=$DEPLOY_ENV" > deploy_env.env
   script:
     - source deploy_env.env
-    - source ../image_tag.env
+    - source image_tag.env
     # - git clone git@gitlab.local:cicd/deployment-manifests.git
     - git clone --depth 1 http://gitlab-ci-token:$DEPLOY_TOKEN@gitlab/cicd/deployment-manifests.git
     - cd deployment-manifests
