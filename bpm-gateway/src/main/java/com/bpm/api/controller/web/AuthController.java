@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping(ROUTES.UI_AUTH_USER)
+@RequestMapping(ROUTES.UI_AUTH)
 public class AuthController {
 
     private final Store store;
@@ -49,12 +49,12 @@ public class AuthController {
     @PostMapping("/save")
     public String save(@ModelAttribute AuthConfig auth) {
     	store.auths().save(auth);
-        return "redirect:" + ROUTES.UI_AUTH_USER;
+        return "redirect:" + ROUTES.UI_AUTH;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
     	store.auths().deleteById(id);
-        return "redirect:" + ROUTES.UI_AUTH_USER;
+        return "redirect:" + ROUTES.UI_AUTH;
     }
 }

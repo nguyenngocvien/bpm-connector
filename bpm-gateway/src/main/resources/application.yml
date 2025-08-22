@@ -1,6 +1,8 @@
 spring:
+  application:
+    name: bpm-connector
   datasource:
-    url: jdbc:postgresql://10.6.18.24:5432/coresys
+    url: jdbc:postgresql://10.6.18.23:30432/coresys
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver
@@ -29,6 +31,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  thymeleaf:
+    cache: false
+
 # security:
 #   user:
 #     name: admin
@@ -37,6 +43,17 @@ spring:
 auth:
   jwt:
     secret: mySuperSecretKey1234567890123456
+
+app:
+  cmis:
+    atompubUrl: "http://172.29.255.121:9081/fncmis/resources/Service"
+    repositoryId: "OBJ"
+    username: "ecmadmin"
+    password: "Car3full"
+    connectTimeoutMs: 10000
+    readTimeoutMs: 30000
+    defaultObjectTypeId: "cmis:document"
+    defaultFolderPath: "/UPLOAD_TEMP"
 
 server:
   port: 8080

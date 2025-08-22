@@ -1,10 +1,11 @@
 package com.bpm.core.repository;
 
-import com.bpm.core.model.file.FileServiceConfig;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
+import com.bpm.core.model.fncmis.FileServiceConfig;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

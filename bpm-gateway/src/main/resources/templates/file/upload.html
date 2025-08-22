@@ -1,0 +1,30 @@
+<div class="content" th:fragment="content">
+    <h2 class="mb-3">Files Management</h2>
+    <hr class="mb-4 mt-2" />
+	<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+	<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+	<form th:action="@{/admin/file/upload}" th:object="${form}" method="post" enctype="multipart/form-data">
+		<div class="mb-3">
+			<label class="form-label">File</label>
+			<input type="file" class="form-control" th:field="*{file}" required />
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Folder path</label>
+			<input type="text" class="form-control" th:field="*{folderPath}" placeholder="/General/Uploads" required />
+			<div class="form-text">Ví dụ: <code>/General/Uploads</code>. Sẽ tự tạo nếu chưa tồn tại.</div>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Object Type ID</label>
+			<input type="text" class="form-control" th:field="*{objectTypeId}" placeholder="cmis:document" />
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Custom properties (JSON)</label>
+			<textarea class="form-control" rows="5" th:field="*{jsonProps}" placeholder='{"cmis:description":"my desc","MyCustomProp":"ABC"}'></textarea>
+			<div class="form-text">Nhập JSON key/value cho property (kể cả property của class custom).</div>
+		</div>
+		<div class="d-flex gap-2">
+			<button type="submit" class="btn btn-primary">Upload</button>
+			<button type="reset" class="btn btn-secondary">Reset</button>
+		</div>
+	</form>
+</div>

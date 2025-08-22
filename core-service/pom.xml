@@ -65,7 +65,12 @@
 	  <groupId>com.oracle.database.jdbc</groupId>
 	  <artifactId>ojdbc11</artifactId>
 	</dependency>
-
+	<!-- Apache Chemistry OpenCMIS client -->
+	<dependency>
+		<groupId>org.apache.chemistry.opencmis</groupId>
+		<artifactId>chemistry-opencmis-client-impl</artifactId>
+		<version>1.1.0</version>
+	</dependency>
   </dependencies>
   <build>
   <plugins>

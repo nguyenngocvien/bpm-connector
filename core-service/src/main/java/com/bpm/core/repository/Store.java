@@ -13,9 +13,11 @@ public class Store {
     private final RestServiceRepository restServiceRepository;
     private final MailServiceRepository mailServiceRepository;
     private final FileServiceRepository fileServiceRepository;
+    private final ServerRepository serverRepository;
 
     @Autowired
     public Store(AuthRepository authRepository,
+    				ServerRepository serverRepository,
     				ServiceConfigRepository serviceConfigRepository,
     				ServiceLogRepository logRepository,
     				DataSourceRepository datasourceRepository,
@@ -24,6 +26,7 @@ public class Store {
     				MailServiceRepository mailServiceRepository,
     				FileServiceRepository fileServiceRepository) {
     	
+    	this.serverRepository = serverRepository;
     	this.authRepository = authRepository;
         this.serviceConfigRepository = serviceConfigRepository;
         this.logRepository = logRepository;
@@ -32,6 +35,10 @@ public class Store {
         this.restServiceRepository = restServiceRepository;
         this.mailServiceRepository = mailServiceRepository;
         this.fileServiceRepository = fileServiceRepository;
+    }
+    
+    public ServerRepository servers() {
+        return serverRepository;
     }
     
     public AuthRepository auths() {

@@ -1,0 +1,8 @@
+CREATE TABLE core_servers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    ip VARCHAR(50) NOT NULL,
+    port INT NOT NULL,
+    https BOOLEAN DEFAULT FALSE
+);

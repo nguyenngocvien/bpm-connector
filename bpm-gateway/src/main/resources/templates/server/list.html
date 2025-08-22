@@ -1,0 +1,40 @@
+<div class="content" th:fragment="content">
+    <h2 class="mb-3">Server Management</h2>
+    <hr class="mb-4 mt-2" />
+	<a class="btn btn-sm btn-outline-secondary mb-3 p-2" th:href="@{/admin/servers/add}">+ Add Server</a>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover shadow-sm bg-white rounded">
+            <thead>
+				<tr>
+		            <th>ID</th>
+		            <th>Server Name</th>
+		            <th>Type</th>
+		            <th>IP</th>
+		            <th>Port</th>
+		            <th>HTTPS</th>
+		            <th>Actions</th>
+		        </tr>
+            </thead>
+            <tbody>
+				<tr th:each="server : ${servers}">
+		            <td th:text="${server.id}"></td>
+		            <td th:text="${server.name}"></td>
+		            <td th:text="${server.type}"></td>
+		            <td th:text="${server.ip}"></td>
+		            <td th:text="${server.port}"></td>
+		            <td>
+		                <span th:text="${server.https} ? '✅ Yes' : '❌ No'"></span>
+		            </td>
+		            <td>
+		                <a th:href="@{'/admin/servers/edit/' + ${server.id}}" class="btn btn-warning btn-sm">✏ Edit</a>
+		                <a th:href="@{'/admin/servers/delete/' + ${server.id}}" class="btn btn-danger btn-sm"
+		                   onclick="return confirm('Are you sure you want to delete this server?');">🗑 Delete</a>
+		            </td>
+		        </tr>
+                <tr th:if="${#lists.isEmpty(servers)}">
+                    <td colspan="8" class="text-center">No server found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -3,7 +3,7 @@ package com.bpm.core.model.service;
 import java.time.LocalDateTime;
 
 import com.bpm.core.model.db.DbServiceConfig;
-import com.bpm.core.model.file.FileServiceConfig;
+import com.bpm.core.model.fncmis.FileServiceConfig;
 import com.bpm.core.model.mail.MailServiceConfig;
 import com.bpm.core.model.rest.RestServiceConfig;
 

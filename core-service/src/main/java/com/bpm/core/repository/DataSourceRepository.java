@@ -3,14 +3,14 @@ package com.bpm.core.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.bpm.core.model.db.DataSourceConfig;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 public class DataSourceRepository {
 
     private final JdbcTemplate jdbcTemplate;

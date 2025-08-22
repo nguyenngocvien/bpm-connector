@@ -1,4 +1,4 @@
-package com.bpm.core.model.file;
+package com.bpm.core.model.fncmis;
 
 import java.time.LocalDateTime;
 

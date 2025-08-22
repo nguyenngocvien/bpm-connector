@@ -3,7 +3,7 @@ package com.bpm.api.controller.web;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.model.db.DataSourceConfig;
 import com.bpm.core.model.db.DbServiceConfig;
-import com.bpm.core.model.file.FileServiceConfig;
+import com.bpm.core.model.fncmis.FileServiceConfig;
 import com.bpm.core.model.mail.MailServiceConfig;
 import com.bpm.core.model.rest.RestServiceConfig;
 import com.bpm.core.model.service.ServiceConfig;
