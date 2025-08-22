@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -20,7 +20,10 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.bpm.core.model.fncmis.CreateDocumentRequest;
 
 @Repository
 public class CmisRepository {
@@ -68,33 +71,53 @@ public class CmisRepository {
             return current;
         }
     }
+    
+    public Map<String, Object> createDocument(CreateDocumentRequest req) {
+        Folder folder = getOrCreateFolderByPath(req.getFolderPath());
 
-    public String upload(MultipartFile file, String folderPath, String objectTypeId, Map<String, Object> customProps) throws IOException {
+        // Merge properties
+        Map<String, Object> props = new HashMap<>();
+        props.put(PropertyIds.OBJECT_TYPE_ID, StringUtils.hasText(req.getTypeId()) ? req.getTypeId() : "cmis:document");
+        props.put(PropertyIds.NAME, req.getName());
+        if (req.getProperties() != null) {
+            props.putAll(req.getProperties());
+        }
+
+        // Create content stream
+        byte[] bytes = Base64.getDecoder().decode(req.getBase64Content());
+        ContentStream content = session.getObjectFactory().createContentStream(
+                req.getName(),
+                bytes.length,
+                req.getMimeType(),
+                new ByteArrayInputStream(bytes)
+        );
+
+        // Create document (Major version)
+        Document doc = folder.createDocument(props, content, VersioningState.MAJOR);
+
+        // Return basic info
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", doc.getId());
+        result.put("name", doc.getName());
+        result.put("type", doc.getType().getId());
+        result.put("versionLabel", Optional.ofNullable(doc.getVersionLabel()).orElse(""));
+        result.put("paths", doc.getPaths());
+        return result;
+    }
+
+    public String createDocument(MultipartFile file, String folderPath, String objectTypeId, Map<String, Object> customProps) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
+        
+        // Default type
         if (objectTypeId == null || objectTypeId.isBlank()) {
             objectTypeId = "cmis:document";
         }
 
         Folder folder = getOrCreateFolderByPath(folderPath);
-
-        String originalName = Optional.ofNullable(file.getOriginalFilename()).orElse("upload.bin");
-        String safeName = originalName;
-
-        // Check duplicate name in the target folder
-        for (CmisObject child : folder.getChildren()) {
-            if (safeName.equalsIgnoreCase(child.getName())) {
-                String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-                int dot = originalName.lastIndexOf('.');
-                if (dot > 0) {
-                    safeName = originalName.substring(0, dot) + "-" + ts + originalName.substring(dot);
-                } else {
-                    safeName = originalName + "-" + ts;
-                }
-                break;
-            }
-        }
+        
+        String safeName = generateSafeName(folder, file.getOriginalFilename());
 
         Map<String, Object> props = new HashMap<>();
         props.put(PropertyIds.OBJECT_TYPE_ID, objectTypeId);
@@ -115,12 +138,30 @@ public class CmisRepository {
         return doc.getId();
     }
 
+    private String generateSafeName(Folder folder, String originalName) {
+        String safeName = Optional.ofNullable(originalName).orElse("upload.bin");
+
+        for (CmisObject child : folder.getChildren()) {
+            if (safeName.equalsIgnoreCase(child.getName())) {
+                String ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+                int dot = safeName.lastIndexOf('.');
+                if (dot > 0) {
+                    safeName = safeName.substring(0, dot) + "-" + ts + safeName.substring(dot);
+                } else {
+                    safeName = safeName + "-" + ts;
+                }
+                break;
+            }
+        }
+        return safeName;
+    }
+    
     // Utility to parse simple JSON into CMIS props (e.g., {"cmis:objectTypeId":"MyType","MyProp":"abc"})
     public Map<String, Object> parseJsonProps(String json) {
         if (json == null || json.isBlank()) return Collections.emptyMap();
         try {
             // primitive tiny parser to avoid depending on Jackson here; your controller uses Jackson if needed
-            Properties p = new Properties();
+//            Properties p = new Properties();
             // Not a real JSON parser; replace in controller if you prefer Jackson mapping.
             return Collections.emptyMap();
         } catch (Exception e) {

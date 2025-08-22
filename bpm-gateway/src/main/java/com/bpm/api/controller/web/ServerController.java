@@ -34,7 +34,6 @@ public class ServerController {
     @GetMapping("/add")
     public String createServerForm(Model model) {
         model.addAttribute("server", new Server());
-        
         model.addAttribute("content", "server/form");
         model.addAttribute("activeMenu", "server");
         

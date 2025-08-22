@@ -2,29 +2,56 @@
     <h2 class="mb-3">Files Management</h2>
     <hr class="mb-4 mt-2" />
 	<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-	<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-	<form th:action="@{/admin/file/upload}" th:object="${form}" method="post" enctype="multipart/form-data">
-		<div class="mb-3">
-			<label class="form-label">File</label>
-			<input type="file" class="form-control" th:field="*{file}" required />
-		</div>
-		<div class="mb-3">
-			<label class="form-label">Folder path</label>
-			<input type="text" class="form-control" th:field="*{folderPath}" placeholder="/General/Uploads" required />
-			<div class="form-text">Ví dụ: <code>/General/Uploads</code>. Sẽ tự tạo nếu chưa tồn tại.</div>
-		</div>
-		<div class="mb-3">
-			<label class="form-label">Object Type ID</label>
-			<input type="text" class="form-control" th:field="*{objectTypeId}" placeholder="cmis:document" />
-		</div>
-		<div class="mb-3">
-			<label class="form-label">Custom properties (JSON)</label>
-			<textarea class="form-control" rows="5" th:field="*{jsonProps}" placeholder='{"cmis:description":"my desc","MyCustomProp":"ABC"}'></textarea>
-			<div class="form-text">Nhập JSON key/value cho property (kể cả property của class custom).</div>
-		</div>
+	<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>	
+	<form class="card p-4 bg-secondary" method="post" enctype="multipart/form-data"
+	      th:action="@{/admin/file/upload}">
+	    <div class="mb-3">
+	        <label class="form-label">Folder Path</label>
+	        <input class="form-control" type="text" name="folderPath" value="/RootFolder/Invoices" required/>
+	    </div>
+	    <div class="mb-3">
+	        <label class="form-label">Document Name</label>
+	        <input class="form-control" type="text" name="name" placeholder="myfile.pdf" required/>
+	    </div>
+	    <div class="mb-3">
+	        <label class="form-label">Object Type ID</label>
+	        <input class="form-control" type="text" name="typeId" value="cmis:document"/>
+	    </div>
+	    <div class="mb-3">
+	        <label class="form-label">Choose File</label>
+	        <input class="form-control" type="file" name="file" required/>
+	    </div>
+		
+		<h5>Custom Properties</h5>
+        <div id="customProps"></div>
+        <button type="button" class="btn btn-outline-light mt-2" onclick="addPropertyRow()">+ Add Property</button>
+		
 		<div class="d-flex gap-2">
 			<button type="submit" class="btn btn-primary">Upload</button>
 			<button type="reset" class="btn btn-secondary">Reset</button>
 		</div>
 	</form>
 </div>
+<script>
+    function addPropertyRow() {
+        const container = document.getElementById("customProps");
+        const index = container.children.length;
+
+        const row = document.createElement("div");
+        row.className = "row mb-2";
+
+        row.innerHTML = `
+            <div class="col">
+                <input type="text" name="propKey${index}" placeholder="Property Key" class="form-control"/>
+            </div>
+            <div class="col">
+                <input type="text" name="propVal${index}" placeholder="Property Value" class="form-control"/>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-danger" onclick="this.closest('.row').remove()">X</button>
+            </div>
+        `;
+        container.appendChild(row);
+    }
+</script>
+
