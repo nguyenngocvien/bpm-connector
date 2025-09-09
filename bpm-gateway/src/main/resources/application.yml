@@ -55,5 +55,13 @@ app:
     defaultObjectTypeId: "cmis:document"
     defaultFolderPath: "/UPLOAD_TEMP"
 
+springdoc:
+  api-docs:
+    path: /api-docs   # endpoint JSON OpenAPI
+  swagger-ui:
+    path: /swagger-ui.html   # UI page
+    operationsSorter: method
+    tagsSorter: alpha
+
 server:
   port: 8080

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDocumentRequest {
+public class CreateDocRequest {
     private String folderPath;
     private String name;
     

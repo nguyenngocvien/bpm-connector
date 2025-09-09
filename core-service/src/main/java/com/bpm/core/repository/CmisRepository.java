@@ -23,7 +23,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bpm.core.model.fncmis.CreateDocumentRequest;
+import com.bpm.core.model.fncmis.CreateDocRequest;
+import com.bpm.core.model.fncmis.CreateDocResponse;
 
 @Repository
 public class CmisRepository {
@@ -72,7 +73,7 @@ public class CmisRepository {
         }
     }
     
-    public Map<String, Object> createDocument(CreateDocumentRequest req) {
+    public CreateDocResponse createDocument(CreateDocRequest req) {
         Folder folder = getOrCreateFolderByPath(req.getFolderPath());
 
         // Merge properties
@@ -95,14 +96,16 @@ public class CmisRepository {
         // Create document (Major version)
         Document doc = folder.createDocument(props, content, VersioningState.MAJOR);
 
-        // Return basic info
-        Map<String, Object> result = new HashMap<>();
-        result.put("id", doc.getId());
-        result.put("name", doc.getName());
-        result.put("type", doc.getType().getId());
-        result.put("versionLabel", Optional.ofNullable(doc.getVersionLabel()).orElse(""));
-        result.put("paths", doc.getPaths());
-        return result;
+        return new CreateDocResponse(
+        	    doc.getId(),
+        	    doc.getName(),
+        	    doc.getType().getId(),
+        	    Optional.ofNullable(doc.getVersionLabel()).orElse(""),
+        	    doc.getPaths(),
+        	    doc.getCreatedBy(),
+        	    doc.getCreationDate() != null ? doc.getCreationDate().getTime() : null, // <-- convert
+        	    doc.getLastModifiedBy()
+        	);
     }
 
     public String createDocument(MultipartFile file, String folderPath, String objectTypeId, Map<String, Object> customProps) throws IOException {
