@@ -151,7 +151,7 @@ public class DBInvoker implements ServiceInvoker {
 
         for (DbParamConfig param : paramList) {
             String name = param.getParamName();
-            int sqlType = toSqlType(param.getParamType());
+            int sqlType = param.getParamType() != null ? param.getParamType().getSqlType() : Types.VARCHAR;
             if ("IN".equalsIgnoreCase(param.getParamMode())) {
                 inParams.put(name, inputParams.get(name));
                 sqlParams.put(name, new SqlParameter(name, sqlType));
@@ -164,6 +164,8 @@ public class DBInvoker implements ServiceInvoker {
         Map<String, Object> result = call.execute(inParams);
         return mapOutput(result, outputMappingList);
     }
+    
+    
 
     private Object[] getParamValues(List<DbParamConfig> paramList, Map<String, Object> inputParams) {
         if (paramList == null || paramList.isEmpty()) return new Object[0];
@@ -189,18 +191,5 @@ public class DBInvoker implements ServiceInvoker {
             mappedList.add(mapOutput(row, mappingList));
         }
         return mappedList;
-    }
-
-    private int toSqlType(String type) {
-        switch (type.toUpperCase()) {
-            case "STRING": return Types.VARCHAR;
-            case "INT": return Types.INTEGER;
-            case "LONG": return Types.BIGINT;
-            case "DATE": return Types.DATE;
-            case "TIMESTAMP": return Types.TIMESTAMP;
-            case "BOOLEAN": return Types.BOOLEAN;
-            case "DOUBLE": return Types.DOUBLE;
-            default: return Types.VARCHAR;
-        }
     }
 }

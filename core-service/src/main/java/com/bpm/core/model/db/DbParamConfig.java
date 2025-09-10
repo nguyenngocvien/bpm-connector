@@ -13,7 +13,7 @@ public class DbParamConfig {
     private Long dbConfigId;
 
     private String paramName;
-    private String paramType;    // STRING, INT, DATE...
+    private ParamType paramType;    // STRING, INT, DATE...
     private String paramMode;    // IN, OUT
     private Integer paramOrder;
 }

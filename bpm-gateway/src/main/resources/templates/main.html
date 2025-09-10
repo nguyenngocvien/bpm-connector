@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 	<script src="https://unpkg.com/htmx.org@1.9.2"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 	<style>
         :root {
             --bg-dark: #121212;
@@ -124,6 +125,18 @@
             border-color: #ffc107;
             color: black;
         }
+		
+		.btn-icon-only {
+		    background: transparent;
+		    border: none;
+		    color: #6c757d; /* giống text-muted */
+		}
+
+		.btn-icon-only:hover {
+		    background-color: #6c757d; /* màu btn-secondary */
+		    color: #fff;
+		    border-radius: 50%;
+		}
 
         .badge {
             font-size: 0.85rem;
@@ -189,7 +202,7 @@
 </head>
 <body>
 	<div class="sidebar">
-	    <h3>Dashboard</h3>
+	    <h3>eConnector</h3>
 	    
 	    <!-- Servers -->
 	    <a th:href="@{/admin/servers}" 

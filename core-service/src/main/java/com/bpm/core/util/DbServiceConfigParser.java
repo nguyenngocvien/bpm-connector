@@ -1,6 +1,7 @@
 package com.bpm.core.util;
 
 import com.bpm.core.model.db.DbParamConfig;
+import com.bpm.core.model.db.ParamType;
 import com.bpm.core.model.db.DbOutputMapping;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,32 +58,47 @@ public class DbServiceConfigParser {
     }
     
     public static String convertParamArrayToJsonObject(List<DbParamConfig> paramList) {
-    	Map<String, Object> result = new LinkedHashMap<>();
-    	for (DbParamConfig param : paramList) {
-            String name = param.getParamName();
-            String type = param.getParamType().toUpperCase();
+        Map<String, Object> result = new LinkedHashMap<>();
 
-            Object defaultValue;
-            switch (type) {
-                case "VARCHAR":
-                case "TEXT":
-                case "STRING":
-                    defaultValue = "";
-                    break;
-                case "INT":
-                case "INTEGER":
-                case "LONG":
-                case "FLOAT":
-                case "DOUBLE":
-                case "DECIMAL":
-                    defaultValue = null;
-                    break;
-                case "BOOLEAN":
-                case "BOOL":
-                    defaultValue = false;
-                    break;
-                default:
-                    defaultValue = null;
+        for (DbParamConfig param : paramList) {
+            String name = param.getParamName();
+            ParamType type = param.getParamType();
+
+            Object defaultValue = null; // mặc định
+
+            if (type != null) {
+                switch (type) {
+                    case VARCHAR:
+                    case TEXT:
+                        defaultValue = "";
+                        break;
+
+                    case INTEGER:
+                    case BIGINT:
+                    case SMALLINT:
+                    case NUMERIC:
+                    case DECIMAL:
+                    case DOUBLE:
+                    case REAL:
+                        defaultValue = null;
+                        break;
+
+                    case BOOLEAN:
+                        defaultValue = false;
+                        break;
+
+                    case DATE:
+                    case TIMESTAMP:
+                        defaultValue = null; // có thể set LocalDate.now() / LocalDateTime.now()
+                        break;
+
+                    case BYTEA:
+                        defaultValue = null; // có thể để [] nếu muốn array rỗng
+                        break;
+
+                    default:
+                        defaultValue = null;
+                }
             }
 
             result.put(name, defaultValue);

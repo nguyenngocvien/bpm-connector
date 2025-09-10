@@ -2,14 +2,25 @@ package com.bpm.core.model.service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public enum ServiceType {
-    REST, SOAP, DB, MAIL, FILE;
+    REST("REST API"),
+    SOAP("SOAP Web Service"),
+    DB("Database"),
+    MAIL("Mail Service"),
+    FILE("File Storage");
 
-    public static List<String> listAll() {
-        return Arrays.stream(values())
-                     .map(Enum::name)
-                     .collect(Collectors.toList());
+    private final String label;
+
+    ServiceType(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public static List<ServiceType> listAll() {
+        return Arrays.asList(values());
     }
 }

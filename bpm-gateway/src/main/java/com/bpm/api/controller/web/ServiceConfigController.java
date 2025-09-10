@@ -7,6 +7,7 @@ import com.bpm.core.model.fncmis.FileServiceConfig;
 import com.bpm.core.model.mail.MailServiceConfig;
 import com.bpm.core.model.rest.RestServiceConfig;
 import com.bpm.core.model.service.ServiceConfig;
+import com.bpm.core.model.service.ServiceType;
 import com.bpm.core.repository.Store;
 
 import org.springframework.http.ResponseEntity;
@@ -92,10 +93,10 @@ public class ServiceConfigController {
     public String save(@ModelAttribute("serviceConfig") ServiceConfig config) {
         store.serviceConfigs().save(config);
         
-        if ("DB".equals(config.getServiceType().name()) && config.getDbServiceConfig() != null) {
+        if (ServiceType.DB.equals(config.getServiceType()) && config.getDbServiceConfig() != null) {
             store.dbServices().save(config.getDbServiceConfig(), config.getId());
         }
-        else if ("REST".equals(config.getServiceType().name()) && config.getRestServiceConfig() != null) {
+        else if (ServiceType.REST.equals(config.getServiceType()) && config.getRestServiceConfig() != null) {
             store.restServices().save(config.getRestServiceConfig(), config.getId());
         }
         

@@ -63,31 +63,43 @@ public class DbServiceRepository {
             .build();
 
     public void save(DbServiceConfig config, Long serviceId) {
-    	if (config == null) return;
+        if (config == null) return;
 
-    	config.setId(serviceId);
-        
-    	String inputJson = DbServiceConfigParser.toInputParamsJson(config.getParamList());
-    	String outputJson = DbServiceConfigParser.toOutputMappingJson(config.getOutputMappingList());
+        config.setId(serviceId);
 
-    	config.setInputParams(inputJson);
-    	config.setOutputMapping(outputJson);
-    	
+        // Convert param list và output mapping sang JSON
+        String inputJson = DbServiceConfigParser.toInputParamsJson(config.getParamList());
+        String outputJson = DbServiceConfigParser.toOutputMappingJson(config.getOutputMappingList());
+
+        config.setInputParams(inputJson);
+        config.setOutputMapping(outputJson);
+
+        // Kiểm tra record đã tồn tại chưa
+        boolean exists = jdbcTemplate.queryForObject(
+                "SELECT COUNT(1) FROM core_service_db WHERE id = ?",
+                Long.class,
+                config.getId()
+        ) > 0;
+
+        if (exists) {
+            update(config);
+        } else {
+            insert(config);
+        }
+    }
+    
+    private void insert(DbServiceConfig config) {
         String sql = ""
                 + "INSERT INTO core_service_db (id, ds_id, sql_statement, sql_type, input_params, output_mapping, "
-                + "timeout_ms, retry_count, retry_backoff_ms, transactional, fetch_size, result_type, enabled, created_at, updated_at) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
-                + "ON CONFLICT (id) DO UPDATE SET "
-                + "ds_id = EXCLUDED.ds_id, sql_statement = EXCLUDED.sql_statement, sql_type = EXCLUDED.sql_type, "
-                + "input_params = EXCLUDED.input_params, output_mapping = EXCLUDED.output_mapping, timeout_ms = EXCLUDED.timeout_ms, "
-                + "retry_count = EXCLUDED.retry_count, retry_backoff_ms = EXCLUDED.retry_backoff_ms, transactional = EXCLUDED.transactional, "
-                + "fetch_size = EXCLUDED.fetch_size, result_type = EXCLUDED.result_type, enabled = EXCLUDED.enabled, updated_at = CURRENT_TIMESTAMP";
+                + "timeout_ms, retry_count, retry_backoff_ms, transactional, fetch_size, result_type, enabled, "
+                + "created_at, updated_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
         jdbcTemplate.update(sql,
                 config.getId(),
                 config.getDbSourceId(),
                 config.getSqlStatement(),
-                config.getSqlType(),
+                config.getSqlType() != null ? config.getSqlType().name() : null,
                 config.getInputParams(),
                 config.getOutputMapping(),
                 config.getTimeoutMs(),
@@ -97,6 +109,41 @@ public class DbServiceRepository {
                 config.getFetchSize(),
                 config.getResultType(),
                 config.getEnabled()
+        );
+    }
+
+    private void update(DbServiceConfig config) {
+        String sql = ""
+                + "UPDATE core_service_db SET "
+                + "ds_id = ?, "
+                + "sql_statement = ?, "
+                + "sql_type = ?, "
+                + "input_params = ?, "
+                + "output_mapping = ?, "
+                + "timeout_ms = ?, "
+                + "retry_count = ?, "
+                + "retry_backoff_ms = ?, "
+                + "transactional = ?, "
+                + "fetch_size = ?, "
+                + "result_type = ?, "
+                + "enabled = ?, "
+                + "updated_at = CURRENT_TIMESTAMP "
+                + "WHERE id = ?";
+
+        jdbcTemplate.update(sql,
+                config.getDbSourceId(),
+                config.getSqlStatement(),
+                config.getSqlType() != null ? config.getSqlType().name() : null,
+                config.getInputParams(),
+                config.getOutputMapping(),
+                config.getTimeoutMs(),
+                config.getRetryCount(),
+                config.getRetryBackoffMs(),
+                config.getTransactional(),
+                config.getFetchSize(),
+                config.getResultType(),
+                config.getEnabled(),
+                config.getId()
         );
     }
 
