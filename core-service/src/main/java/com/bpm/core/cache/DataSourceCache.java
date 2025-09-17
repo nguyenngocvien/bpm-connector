@@ -1,6 +1,6 @@
 package com.bpm.core.cache;
 
-import com.bpm.core.model.db.DataSourceConfig;
+import com.bpm.core.datasource.domain.DataSourceConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;

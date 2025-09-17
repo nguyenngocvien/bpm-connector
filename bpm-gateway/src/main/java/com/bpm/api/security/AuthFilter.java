@@ -59,6 +59,14 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     private boolean isPublicPath(String path) {
-        return path.equals("/login") || path.startsWith("/admin") || path.startsWith("/css/") || path.startsWith("/js/");
+        return path.equals("/login") 
+        		|| path.startsWith("/admin") 
+        		|| path.startsWith("/css/") 
+        		|| path.startsWith("/js/") 
+        		|| path.contains("/swagger-ui")
+        		|| path.contains("/v3/api-docs")
+        		|| path.contains("/swagger-resources")
+        		|| path.contains("/webjars")
+        		|| path.contains("/configuration");
     }
 }

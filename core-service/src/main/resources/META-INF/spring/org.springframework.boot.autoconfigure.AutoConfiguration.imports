@@ -1,0 +1,3 @@
+com.bpm.core.config.AuthAutoConfiguration
+com.bpm.core.config.CacheAutoConfiguration
+com.bpm.core.config.WebAutoConfiguration

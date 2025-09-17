@@ -1,15 +1,12 @@
 package com.bpm.core.cache;
 
-import com.bpm.core.model.auth.AuthConfig;
-import com.bpm.core.model.auth.AuthType;
-import com.bpm.core.repository.AuthRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.bpm.core.auth.domain.AuthConfig;
+import com.bpm.core.auth.domain.AuthType;
+import com.bpm.core.auth.repository.AuthRepository;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
 public class AuthServiceCache {
 
     private final AuthRepository authRepository;
@@ -18,7 +15,6 @@ public class AuthServiceCache {
     private final ConcurrentHashMap<Integer, AuthConfig> authCacheById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, AuthConfig> authCacheByName = new ConcurrentHashMap<>();
 
-    @Autowired
     public AuthServiceCache(AuthRepository authRepository) {
         this.authRepository = authRepository;
     }

@@ -5,7 +5,10 @@
     <artifactId>bpm-connector</artifactId>
     <version>1.0.0</version>
   </parent>
-  <artifactId>core-service</artifactId>
+  <artifactId>bpm-core</artifactId>
+  <packaging>jar</packaging>
+  <name>bpm-core</name>
+  <description>Common reusable starter for BPM Core</description>
   <dependencies>
   	<dependency>
         <groupId>org.springframework.boot</groupId>
@@ -65,14 +68,21 @@
 	  <groupId>com.oracle.database.jdbc</groupId>
 	  <artifactId>ojdbc11</artifactId>
 	</dependency>
-
+	<!-- Apache Chemistry OpenCMIS client -->
+	<dependency>
+		<groupId>org.apache.chemistry.opencmis</groupId>
+		<artifactId>chemistry-opencmis-client-impl</artifactId>
+		<version>1.1.0</version>
+	</dependency>
+	<!-- For UUID, commons-io optional -->
+    <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.11.0</version>
+    </dependency>
   </dependencies>
   <build>
-  <plugins>
-	<plugin>
-		<groupId>org.springframework.boot</groupId>
-		  <artifactId>spring-boot-maven-plugin</artifactId>
-		</plugin>
+    <plugins>
 		<plugin>
 		  <groupId>org.apache.maven.plugins</groupId>
 		  <artifactId>maven-compiler-plugin</artifactId>
@@ -89,5 +99,5 @@
 		  </configuration>
 		</plugin>
 	  </plugins>
-	</build>
+  </build>
 </project>

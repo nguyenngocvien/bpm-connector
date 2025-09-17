@@ -103,8 +103,7 @@ mvn clean install
 ### Run bpm-gateway
 
 ```bash
-cd bpm-gateway
-mvn spring-boot:run
+mvn -f bpm-gateway/pom.xml spring-boot:run
 ```
 
 > ✅ Requires Java 17+, Maven 3.8+, and a running MySQL/Postgres database.
