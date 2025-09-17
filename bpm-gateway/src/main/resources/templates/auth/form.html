@@ -1,8 +1,33 @@
-<div class="content" th:fragment="content">
-    <h2 th:text="${authConfig.id == null} ? 'Add Auth Config' : 'Edit Auth Config'" class="mb-3"></h2>
-    <hr class="mb-4 mt-2" />
+<div class="content" th:fragment="content" style="height: 100vh; display: flex; flex-direction: column;">
+	<div class="sticky-top" style="z-index: 10;">
+		<div class="d-flex justify-content-between align-items-center mb-2">
+			<div class="d-flex align-items-center gap-2">
+		        <a th:href="@{/admin/auth}" class="btn btn-sm btn-icon-only rounded-circle" title="Back">
+		            <i class="bi bi-arrow-left"></i>
+		        </a>
+		        <h3 class="mb-0" th:text="${authConfig.id == null} ? 'Add Auth Config' : 'Edit Auth Config'" ></h3>
+		    </div>
+			<div class="d-flex gap-2">
+				<a th:if="${authConfig.id != null}"
+					th:href="@{'/admin/auth/delete/' + ${authConfig.id}}"
+					class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this credential?')">
+					<i class="bi bi-trash"></i> Delete
+				</a>
 
-    <form th:action="@{/admin/auth/save}" th:object="${authConfig}" method="post">
+			    <button type="submit" form="authForm" class="btn btn-sm btn-success">
+			        <i class="bi bi-save"></i> Save
+			    </button>
+
+			    <a th:href="@{/admin/auth}" class="btn btn-sm btn-secondary">
+			        <i class="bi bi-x-circle"></i> Cancel
+			    </a>
+			</div>
+		</div>
+	    <hr class="mb-4 mt-2" />
+	</div>
+
+	<div style="flex: 1; overflow-y: auto; padding:10px;">
+		<form id="authForm" th:action="@{/admin/auth/save}" th:object="${authConfig}" method="post">
         <input type="hidden" th:field="*{id}" />
 
         <div class="mb-3">
@@ -67,21 +92,10 @@
             <label class="form-label">Scope</label>
             <input type="text" th:field="*{scope}" class="form-control" placeholder="e.g., read write" />
         </div>
-
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" th:field="*{active}" id="activeCheckbox" />
-            <label class="form-check-label" for="activeCheckbox">Active</label>
-        </div>
-
-        <div class="mt-4 d-flex gap-2">
-			<a th:if="${authConfig.id != null}"
-		       th:href="@{'/admin/auth/delete/' + ${authConfig.id}}"
-		       class="btn btn-danger"
-		       onclick="return confirm('Are you sure to delete this service config?')">
-				Delete
-		    </a>
-			<button type="submit" class="btn btn-success">Save</button>
-			<a th:href="@{/admin/auth}" class="btn btn-secondary">Cancel</a>
-        </div>
+		
+		<div class="form-check form-switch toggle-switch d-flex gap-2 align-items-center">
+	        <input class="form-check-input" type="checkbox" th:field="*{active}" id="active">
+	        <label class="form-check-label" for="active">Active</label>
+	    </div>
     </form>
 </div>

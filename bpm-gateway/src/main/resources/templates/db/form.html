@@ -1,94 +1,110 @@
-<div class="content" th:fragment="content">
-    <h2 th:text="${dbConfig.id == null} ? 'Add Datasource' : 'Edit Datasource'" class="mb-3"></h2>
-    <hr class="mb-4 mt-2" />
+<div class="content" th:fragment="content" style="height: 100vh; display: flex; flex-direction: column;">
+	<div class="sticky-top" style="z-index: 10;">
+		<div class="d-flex justify-content-between align-items-center mb-2">
+			<div class="d-flex align-items-center gap-2">
+		        <a th:href="@{/admin/datasource}" class="btn btn-sm btn-icon-only rounded-circle" title="Back">
+		            <i class="bi bi-arrow-left"></i>
+		        </a>
+				<h3 th:text="${dbConfig.id == null} ? 'Add Datasource' : 'Edit Datasource'"></h3>
+		    </div>
+			<div class="d-flex gap-2">
+				<a th:if="${dbConfig.id != null}"
+					th:href="@{'/admin/datasource/delete/' + ${dbConfig.id}}"
+					class="btn btn-info btn-sm" onclick="testConnection()">
+					<i class="bi bi-play-fill"></i> Test Connection
+				</a>
 
-    <form th:action="@{/admin/datasource/save}" th:object="${dbConfig}" method="post" class="needs-validation" novalidate>
-        <input type="hidden" th:field="*{id}" />
+			    <button type="submit" form="dbForm" class="btn btn-sm btn-success">
+			        <i class="bi bi-save"></i> Save
+			    </button>
 
-        <div class="mb-3">
-            <label for="name" class="form-label">Datasource Name</label>
-            <input type="text" th:field="*{name}" class="form-control" id="name" required />
-            <div class="invalid-feedback">Please provide a datasource name.</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea th:field="*{description}" class="form-control" id="description" rows="2" placeholder="Optional description..."></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label for="jdbcUrl" class="form-label">JDBC URL</label>
-            <input type="text" th:field="*{jdbcUrl}" class="form-control" id="jdbcUrl" placeholder="jdbc:mysql://..." required />
-            <div class="invalid-feedback">Please provide a valid JDBC URL.</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" th:field="*{username}" class="form-control" id="username" required />
-            <div class="invalid-feedback">Please enter username.</div>
-        </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-			<input type="hidden" id="existingPassword" name="existingPassword" th:value="${dbConfig.password}" />
-            <input type="password" th:field="*{password}" class="form-control" id="password" th:required="${dbConfig.id == null}" />
-            <div class="invalid-feedback">Please enter password.</div>
-            <small class="form-text text-muted" th:if="${dbConfig.id != null}">Leave blank to keep current password</small>
-        </div>
-
-        <div class="mb-3">
-            <label for="driverClassName" class="form-label">Driver Class Name</label>
-            <input type="text" th:field="*{driverClassName}" class="form-control" id="driverClassName" required />
-            <div class="invalid-feedback">Please enter JDBC driver class name.</div>
-        </div>
-
-        <h4 class="mt-4">Connection Pool Settings</h4>
-        <div class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label">Max Pool Size</label>
-                <input type="number" th:field="*{maxPoolSize}" class="form-control" min="1" />
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Min Idle</label>
-                <input type="number" th:field="*{minIdle}" class="form-control" min="0" />
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Connection Timeout (ms)</label>
-                <input type="number" th:field="*{connectionTimeoutMs}" class="form-control" min="1000" />
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Idle Timeout (ms)</label>
-                <input type="number" th:field="*{idleTimeoutMs}" class="form-control" min="1000" />
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Max Lifetime (ms)</label>
-                <input type="number" th:field="*{maxLifetimeMs}" class="form-control" min="1000" />
-            </div>
-
-            <div class="col-md-4 d-flex align-items-center">
-                <div class="form-check mt-4">
-                    <input type="checkbox" th:field="*{active}" class="form-check-input" id="active">
-                    <label class="form-check-label" for="active">Active</label>
-                </div>
-            </div>
-        </div>
-		<span id="testResult" class="mt-4 text-muted"></span>
-		<div class="mt-4 d-flex gap-2">
-			<button type="button" class="btn btn-info" onclick="testConnection()">Test Connection</button>
-			<a th:if="${dbConfig.id != null}"
-		       th:href="@{'/admin/datasource/delete/' + ${dbConfig.id}}"
-		       class="btn btn-danger "
-		       onclick="return confirm('Are you sure to delete this service config?')">
-				Delete
-		    </a>
-			<button type="submit" class="btn btn-success">Save</button>
-			<a th:href="@{/admin/datasource}" class="btn btn-secondary">Cancel</a>
+			    <a th:href="@{/admin/datasource}" class="btn btn-sm btn-secondary">
+			        <i class="bi bi-x-circle"></i> Cancel
+			    </a>
+			</div>
 		</div>
-    </form>
+	    <hr class="mb-4 mt-2" />
+	</div>
+
+	<div style="flex: 1; overflow-y: auto; padding:10px;">
+		<span id="testResult" class="mt-4 text-muted"></span>
+		
+		<form id="dbForm" th:action="@{/admin/datasource/save}" th:object="${dbConfig}" method="post" class="needs-validation" novalidate>
+	        <input type="hidden" th:field="*{id}" />
+	
+	        <div class="mb-3">
+	            <label for="name" class="form-label">Datasource Name</label>
+	            <input type="text" th:field="*{name}" class="form-control" id="name" required />
+	            <div class="invalid-feedback">Please provide a datasource name.</div>
+	        </div>
+	
+	        <div class="mb-3">
+	            <label for="description" class="form-label">Description</label>
+	            <textarea th:field="*{description}" class="form-control" id="description" rows="2" placeholder="Optional description..."></textarea>
+	        </div>
+	
+	        <div class="mb-3">
+	            <label for="jdbcUrl" class="form-label">JDBC URL</label>
+	            <input type="text" th:field="*{jdbcUrl}" class="form-control" id="jdbcUrl" placeholder="jdbc:mysql://..." required />
+	            <div class="invalid-feedback">Please provide a valid JDBC URL.</div>
+	        </div>
+	
+	        <div class="mb-3">
+	            <label for="username" class="form-label">Username</label>
+	            <input type="text" th:field="*{username}" class="form-control" id="username" required />
+	            <div class="invalid-feedback">Please enter username.</div>
+	        </div>
+	
+	        <div class="mb-3">
+	            <label for="password" class="form-label">Password</label>
+				<input type="hidden" id="existingPassword" name="existingPassword" th:value="${dbConfig.password}" />
+	            <input type="password" th:field="*{password}" class="form-control" id="password" th:required="${dbConfig.id == null}" />
+	            <div class="invalid-feedback">Please enter password.</div>
+	            <small class="form-text text-muted" th:if="${dbConfig.id != null}">Leave blank to keep current password</small>
+	        </div>
+	
+	        <div class="mb-3">
+	            <label for="driverClassName" class="form-label">Driver Class Name</label>
+	            <input type="text" th:field="*{driverClassName}" class="form-control" id="driverClassName" required />
+	            <div class="invalid-feedback">Please enter JDBC driver class name.</div>
+	        </div>
+	
+	        <h4 class="mt-4">Connection Pool Settings</h4>
+	        <div class="row g-3">
+	            <div class="col-md-4">
+	                <label class="form-label">Max Pool Size</label>
+	                <input type="number" th:field="*{maxPoolSize}" class="form-control" min="1" />
+	            </div>
+	
+	            <div class="col-md-4">
+	                <label class="form-label">Min Idle</label>
+	                <input type="number" th:field="*{minIdle}" class="form-control" min="0" />
+	            </div>
+	
+	            <div class="col-md-4">
+	                <label class="form-label">Connection Timeout (ms)</label>
+	                <input type="number" th:field="*{connectionTimeoutMs}" class="form-control" min="1000" />
+	            </div>
+	
+	            <div class="col-md-4">
+	                <label class="form-label">Idle Timeout (ms)</label>
+	                <input type="number" th:field="*{idleTimeoutMs}" class="form-control" min="1000" />
+	            </div>
+	
+	            <div class="col-md-4">
+	                <label class="form-label">Max Lifetime (ms)</label>
+	                <input type="number" th:field="*{maxLifetimeMs}" class="form-control" min="1000" />
+	            </div>
+	
+	            <div class="col-md-4 d-flex align-items-center align-content-center">
+					<div class="form-check form-switch toggle-switch d-flex gap-2 align-items-center mt-4">
+				        <input class="form-check-input" type="checkbox" th:field="*{active}" id="active">
+				        <label class="form-check-label" for="active">Active</label>
+				    </div>
+	            </div>
+	        </div>
+	    </form>
+	</div>
 	<script>
 	    // Bootstrap validation (giữ nguyên phần này)
 	    (function () {
