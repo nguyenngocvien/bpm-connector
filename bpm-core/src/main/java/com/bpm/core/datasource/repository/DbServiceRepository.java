@@ -3,8 +3,6 @@ package com.bpm.core.datasource.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
 import com.bpm.core.datasource.domain.DbOutputMapping;
 import com.bpm.core.datasource.domain.DbParamConfig;
 import com.bpm.core.datasource.domain.DbServiceConfig;
@@ -14,7 +12,6 @@ import com.bpm.core.datasource.infrastructure.DbServiceConfigParser;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class DbServiceRepository {
 
     private final JdbcTemplate jdbcTemplate;

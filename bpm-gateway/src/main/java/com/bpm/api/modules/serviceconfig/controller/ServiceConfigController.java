@@ -1,13 +1,13 @@
 package com.bpm.api.modules.serviceconfig.controller;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.model.db.DataSourceConfig;
-import com.bpm.core.model.db.DbServiceConfig;
-import com.bpm.core.model.fncmis.FileServiceConfig;
-import com.bpm.core.model.mail.MailServiceConfig;
-import com.bpm.core.model.rest.RestServiceConfig;
-import com.bpm.core.model.service.ServiceConfig;
-import com.bpm.core.repository.Store;
+import com.bpm.core.datasource.domain.DataSourceConfig;
+import com.bpm.core.datasource.domain.DbServiceConfig;
+import com.bpm.core.document.domain.FileServiceConfig;
+import com.bpm.core.mail.domain.MailServiceConfig;
+import com.bpm.core.rest.domain.RestServiceConfig;
+import com.bpm.core.serviceconfig.domain.ServiceConfig;
+import com.bpm.core.serviceconfig.service.ServiceConfigService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,21 +19,16 @@ import java.util.List;
 @RequestMapping(ROUTES.UI_SERVICE)
 public class ServiceConfigController {
 
-    private final Store store;
+	private final ServiceConfigService serviceConfigService;
 
-    public ServiceConfigController(Store store) {
-    	this.store = store;
+    public ServiceConfigController(ServiceConfigService serviceConfigService) {
+    	this.serviceConfigService = serviceConfigService;
     }
 
     @GetMapping
     public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
     	
-        List<ServiceConfig> configs;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            configs = store.serviceConfigs().searchByKeyword(keyword);
-        } else {
-            configs = store.serviceConfigs().findAll();
-        }
+    	List<ServiceConfig> configs = serviceConfigService.findAll(keyword);
         
         model.addAttribute("keyword", keyword);
         model.addAttribute("serviceConfigs", configs);
@@ -49,7 +44,9 @@ public class ServiceConfigController {
     	config.setRestServiceConfig(new RestServiceConfig());
     	config.setMailServiceConfig(new MailServiceConfig());
     	config.setFileServiceConfig(new FileServiceConfig());
-    	List<DataSourceConfig> datasourceList = store.datasources().findAll();
+    	
+    	List<DataSourceConfig> datasourceList = serviceConfigService.getAllDataSources();
+    	
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);
         model.addAttribute("content", "service/form");
@@ -59,26 +56,8 @@ public class ServiceConfigController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        ServiceConfig serviceConfig = store.serviceConfigs().findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid Service ID: " + id));
-
-        serviceConfig.setDbServiceConfig(
-            store.dbServices().findById(id).orElse(new DbServiceConfig())
-        );
-
-        serviceConfig.setRestServiceConfig(
-            store.restServices().findById(id).orElse(new RestServiceConfig())
-        );
-
-        serviceConfig.setMailServiceConfig(
-            store.mailServices().findById(id).orElse(new MailServiceConfig())
-        );
-
-        serviceConfig.setFileServiceConfig(
-            store.fileServices().findById(id).orElse(new FileServiceConfig())
-        );
-
-        List<DataSourceConfig> datasourceList = store.datasources().findAll();
+    	ServiceConfig serviceConfig = serviceConfigService.findById(id);
+        List<DataSourceConfig> datasourceList = serviceConfigService.getAllDataSources();
 
         model.addAttribute("serviceConfig", serviceConfig);
         model.addAttribute("datasourceList", datasourceList);
@@ -90,44 +69,26 @@ public class ServiceConfigController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute("serviceConfig") ServiceConfig config) {
-        store.serviceConfigs().save(config);
-        
-        if ("DB".equals(config.getServiceType().name()) && config.getDbServiceConfig() != null) {
-            store.dbServices().save(config.getDbServiceConfig(), config.getId());
-        }
-        else if ("REST".equals(config.getServiceType().name()) && config.getRestServiceConfig() != null) {
-            store.restServices().save(config.getRestServiceConfig(), config.getId());
-        }
-        
+    	serviceConfigService.save(config);
         return "redirect:" + ROUTES.UI_SERVICE;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-        if (!store.serviceConfigs().existsById(id)) {
-            // Optional: log warning
-            return "redirect:" + ROUTES.UI_SERVICE + "?error=NotFound";
-        }
-        store.serviceConfigs().deleteById(id);
+    	serviceConfigService.delete(id);
         return "redirect:" + ROUTES.UI_SERVICE;
     }
     
 
     @PostMapping("/{id}/toggle-log")
     public ResponseEntity<?> toggleLog(@PathVariable Long id, @RequestParam boolean enabled) {
-        if (!store.serviceConfigs().existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        store.serviceConfigs().enableLog(id, enabled);
+    	serviceConfigService.toggleLog(id, enabled);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/toggle-active")
     public ResponseEntity<?> toggleActive(@PathVariable Long id, @RequestParam boolean active) {
-        if (!store.serviceConfigs().existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        store.serviceConfigs().setActive(id, active);
+    	serviceConfigService.toggleActive(id, active);
         return ResponseEntity.ok().build();
     }
 }

@@ -3,8 +3,6 @@ package com.bpm.core.auth.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.domain.AuthType;
 import com.bpm.core.common.util.AESCryptoUtil;
@@ -13,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class AuthRepository {
 
     private final JdbcTemplate jdbcTemplate;

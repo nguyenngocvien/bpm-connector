@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.bpm.auth.AuthManager;
-import com.bpm.auth.AuthResult;
+import com.bpm.core.auth.domain.AuthResult;
+import com.bpm.core.auth.service.AuthManager;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

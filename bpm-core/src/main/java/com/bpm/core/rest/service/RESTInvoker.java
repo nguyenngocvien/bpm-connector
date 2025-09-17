@@ -13,7 +13,6 @@ import com.bpm.core.serviceconfig.service.ServiceInvoker;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -25,7 +24,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service("restInvoker")
 public class RESTInvoker implements ServiceInvoker {
 
     private final RestServiceRepository repository;

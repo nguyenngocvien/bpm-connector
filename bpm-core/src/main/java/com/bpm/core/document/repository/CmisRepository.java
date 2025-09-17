@@ -19,14 +19,12 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bpm.core.document.domain.CreateDocRequest;
 import com.bpm.core.document.domain.CreateDocResponse;
 
-@Repository
 public class CmisRepository {
 
     private final Session session;

@@ -1,8 +1,5 @@
 package com.bpm.core.monitor;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public class DashboardService {
 
     public DashboardSummary getSummary() {

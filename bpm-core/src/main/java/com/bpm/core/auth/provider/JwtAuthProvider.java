@@ -1,12 +1,9 @@
 package com.bpm.core.auth.provider;
 
-import org.springframework.stereotype.Component;
-
 import com.bpm.core.auth.domain.AuthProperties;
 import com.bpm.core.auth.domain.AuthProvider;
 import com.bpm.core.auth.domain.AuthResult;
 
-@Component
 public class JwtAuthProvider implements AuthProvider {
 
     private final AuthProperties authProperties;

@@ -9,7 +9,6 @@ import com.bpm.core.datasource.domain.DatasourceStatus;
 import com.bpm.core.mail.domain.MailServerStatus;
 import com.bpm.core.serviceconfig.domain.ServiceMetric;
 
-@Service
 public class HealthCheckService {
 
     public DatasourceStatus checkDatasource() {

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.model.fncmis.UploadForm;
+import com.bpm.core.document.domain.UploadForm;
 
 @Controller
 @RequestMapping(ROUTES.UI_FILE)

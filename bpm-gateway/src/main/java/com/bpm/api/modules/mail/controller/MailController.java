@@ -8,21 +8,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.model.mail.MailServiceConfig;
-import com.bpm.core.model.service.ServiceConfig;
-import com.bpm.core.repository.Store;
-import com.bpm.core.service.impl.EmailSender;
+import com.bpm.core.mail.service.EmailSender;
+import com.bpm.core.serviceconfig.domain.ServiceConfig;
+import com.bpm.core.serviceconfig.service.ServiceConfigService;
 
 @RestController
 @RequestMapping(ROUTES.MAIL)
 public class MailController {
 
-    private final Store store;
+    private final ServiceConfigService service;
     private final EmailSender emailSender;
 
     @Autowired
-    public MailController(Store store, EmailSender emailSender) {
-        this.store = store;
+    public MailController(ServiceConfigService service, EmailSender emailSender) {
+        this.service = service;
         this.emailSender = emailSender;
     }
 
@@ -30,16 +29,12 @@ public class MailController {
     public ResponseEntity<?> send(@RequestParam String emailCode,
                                   @RequestParam String listMailTo) {
         try {
-            ServiceConfig config = store.serviceConfigs().findByCode(emailCode)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid Email Code: " + emailCode));
-
-            MailServiceConfig mailConfig = store.mailServices().findById(config.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid Email Code: " + emailCode));
+            ServiceConfig config = service.findByCode(emailCode);
 
             // Assign mailTo from listMailTo
-            mailConfig.setMailTo(listMailTo);
+            config.getMailServiceConfig().setMailTo(listMailTo);
 
-            emailSender.sendEmail(mailConfig);
+            emailSender.sendEmail(config.getMailServiceConfig());
 
             return ResponseEntity.ok("Email sent successfully");
         } catch (IllegalArgumentException ex) {

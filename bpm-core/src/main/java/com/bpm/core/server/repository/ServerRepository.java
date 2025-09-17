@@ -3,14 +3,12 @@ package com.bpm.core.server.repository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import com.bpm.core.server.domain.Server;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class ServerRepository {
 
     private final JdbcTemplate jdbcTemplate;

@@ -3,14 +3,12 @@ package com.bpm.core.mail.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import com.bpm.core.mail.domain.MailServiceConfig;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class MailServiceRepository {
 
     private final JdbcTemplate jdbcTemplate;

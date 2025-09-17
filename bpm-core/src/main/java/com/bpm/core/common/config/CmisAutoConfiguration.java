@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.bpm.core.document.domain.CmisProperties;
+import com.bpm.core.document.repository.CmisRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,5 +33,10 @@ public class CmisAutoConfiguration {
         params.put(SessionParameter.READ_TIMEOUT, String.valueOf(properties.getReadTimeoutMs()));
 
         return SessionFactoryImpl.newInstance().createSession(params);
+    }
+    
+    @Bean
+    public CmisRepository cmisRepository(Session session) {
+    	return new CmisRepository(session);
     }
 }

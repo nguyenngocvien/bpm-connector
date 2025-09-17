@@ -4,11 +4,8 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.util.Properties;
 
-import org.springframework.stereotype.Service;
-
 import com.bpm.core.mail.domain.MailServiceConfig;
 
-@Service("emailSender")
 public class EmailSender {
 
     public void sendEmail(MailServiceConfig config) throws MessagingException {

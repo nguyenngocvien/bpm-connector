@@ -14,8 +14,9 @@ D:.
 +---.settings
 |       org.eclipse.m2e.core.prefs
 |       
-+---bpm-gateway
++---bpm-core
 |   |   .classpath
+|   |   .factorypath
 |   |   .gitignore
 |   |   .project
 |   |   pom.xml
@@ -32,146 +33,324 @@ D:.
 |   |       +---java
 |   |       |   \---com
 |   |       |       \---bpm
-|   |       |           \---api
-|   |       |               |   ApiGatewayApplication.java
-|   |       |               |   AppShutdownManager.java
-|   |       |               |   DefaultAdminInitializer.java
-|   |       |               |   
-|   |       |               +---config
-|   |       |               |       OpenApiConfig.java
-|   |       |               |       
-|   |       |               +---constant
-|   |       |               |       ROUTES.java
-|   |       |               |       
-|   |       |               +---modules
-|   |       |               |   +---auth
-|   |       |               |   |   +---controller
-|   |       |               |   |   |       AuthController.java
-|   |       |               |   |   |       DashboardController.java
-|   |       |               |   |   |       LoginController.java
-|   |       |               |   |   |       
-|   |       |               |   |   \---dto
-|   |       |               |   |           LoginRequest.java
-|   |       |               |   |           LoginResponse.java
-|   |       |               |   |           UserDto.java
-|   |       |               |   |           
-|   |       |               |   +---dashboard
-|   |       |               |   |       DashboardController.java
+|   |       |           \---core
+|   |       |               +---auth
+|   |       |               |   +---domain
+|   |       |               |   |       AuthConfig.java
+|   |       |               |   |       AuthProperties.java
+|   |       |               |   |       AuthProvider.java
+|   |       |               |   |       AuthResult.java
+|   |       |               |   |       AuthType.java
 |   |       |               |   |       
-|   |       |               |   +---datasource
-|   |       |               |   |   +---controller
-|   |       |               |   |   |       DataSourceConfigController.java
-|   |       |               |   |   |       DataSourceController.java
-|   |       |               |   |   |       
-|   |       |               |   |   \---dto
-|   |       |               |   |           SQLProcRequestPayload.java
-|   |       |               |   |           SQLRequestPayload.java
-|   |       |               |   |           
-|   |       |               |   +---document
-|   |       |               |   |   +---controller
-|   |       |               |   |   |       DocumentController.java
-|   |       |               |   |   |       FileController.java
-|   |       |               |   |   |       MultipartDocumentController.java
-|   |       |               |   |   |       
-|   |       |               |   |   \---dto
-|   |       |               |   |           ExportRequest.java
-|   |       |               |   |           ExportResponse.java
-|   |       |               |   |           
-|   |       |               |   +---mail
-|   |       |               |   |   \---controller
-|   |       |               |   |           MailController.java
-|   |       |               |   |           
-|   |       |               |   +---server
-|   |       |               |   |   \---controller
-|   |       |               |   |           ServerController.java
-|   |       |               |   |           
-|   |       |               |   \---serviceconfig
-|   |       |               |       \---controller
-|   |       |               |               ServiceConfigController.java
-|   |       |               |               ServiceTestController.java
-|   |       |               |               
-|   |       |               \---security
-|   |       |                       AuthFilter.java
-|   |       |                       CustomUserDetailsService.java
-|   |       |                       SecurityConfig.java
-|   |       |                       
+|   |       |               |   +---provider
+|   |       |               |   |       BasicAuthProvider.java
+|   |       |               |   |       JwtAuthProvider.java
+|   |       |               |   |       
+|   |       |               |   +---repository
+|   |       |               |   |       AuthRepository.java
+|   |       |               |   |       
+|   |       |               |   \---service
+|   |       |               |           AuthManager.java
+|   |       |               |           
+|   |       |               +---cache
+|   |       |               |       AuthServiceCache.java
+|   |       |               |       DataSourceCache.java
+|   |       |               |       
+|   |       |               +---common
+|   |       |               |   +---config
+|   |       |               |   |       AuthAutoConfiguration.java
+|   |       |               |   |       CacheAutoConfiguration.java
+|   |       |               |   |       CmisAutoConfiguration.java
+|   |       |               |   |       
+|   |       |               |   +---constant
+|   |       |               |   |       DATE_PATTERN.java
+|   |       |               |   |       SERVICE_TYPE.java
+|   |       |               |   |       STATUS.java
+|   |       |               |   |       
+|   |       |               |   +---response
+|   |       |               |   |       Response.java
+|   |       |               |   |       Wrapper.java
+|   |       |               |   |       
+|   |       |               |   \---util
+|   |       |               |           AESCryptoUtil.java
+|   |       |               |           DateUtil.java
+|   |       |               |           JsonUtil.java
+|   |       |               |           
+|   |       |               +---datasource
+|   |       |               |   +---domain
+|   |       |               |   |       DataSourceConfig.java
+|   |       |               |   |       DatasourceStatus.java
+|   |       |               |   |       DbOutputMapping.java
+|   |       |               |   |       DbParamConfig.java
+|   |       |               |   |       DbServiceConfig.java
+|   |       |               |   |       DbType.java
+|   |       |               |   |       SQLProcedureRequest.java
+|   |       |               |   |       SQLRequest.java
+|   |       |               |   |       SqlType.java
+|   |       |               |   |       
+|   |       |               |   +---infrastructure
+|   |       |               |   |       DataSourceTestUtil.java
+|   |       |               |   |       DbServiceConfigParser.java
+|   |       |               |   |       
+|   |       |               |   +---repository
+|   |       |               |   |       DataSourceRepository.java
+|   |       |               |   |       DbServiceRepository.java
+|   |       |               |   |       
+|   |       |               |   \---service
+|   |       |               |           DBInvoker.java
+|   |       |               |           
+|   |       |               +---document
+|   |       |               |   +---domain
+|   |       |               |   |       CmisConfig.java
+|   |       |               |   |       CmisProperties.java
+|   |       |               |   |       CreateDocRequest.java
+|   |       |               |   |       CreateDocResponse.java
+|   |       |               |   |       FileServiceConfig.java
+|   |       |               |   |       UploadForm.java
+|   |       |               |   |       
+|   |       |               |   \---repository
+|   |       |               |           CmisRepository.java
+|   |       |               |           FileServiceRepository.java
+|   |       |               |           
+|   |       |               +---mail
+|   |       |               |   +---domain
+|   |       |               |   |       MailServerStatus.java
+|   |       |               |   |       MailServiceConfig.java
+|   |       |               |   |       
+|   |       |               |   +---repository
+|   |       |               |   |       MailServiceRepository.java
+|   |       |               |   |       
+|   |       |               |   \---service
+|   |       |               |           EmailSender.java
+|   |       |               |           
+|   |       |               +---monitor
+|   |       |               |       DashboardService.java
+|   |       |               |       DashboardSummary.java
+|   |       |               |       
+|   |       |               +---rest
+|   |       |               |   +---domain
+|   |       |               |   |       NameValuePair.java
+|   |       |               |   |       RestMethod.java
+|   |       |               |   |       RestServiceConfig.java
+|   |       |               |   |       
+|   |       |               |   +---infrastructure
+|   |       |               |   |       RestServiceConfigParser.java
+|   |       |               |   |       TemplateUtil.java
+|   |       |               |   |       WebClientAuthUtil.java
+|   |       |               |   |       
+|   |       |               |   +---repository
+|   |       |               |   |       RestServiceRepository.java
+|   |       |               |   |       
+|   |       |               |   \---service
+|   |       |               |           RESTInvoker.java
+|   |       |               |           
+|   |       |               +---server
+|   |       |               |   +---domain
+|   |       |               |   |       Server.java
+|   |       |               |   |       
+|   |       |               |   \---repository
+|   |       |               |           ServerRepository.java
+|   |       |               |           
+|   |       |               \---serviceconfig
+|   |       |                   +---domain
+|   |       |                   |       ServiceConfig.java
+|   |       |                   |       ServiceLog.java
+|   |       |                   |       ServiceMetric.java
+|   |       |                   |       ServiceType.java
+|   |       |                   |       
+|   |       |                   +---repository
+|   |       |                   |       ServiceConfigRepository.java
+|   |       |                   |       ServiceLogRepository.java
+|   |       |                   |       
+|   |       |                   \---service
+|   |       |                           HealthCheckService.java
+|   |       |                           ServiceConfigService.java
+|   |       |                           ServiceInvoker.java
+|   |       |                           
 |   |       \---resources
-|   |           |   application-docker.yml
-|   |           |   application.yml
-|   |           |   
-|   |           +---db
-|   |           |   \---migration
-|   |           |           V1__init_core_auth.sql
-|   |           |           V2__init_core_datasource.sql
-|   |           |           V3__init_core_service_config.sql
-|   |           |           V4__init_core_service_log.sql
-|   |           |           V5__init_core_service_db.sql
-|   |           |           V6__init_core_service_rest.sql
-|   |           |           V7__init_core_service_file.sql
-|   |           |           V8__init_core_service_mail.sql
-|   |           |           V9__init_core_server.sql
-|   |           |           
-|   |           +---static
-|   |           |   \---css
-|   |           |           bootstrap.min.css
-|   |           |           
-|   |           \---templates
-|   |               |   dashboard.html
-|   |               |   login.html
-|   |               |   main.html
-|   |               |   
-|   |               +---auth
-|   |               |       form.html
-|   |               |       list.html
-|   |               |       
-|   |               +---db
-|   |               |       form.html
-|   |               |       list.html
-|   |               |       
-|   |               +---file
-|   |               |       upload.html
-|   |               |       
-|   |               +---server
-|   |               |       form.html
-|   |               |       list.html
-|   |               |       
-|   |               \---service
-|   |                       form.html
-|   |                       list.html
-|   |                       param-textarea.html
-|   |                       response.html
-|   |                       test.html
+|   |           \---META-INF
+|   |               \---spring
+|   |                       org.springframework.boot.autoconfigure.AutoConfiguration.imports
 |   |                       
 |   \---target
-|       |   bpm-gateway-1.0.0.jar
-|       |   bpm-gateway-1.0.0.jar.original
+|       |   bpm-core-1.0.0.jar
 |       |   
 |       +---classes
+|       |   +---com
+|       |   |   \---bpm
+|       |   |       \---core
+|       |   |           +---auth
+|       |   |           |   +---domain
+|       |   |           |   |       AuthConfig$AuthConfigBuilder.class
+|       |   |           |   |       AuthConfig.class
+|       |   |           |   |       AuthProperties.class
+|       |   |           |   |       AuthProvider.class
+|       |   |           |   |       AuthResult.class
+|       |   |           |   |       AuthType.class
+|       |   |           |   |       
+|       |   |           |   +---provider
+|       |   |           |   |       BasicAuthProvider.class
+|       |   |           |   |       JwtAuthProvider.class
+|       |   |           |   |       
+|       |   |           |   +---repository
+|       |   |           |   |       AuthRepository.class
+|       |   |           |   |       
+|       |   |           |   \---service
+|       |   |           |           AuthManager.class
+|       |   |           |           
+|       |   |           +---cache
+|       |   |           |       AuthServiceCache$1.class
+|       |   |           |       AuthServiceCache.class
+|       |   |           |       DataSourceCache.class
+|       |   |           |       
+|       |   |           +---common
+|       |   |           |   +---config
+|       |   |           |   |       AuthAutoConfiguration.class
+|       |   |           |   |       CacheAutoConfiguration.class
+|       |   |           |   |       CmisAutoConfiguration.class
+|       |   |           |   |       
+|       |   |           |   +---constant
+|       |   |           |   |       DATE_PATTERN.class
+|       |   |           |   |       SERVICE_TYPE.class
+|       |   |           |   |       STATUS.class
+|       |   |           |   |       
+|       |   |           |   +---response
+|       |   |           |   |       Response.class
+|       |   |           |   |       Wrapper.class
+|       |   |           |   |       
+|       |   |           |   \---util
+|       |   |           |           AESCryptoUtil.class
+|       |   |           |           DateUtil.class
+|       |   |           |           JsonUtil$1.class
+|       |   |           |           JsonUtil$2.class
+|       |   |           |           JsonUtil.class
+|       |   |           |           
+|       |   |           +---datasource
+|       |   |           |   +---domain
+|       |   |           |   |       DataSourceConfig$DataSourceConfigBuilder.class
+|       |   |           |   |       DataSourceConfig.class
+|       |   |           |   |       DatasourceStatus$DatasourceStatusBuilder.class
+|       |   |           |   |       DatasourceStatus.class
+|       |   |           |   |       DbOutputMapping.class
+|       |   |           |   |       DbParamConfig.class
+|       |   |           |   |       DbServiceConfig$DbServiceConfigBuilder.class
+|       |   |           |   |       DbServiceConfig.class
+|       |   |           |   |       DbType.class
+|       |   |           |   |       SQLProcedureRequest.class
+|       |   |           |   |       SQLRequest.class
+|       |   |           |   |       SqlType.class
+|       |   |           |   |       
+|       |   |           |   +---infrastructure
+|       |   |           |   |       DataSourceTestUtil.class
+|       |   |           |   |       DbServiceConfigParser$1.class
+|       |   |           |   |       DbServiceConfigParser$2.class
+|       |   |           |   |       DbServiceConfigParser.class
+|       |   |           |   |       
+|       |   |           |   +---repository
+|       |   |           |   |       DataSourceRepository.class
+|       |   |           |   |       DbServiceRepository.class
+|       |   |           |   |       
+|       |   |           |   \---service
+|       |   |           |           DBInvoker.class
+|       |   |           |           
+|       |   |           +---document
+|       |   |           |   +---domain
+|       |   |           |   |       CmisConfig.class
+|       |   |           |   |       CmisProperties.class
+|       |   |           |   |       CreateDocRequest$CreateDocRequestBuilder.class
+|       |   |           |   |       CreateDocRequest.class
+|       |   |           |   |       CreateDocResponse$CreateDocResponseBuilder.class
+|       |   |           |   |       CreateDocResponse.class
+|       |   |           |   |       FileServiceConfig.class
+|       |   |           |   |       UploadForm.class
+|       |   |           |   |       
+|       |   |           |   \---repository
+|       |   |           |           CmisRepository.class
+|       |   |           |           FileServiceRepository.class
+|       |   |           |           
+|       |   |           +---mail
+|       |   |           |   +---domain
+|       |   |           |   |       MailServerStatus$MailServerStatusBuilder.class
+|       |   |           |   |       MailServerStatus.class
+|       |   |           |   |       MailServiceConfig$MailServiceConfigBuilder.class
+|       |   |           |   |       MailServiceConfig.class
+|       |   |           |   |       
+|       |   |           |   +---repository
+|       |   |           |   |       MailServiceRepository.class
+|       |   |           |   |       
+|       |   |           |   \---service
+|       |   |           |           EmailSender$1.class
+|       |   |           |           EmailSender.class
+|       |   |           |           
+|       |   |           +---monitor
+|       |   |           |       DashboardService.class
+|       |   |           |       DashboardSummary$DashboardSummaryBuilder.class
+|       |   |           |       DashboardSummary.class
+|       |   |           |       
+|       |   |           +---rest
+|       |   |           |   +---domain
+|       |   |           |   |       NameValuePair.class
+|       |   |           |   |       RestMethod.class
+|       |   |           |   |       RestServiceConfig$RestServiceConfigBuilder.class
+|       |   |           |   |       RestServiceConfig.class
+|       |   |           |   |       
+|       |   |           |   +---infrastructure
+|       |   |           |   |       RestServiceConfigParser$1.class
+|       |   |           |   |       RestServiceConfigParser.class
+|       |   |           |   |       TemplateUtil.class
+|       |   |           |   |       WebClientAuthUtil$1.class
+|       |   |           |   |       WebClientAuthUtil.class
+|       |   |           |   |       
+|       |   |           |   +---repository
+|       |   |           |   |       RestServiceRepository.class
+|       |   |           |   |       
+|       |   |           |   \---service
+|       |   |           |           RESTInvoker.class
+|       |   |           |           
+|       |   |           +---server
+|       |   |           |   +---domain
+|       |   |           |   |       Server$ServerBuilder.class
+|       |   |           |   |       Server.class
+|       |   |           |   |       
+|       |   |           |   \---repository
+|       |   |           |           ServerRepository.class
+|       |   |           |           
+|       |   |           \---serviceconfig
+|       |   |               +---domain
+|       |   |               |       ServiceConfig$ServiceConfigBuilder.class
+|       |   |               |       ServiceConfig.class
+|       |   |               |       ServiceLog.class
+|       |   |               |       ServiceMetric$ServiceMetricBuilder.class
+|       |   |               |       ServiceMetric.class
+|       |   |               |       ServiceType.class
+|       |   |               |       
+|       |   |               +---repository
+|       |   |               |       ServiceConfigRepository.class
+|       |   |               |       ServiceLogRepository.class
+|       |   |               |       
+|       |   |               \---service
+|       |   |                       HealthCheckService.class
+|       |   |                       ServiceConfigService.class
+|       |   |                       ServiceInvoker.class
+|       |   |                       
 |       |   \---META-INF
-|       |       |   MANIFEST.MF
-|       |       |   
-|       |       \---maven
-|       |           \---com.bpm
-|       |               \---bpm-gateway
-|       |                       pom.properties
-|       |                       pom.xml
-|       |                       
+|       |       \---spring
+|       |               org.springframework.boot.autoconfigure.AutoConfiguration.imports
+|       |               
 |       +---generated-sources
 |       |   \---annotations
 |       +---maven-archiver
 |       |       pom.properties
 |       |       
-|       +---maven-status
-|       |   \---maven-compiler-plugin
-|       |       \---compile
-|       |           \---default-compile
-|       |                   createdFiles.lst
-|       |                   inputFiles.lst
-|       |                   
-|       \---test-classes
-\---core-service
+|       \---maven-status
+|           \---maven-compiler-plugin
+|               \---compile
+|                   \---default-compile
+|                           createdFiles.lst
+|                           inputFiles.lst
+|                           
+\---bpm-gateway
     |   .classpath
-    |   .factorypath
     |   .gitignore
     |   .project
     |   pom.xml
@@ -188,324 +367,243 @@ D:.
     |       +---java
     |       |   \---com
     |       |       \---bpm
-    |       |           \---core
-    |       |               +---auth
-    |       |               |   +---domain
-    |       |               |   |       AuthConfig.java
-    |       |               |   |       AuthProperties.java
-    |       |               |   |       AuthProvider.java
-    |       |               |   |       AuthResult.java
-    |       |               |   |       AuthType.java
-    |       |               |   |       
-    |       |               |   +---provider
-    |       |               |   |       BasicAuthProvider.java
-    |       |               |   |       JwtAuthProvider.java
-    |       |               |   |       
-    |       |               |   +---repository
-    |       |               |   |       AuthRepository.java
-    |       |               |   |       
-    |       |               |   \---service
-    |       |               |           AuthManager.java
-    |       |               |           
-    |       |               +---cache
-    |       |               |       AuthServiceCache.java
-    |       |               |       DataSourceCache.java
+    |       |           \---api
+    |       |               |   ApiGatewayApplication.java
+    |       |               |   AppShutdownManager.java
+    |       |               |   DefaultAdminInitializer.java
+    |       |               |   
+    |       |               +---config
+    |       |               |       OpenApiConfig.java
     |       |               |       
-    |       |               +---common
-    |       |               |   +---config
-    |       |               |   |       AuthAutoConfiguration.java
-    |       |               |   |       CacheAutoConfiguration.java
-    |       |               |   |       CmisAutoConfiguration.java
-    |       |               |   |       
-    |       |               |   +---constant
-    |       |               |   |       DATE_PATTERN.java
-    |       |               |   |       SERVICE_TYPE.java
-    |       |               |   |       STATUS.java
-    |       |               |   |       
-    |       |               |   +---response
-    |       |               |   |       Response.java
-    |       |               |   |       Wrapper.java
-    |       |               |   |       
-    |       |               |   \---util
-    |       |               |           AESCryptoUtil.java
-    |       |               |           DateUtil.java
-    |       |               |           JsonUtil.java
-    |       |               |           
-    |       |               +---datasource
-    |       |               |   +---domain
-    |       |               |   |       DataSourceConfig.java
-    |       |               |   |       DatasourceStatus.java
-    |       |               |   |       DbOutputMapping.java
-    |       |               |   |       DbParamConfig.java
-    |       |               |   |       DbServiceConfig.java
-    |       |               |   |       DbType.java
-    |       |               |   |       SQLProcedureRequest.java
-    |       |               |   |       SQLRequest.java
-    |       |               |   |       SqlType.java
-    |       |               |   |       
-    |       |               |   +---infrastructure
-    |       |               |   |       DataSourceTestUtil.java
-    |       |               |   |       DbServiceConfigParser.java
-    |       |               |   |       
-    |       |               |   +---repository
-    |       |               |   |       DataSourceRepository.java
-    |       |               |   |       DbServiceRepository.java
-    |       |               |   |       
-    |       |               |   \---service
-    |       |               |           DBInvoker.java
-    |       |               |           
-    |       |               +---document
-    |       |               |   +---domain
-    |       |               |   |       CmisConfig.java
-    |       |               |   |       CmisProperties.java
-    |       |               |   |       CreateDocRequest.java
-    |       |               |   |       CreateDocResponse.java
-    |       |               |   |       FileServiceConfig.java
-    |       |               |   |       UploadForm.java
-    |       |               |   |       
-    |       |               |   \---repository
-    |       |               |           CmisRepository.java
-    |       |               |           FileServiceRepository.java
-    |       |               |           
-    |       |               +---mail
-    |       |               |   +---domain
-    |       |               |   |       MailServerStatus.java
-    |       |               |   |       MailServiceConfig.java
-    |       |               |   |       
-    |       |               |   +---repository
-    |       |               |   |       MailServiceRepository.java
-    |       |               |   |       
-    |       |               |   \---service
-    |       |               |           EmailSender.java
-    |       |               |           
-    |       |               +---monitor
-    |       |               |       DashboardService.java
-    |       |               |       DashboardSummary.java
+    |       |               +---constant
+    |       |               |       ROUTES.java
     |       |               |       
-    |       |               +---rest
-    |       |               |   +---domain
-    |       |               |   |       NameValuePair.java
-    |       |               |   |       RestMethod.java
-    |       |               |   |       RestServiceConfig.java
+    |       |               +---modules
+    |       |               |   +---auth
+    |       |               |   |   +---controller
+    |       |               |   |   |       AuthController.java
+    |       |               |   |   |       DashboardController.java
+    |       |               |   |   |       LoginController.java
+    |       |               |   |   |       
+    |       |               |   |   \---dto
+    |       |               |   |           LoginRequest.java
+    |       |               |   |           LoginResponse.java
+    |       |               |   |           UserDto.java
+    |       |               |   |           
+    |       |               |   +---dashboard
+    |       |               |   |       DashboardController.java
     |       |               |   |       
-    |       |               |   +---infrastructure
-    |       |               |   |       RestServiceConfigParser.java
-    |       |               |   |       TemplateUtil.java
-    |       |               |   |       WebClientAuthUtil.java
-    |       |               |   |       
-    |       |               |   +---repository
-    |       |               |   |       RestServiceRepository.java
-    |       |               |   |       
-    |       |               |   \---service
-    |       |               |           RESTInvoker.java
-    |       |               |           
-    |       |               +---server
-    |       |               |   +---domain
-    |       |               |   |       Server.java
-    |       |               |   |       
-    |       |               |   \---repository
-    |       |               |           ServerRepository.java
-    |       |               |           
-    |       |               \---serviceconfig
-    |       |                   +---domain
-    |       |                   |       ServiceConfig.java
-    |       |                   |       ServiceLog.java
-    |       |                   |       ServiceMetric.java
-    |       |                   |       ServiceType.java
-    |       |                   |       
-    |       |                   +---repository
-    |       |                   |       ServiceConfigRepository.java
-    |       |                   |       ServiceLogRepository.java
-    |       |                   |       
-    |       |                   \---service
-    |       |                           HealthCheckService.java
-    |       |                           ServiceInvoker.java
-    |       |                           
+    |       |               |   +---datasource
+    |       |               |   |   +---controller
+    |       |               |   |   |       DataSourceConfigController.java
+    |       |               |   |   |       DataSourceController.java
+    |       |               |   |   |       
+    |       |               |   |   \---dto
+    |       |               |   |           SQLProcRequestPayload.java
+    |       |               |   |           SQLRequestPayload.java
+    |       |               |   |           
+    |       |               |   +---document
+    |       |               |   |   +---controller
+    |       |               |   |   |       DocumentController.java
+    |       |               |   |   |       FileController.java
+    |       |               |   |   |       MultipartDocumentController.java
+    |       |               |   |   |       
+    |       |               |   |   \---dto
+    |       |               |   |           ExportRequest.java
+    |       |               |   |           ExportResponse.java
+    |       |               |   |           
+    |       |               |   +---mail
+    |       |               |   |   \---controller
+    |       |               |   |           MailController.java
+    |       |               |   |           
+    |       |               |   +---server
+    |       |               |   |   \---controller
+    |       |               |   |           ServerController.java
+    |       |               |   |           
+    |       |               |   \---serviceconfig
+    |       |               |       \---controller
+    |       |               |               ServiceConfigController.java
+    |       |               |               ServiceTestController.java
+    |       |               |               
+    |       |               \---security
+    |       |                       AuthFilter.java
+    |       |                       CustomUserDetailsService.java
+    |       |                       SecurityConfig.java
+    |       |                       
     |       \---resources
-    |           \---META-INF
-    |               \---spring
-    |                       org.springframework.boot.autoconfigure.AutoConfiguration.imports
+    |           |   application-docker.yml
+    |           |   application.yml
+    |           |   
+    |           +---db
+    |           |   \---migration
+    |           |           V1__init_core_auth.sql
+    |           |           V2__init_core_datasource.sql
+    |           |           V3__init_core_service_config.sql
+    |           |           V4__init_core_service_log.sql
+    |           |           V5__init_core_service_db.sql
+    |           |           V6__init_core_service_rest.sql
+    |           |           V7__init_core_service_file.sql
+    |           |           V8__init_core_service_mail.sql
+    |           |           V9__init_core_server.sql
+    |           |           
+    |           +---static
+    |           |   \---css
+    |           |           bootstrap.min.css
+    |           |           
+    |           \---templates
+    |               |   dashboard.html
+    |               |   login.html
+    |               |   main.html
+    |               |   
+    |               +---auth
+    |               |       form.html
+    |               |       list.html
+    |               |       
+    |               +---db
+    |               |       form.html
+    |               |       list.html
+    |               |       
+    |               +---file
+    |               |       upload.html
+    |               |       
+    |               +---server
+    |               |       form.html
+    |               |       list.html
+    |               |       
+    |               \---service
+    |                       form.html
+    |                       list.html
+    |                       param-textarea.html
+    |                       response.html
+    |                       test.html
     |                       
     \---target
-        |   core-service-1.0.0.jar
+        |   bpm-gateway-1.0.0.jar
+        |   bpm-gateway-1.0.0.jar.original
         |   
         +---classes
+        |   |   application-docker.yml
+        |   |   application.yml
+        |   |   
         |   +---com
         |   |   \---bpm
-        |   |       \---core
-        |   |           +---auth
-        |   |           |   +---domain
-        |   |           |   |       AuthConfig$AuthConfigBuilder.class
-        |   |           |   |       AuthConfig.class
-        |   |           |   |       AuthProperties.class
-        |   |           |   |       AuthProvider.class
-        |   |           |   |       AuthResult.class
-        |   |           |   |       AuthType.class
-        |   |           |   |       
-        |   |           |   +---provider
-        |   |           |   |       BasicAuthProvider.class
-        |   |           |   |       JwtAuthProvider.class
-        |   |           |   |       
-        |   |           |   +---repository
-        |   |           |   |       AuthRepository.class
-        |   |           |   |       
-        |   |           |   \---service
-        |   |           |           AuthManager.class
-        |   |           |           
-        |   |           +---cache
-        |   |           |       AuthServiceCache.class
-        |   |           |       DataSourceCache.class
+        |   |       \---api
+        |   |           |   ApiGatewayApplication.class
+        |   |           |   AppShutdownManager.class
+        |   |           |   DefaultAdminInitializer.class
+        |   |           |   
+        |   |           +---config
+        |   |           |       OpenApiConfig.class
         |   |           |       
-        |   |           +---common
-        |   |           |   +---config
-        |   |           |   |       AuthAutoConfiguration.class
-        |   |           |   |       CacheAutoConfiguration.class
-        |   |           |   |       CmisAutoConfiguration.class
-        |   |           |   |       
-        |   |           |   +---constant
-        |   |           |   |       DATE_PATTERN.class
-        |   |           |   |       SERVICE_TYPE.class
-        |   |           |   |       STATUS.class
-        |   |           |   |       
-        |   |           |   +---response
-        |   |           |   |       Response.class
-        |   |           |   |       Wrapper.class
-        |   |           |   |       
-        |   |           |   \---util
-        |   |           |           AESCryptoUtil.class
-        |   |           |           DateUtil.class
-        |   |           |           JsonUtil$1.class
-        |   |           |           JsonUtil$2.class
-        |   |           |           JsonUtil.class
-        |   |           |           
-        |   |           +---datasource
-        |   |           |   +---domain
-        |   |           |   |       DataSourceConfig$DataSourceConfigBuilder.class
-        |   |           |   |       DataSourceConfig.class
-        |   |           |   |       DatasourceStatus$DatasourceStatusBuilder.class
-        |   |           |   |       DatasourceStatus.class
-        |   |           |   |       DbOutputMapping.class
-        |   |           |   |       DbParamConfig.class
-        |   |           |   |       DbServiceConfig$DbServiceConfigBuilder.class
-        |   |           |   |       DbServiceConfig.class
-        |   |           |   |       DbType.class
-        |   |           |   |       SQLProcedureRequest.class
-        |   |           |   |       SQLRequest.class
-        |   |           |   |       SqlType.class
-        |   |           |   |       
-        |   |           |   +---infrastructure
-        |   |           |   |       DataSourceTestUtil.class
-        |   |           |   |       DbServiceConfigParser$1.class
-        |   |           |   |       DbServiceConfigParser$2.class
-        |   |           |   |       DbServiceConfigParser.class
-        |   |           |   |       
-        |   |           |   +---repository
-        |   |           |   |       DataSourceRepository.class
-        |   |           |   |       DbServiceRepository.class
-        |   |           |   |       
-        |   |           |   \---service
-        |   |           |           DBInvoker.class
-        |   |           |           
-        |   |           +---document
-        |   |           |   +---domain
-        |   |           |   |       CmisConfig.class
-        |   |           |   |       CmisProperties.class
-        |   |           |   |       CreateDocRequest$CreateDocRequestBuilder.class
-        |   |           |   |       CreateDocRequest.class
-        |   |           |   |       CreateDocResponse$CreateDocResponseBuilder.class
-        |   |           |   |       CreateDocResponse.class
-        |   |           |   |       FileServiceConfig.class
-        |   |           |   |       UploadForm.class
-        |   |           |   |       
-        |   |           |   \---repository
-        |   |           |           CmisRepository.class
-        |   |           |           FileServiceRepository.class
-        |   |           |           
-        |   |           +---mail
-        |   |           |   +---domain
-        |   |           |   |       MailServerStatus$MailServerStatusBuilder.class
-        |   |           |   |       MailServerStatus.class
-        |   |           |   |       MailServiceConfig$MailServiceConfigBuilder.class
-        |   |           |   |       MailServiceConfig.class
-        |   |           |   |       
-        |   |           |   +---repository
-        |   |           |   |       MailServiceRepository.class
-        |   |           |   |       
-        |   |           |   \---service
-        |   |           |           EmailSender$1.class
-        |   |           |           EmailSender.class
-        |   |           |           
-        |   |           +---monitor
-        |   |           |       DashboardService.class
-        |   |           |       DashboardSummary$DashboardSummaryBuilder.class
-        |   |           |       DashboardSummary.class
+        |   |           +---constant
+        |   |           |       ROUTES.class
         |   |           |       
-        |   |           +---rest
-        |   |           |   +---domain
-        |   |           |   |       NameValuePair.class
-        |   |           |   |       RestMethod.class
-        |   |           |   |       RestServiceConfig$RestServiceConfigBuilder.class
-        |   |           |   |       RestServiceConfig.class
+        |   |           +---modules
+        |   |           |   +---auth
+        |   |           |   |   +---controller
+        |   |           |   |   |       AuthController.class
+        |   |           |   |   |       DashboardController.class
+        |   |           |   |   |       LoginController.class
+        |   |           |   |   |       
+        |   |           |   |   \---dto
+        |   |           |   |           LoginRequest.class
+        |   |           |   |           LoginResponse.class
+        |   |           |   |           UserDto.class
+        |   |           |   |           
+        |   |           |   +---dashboard
+        |   |           |   |       DashboardController.class
         |   |           |   |       
-        |   |           |   +---infrastructure
-        |   |           |   |       RestServiceConfigParser$1.class
-        |   |           |   |       RestServiceConfigParser.class
-        |   |           |   |       TemplateUtil.class
-        |   |           |   |       WebClientAuthUtil.class
-        |   |           |   |       
-        |   |           |   +---repository
-        |   |           |   |       RestServiceRepository.class
-        |   |           |   |       
-        |   |           |   \---service
-        |   |           |           RESTInvoker.class
-        |   |           |           
-        |   |           +---server
-        |   |           |   +---domain
-        |   |           |   |       Server$ServerBuilder.class
-        |   |           |   |       Server.class
-        |   |           |   |       
-        |   |           |   \---repository
-        |   |           |           ServerRepository.class
-        |   |           |           
-        |   |           \---serviceconfig
-        |   |               +---domain
-        |   |               |       ServiceConfig$ServiceConfigBuilder.class
-        |   |               |       ServiceConfig.class
-        |   |               |       ServiceLog.class
-        |   |               |       ServiceMetric$ServiceMetricBuilder.class
-        |   |               |       ServiceMetric.class
-        |   |               |       ServiceType.class
-        |   |               |       
-        |   |               +---repository
-        |   |               |       ServiceConfigRepository.class
-        |   |               |       ServiceLogRepository.class
-        |   |               |       
-        |   |               \---service
-        |   |                       HealthCheckService.class
-        |   |                       ServiceInvoker.class
-        |   |                       
-        |   \---META-INF
-        |       |   MANIFEST.MF
+        |   |           |   +---datasource
+        |   |           |   |   +---controller
+        |   |           |   |   |       DataSourceConfigController.class
+        |   |           |   |   |       DataSourceController.class
+        |   |           |   |   |       
+        |   |           |   |   \---dto
+        |   |           |   |           SQLProcRequestPayload.class
+        |   |           |   |           SQLRequestPayload.class
+        |   |           |   |           
+        |   |           |   +---document
+        |   |           |   |   +---controller
+        |   |           |   |   |       DocumentController.class
+        |   |           |   |   |       FileController.class
+        |   |           |   |   |       MultipartDocumentController$1.class
+        |   |           |   |   |       MultipartDocumentController.class
+        |   |           |   |   |       
+        |   |           |   |   \---dto
+        |   |           |   |           ExportRequest.class
+        |   |           |   |           ExportResponse.class
+        |   |           |   |           
+        |   |           |   +---mail
+        |   |           |   |   \---controller
+        |   |           |   |           MailController.class
+        |   |           |   |           
+        |   |           |   +---server
+        |   |           |   |   \---controller
+        |   |           |   |           ServerController.class
+        |   |           |   |           
+        |   |           |   \---serviceconfig
+        |   |           |       \---controller
+        |   |           |               ServiceConfigController.class
+        |   |           |               ServiceTestController$1.class
+        |   |           |               ServiceTestController.class
+        |   |           |               
+        |   |           \---security
+        |   |                   AuthFilter.class
+        |   |                   CustomUserDetailsService.class
+        |   |                   SecurityConfig.class
+        |   |                   
+        |   +---db
+        |   |   \---migration
+        |   |           V1__init_core_auth.sql
+        |   |           V2__init_core_datasource.sql
+        |   |           V3__init_core_service_config.sql
+        |   |           V4__init_core_service_log.sql
+        |   |           V5__init_core_service_db.sql
+        |   |           V6__init_core_service_rest.sql
+        |   |           V7__init_core_service_file.sql
+        |   |           V8__init_core_service_mail.sql
+        |   |           V9__init_core_server.sql
+        |   |           
+        |   +---static
+        |   |   \---css
+        |   |           bootstrap.min.css
+        |   |           
+        |   \---templates
+        |       |   dashboard.html
+        |       |   login.html
+        |       |   main.html
         |       |   
-        |       +---maven
-        |       |   \---com.bpm
-        |       |       \---bpm-core
-        |       |               pom.properties
-        |       |               pom.xml
-        |       |               
-        |       \---spring
-        |               org.springframework.boot.autoconfigure.AutoConfiguration.imports
+        |       +---auth
+        |       |       form.html
+        |       |       list.html
+        |       |       
+        |       +---db
+        |       |       form.html
+        |       |       list.html
+        |       |       
+        |       +---file
+        |       |       upload.html
+        |       |       
+        |       +---server
+        |       |       form.html
+        |       |       list.html
+        |       |       
+        |       \---service
+        |               form.html
+        |               list.html
+        |               param-textarea.html
+        |               response.html
+        |               test.html
         |               
         +---generated-sources
         |   \---annotations
         +---maven-archiver
         |       pom.properties
         |       
-        +---maven-status
-        |   \---maven-compiler-plugin
-        |       \---compile
-        |           \---default-compile
-        |                   createdFiles.lst
-        |                   inputFiles.lst
-        |                   
-        \---test-classes
+        \---maven-status
+            \---maven-compiler-plugin
+                \---compile
+                    \---default-compile
+                            createdFiles.lst
+                            inputFiles.lst
+                            

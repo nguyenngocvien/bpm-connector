@@ -3,7 +3,6 @@ package com.bpm.core.serviceconfig.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.domain.ServiceType;
@@ -12,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class ServiceConfigRepository {
 
     private final JdbcTemplate jdbcTemplate;

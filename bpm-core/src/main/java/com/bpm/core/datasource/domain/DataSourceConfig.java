@@ -19,7 +19,7 @@ import lombok.Builder.Default;
 @AllArgsConstructor
 public class DataSourceConfig {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
 

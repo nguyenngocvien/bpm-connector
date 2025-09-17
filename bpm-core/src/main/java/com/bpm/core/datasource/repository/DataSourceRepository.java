@@ -3,14 +3,12 @@ package com.bpm.core.datasource.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import com.bpm.core.datasource.domain.DataSourceConfig;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class DataSourceRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -88,7 +86,7 @@ public class DataSourceRepository {
 
     private final RowMapper<DataSourceConfig> dbConfigRowMapper = (rs, rowNum) -> {
         return DataSourceConfig.builder()
-            .id(rs.getInt("id"))
+            .id(rs.getLong("id"))
             .name(rs.getString("name"))
             .description(rs.getString("description"))
             .jdbcUrl(rs.getString("url"))

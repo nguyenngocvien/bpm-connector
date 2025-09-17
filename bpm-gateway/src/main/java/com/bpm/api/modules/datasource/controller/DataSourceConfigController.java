@@ -1,9 +1,9 @@
 package com.bpm.api.modules.datasource.controller;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.model.db.DataSourceConfig;
-import com.bpm.core.repository.Store;
-import com.bpm.core.util.DataSourceTestUtil;
+import com.bpm.core.datasource.domain.DataSourceConfig;
+import com.bpm.core.datasource.infrastructure.DataSourceTestUtil;
+import com.bpm.core.datasource.service.DataSourceService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,15 +18,15 @@ import java.util.Map;
 @RequestMapping(ROUTES.UI_DATASOURCE)
 public class DataSourceConfigController {
 
-    private final Store store;
+    private final DataSourceService dataSourceService;
 
-    public DataSourceConfigController(Store store) {
-        this.store = store;
+    public DataSourceConfigController(DataSourceService dataSourceService) {
+        this.dataSourceService = dataSourceService;
     }
 
     @GetMapping
     public String list(Model model) {
-        List<DataSourceConfig> configs = store.datasources().findAll();
+        List<DataSourceConfig> configs = dataSourceService.getAllDataSources();
         model.addAttribute("dbConfigs", configs);
         model.addAttribute("content", "db/list");
         model.addAttribute("activeMenu", "datasource");
@@ -43,7 +43,7 @@ public class DataSourceConfigController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        DataSourceConfig config = store.datasources().findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
+        DataSourceConfig config = dataSourceService.getDataSourceById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
         model.addAttribute("dbConfig", config);
         model.addAttribute("content", "db/form");
         model.addAttribute("activeMenu", "datasource");
@@ -52,13 +52,13 @@ public class DataSourceConfigController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute DataSourceConfig config) {
-    	store.datasources().save(config);
+    	dataSourceService.saveDataSource(config);
         return "redirect:" + ROUTES.UI_DATASOURCE;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-    	store.datasources().deleteById(id);
+    	dataSourceService.deleteDataSource(id);
         return "redirect:" + ROUTES.UI_DATASOURCE;
     }
     

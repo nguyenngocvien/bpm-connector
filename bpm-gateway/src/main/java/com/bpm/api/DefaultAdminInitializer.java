@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.bpm.core.model.auth.AuthConfig;
-import com.bpm.core.model.auth.AuthType;
-import com.bpm.core.repository.AuthRepository;
+import com.bpm.core.auth.domain.AuthConfig;
+import com.bpm.core.auth.domain.AuthType;
+import com.bpm.core.auth.repository.AuthRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class FileServiceRepository {
 
     private final JdbcTemplate jdbcTemplate;

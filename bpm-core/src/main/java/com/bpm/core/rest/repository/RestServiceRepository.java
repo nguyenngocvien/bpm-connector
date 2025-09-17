@@ -6,12 +6,10 @@ import com.bpm.core.rest.infrastructure.RestServiceConfigParser;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.List;
 
-@Repository
 public class RestServiceRepository {
 
     private final JdbcTemplate jdbcTemplate;
