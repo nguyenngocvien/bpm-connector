@@ -34,29 +34,29 @@ public class RestRepository {
     }
 
     public void save(RestServiceConfig config, Long serviceId) {
-    	
-    	if (config == null) return;
-    	config.setId(serviceId);
-    	
+        if (config == null) return;
+        config.setId(serviceId);
+
         // Serialize JSON fields before saving
         config.setHeaders(RestServiceConfigParser.toJson(config.getHeaderList()));
         config.setQueryParams(RestServiceConfigParser.toJson(config.getQueryParamList()));
         config.setPathParams(RestServiceConfigParser.toJson(config.getPathParamList()));
 
         String sql = ""
-                + "INSERT INTO core_service_rest (id, target_url, http_method, content_type, timeout_ms, retry_count, retry_backoff_ms, "
-                + "payload_template, response_mapping, auth_id, headers_json, query_params_json, path_params_json, created_at, updated_at) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
+                + "INSERT INTO core_service_rest (id, server_id, path, http_method, content_type, timeout_ms, retry_count, retry_backoff_ms, "
+                + "payload_template, response_mapping, auth_id, headers, query_params, path_params, created_at, updated_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
                 + "ON CONFLICT (id) DO UPDATE SET "
-                + "target_url = EXCLUDED.target_url, http_method = EXCLUDED.http_method, content_type = EXCLUDED.content_type, "
+                + "server_id = EXCLUDED.server_id, path = EXCLUDED.path, http_method = EXCLUDED.http_method, content_type = EXCLUDED.content_type, "
                 + "timeout_ms = EXCLUDED.timeout_ms, retry_count = EXCLUDED.retry_count, retry_backoff_ms = EXCLUDED.retry_backoff_ms, "
                 + "payload_template = EXCLUDED.payload_template, response_mapping = EXCLUDED.response_mapping, auth_id = EXCLUDED.auth_id, "
-                + "headers_json = EXCLUDED.headers_json, query_params_json = EXCLUDED.query_params_json, path_params_json = EXCLUDED.path_params_json, "
+                + "headers = EXCLUDED.headers, query_params = EXCLUDED.query_params, path_params = EXCLUDED.path_params, "
                 + "updated_at = CURRENT_TIMESTAMP";
 
         jdbcTemplate.update(sql,
                 config.getId(),
-                config.getTargetUrl(),
+                config.getServerId(),
+                config.getPath(),
                 config.getHttpMethod(),
                 config.getContentType(),
                 config.getTimeoutMs(),
@@ -79,7 +79,9 @@ public class RestRepository {
     private final RowMapper<RestServiceConfig> rowMapperWithJsonParsing = (rs, rowNum) -> {
         RestServiceConfig config = new RestServiceConfig();
         config.setId(rs.getLong("id"));
-        config.setTargetUrl(rs.getString("target_url"));
+        Object serverIdObj = rs.getObject("server_id");
+        config.setServerId(serverIdObj != null ? rs.getLong("server_id") : null);
+        config.setPath(rs.getString("path"));
         config.setHttpMethod(rs.getString("http_method"));
         config.setContentType(rs.getString("content_type"));
         config.setTimeoutMs(rs.getInt("timeout_ms"));
@@ -93,9 +95,9 @@ public class RestRepository {
         config.setUpdatedAt(rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
 
         // Parse JSON to List<NameValuePair>
-        config.setHeaders(rs.getString("headers_json"));
-        config.setQueryParams(rs.getString("query_params_json"));
-        config.setPathParams(rs.getString("path_params_json"));
+        config.setHeaders(rs.getString("headers"));
+        config.setQueryParams(rs.getString("query_params"));
+        config.setPathParams(rs.getString("path_params"));
 
         config.setHeaderList(RestServiceConfigParser.parseHeaders(config.getHeaders()));
         config.setQueryParamList(RestServiceConfigParser.parseQueryParams(config.getQueryParams()));

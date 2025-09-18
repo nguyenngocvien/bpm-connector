@@ -43,8 +43,7 @@ public class ServerController {
     // 3. Edit server form
     @GetMapping("/edit/{id}")
     public String editServerForm(@PathVariable Long id, Model model) {
-        Server server = serverService.getServerById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid server ID: " + id));
+        Server server = serverService.getServerById(id);
         model.addAttribute("server", server);
         
         model.addAttribute("content", "server/form");

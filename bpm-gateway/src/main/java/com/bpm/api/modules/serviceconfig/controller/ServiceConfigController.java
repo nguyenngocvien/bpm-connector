@@ -7,6 +7,8 @@ import com.bpm.core.db.service.DataSourceService;
 import com.bpm.core.document.domain.FileServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
+import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.service.ServerService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.service.ServiceConfigService;
 
@@ -22,10 +24,12 @@ public class ServiceConfigController {
 
 	private final ServiceConfigService serviceConfigService;
 	private final DataSourceService dataSourceService;
+	private final ServerService serverService;
 
-    public ServiceConfigController(ServiceConfigService serviceConfigService, DataSourceService dataSourceService) {
+    public ServiceConfigController(ServiceConfigService serviceConfigService, DataSourceService dataSourceService, ServerService serverService) {
     	this.serviceConfigService = serviceConfigService;
     	this.dataSourceService = dataSourceService;
+    	this.serverService = serverService;
     }
 
     @GetMapping
@@ -49,9 +53,11 @@ public class ServiceConfigController {
     	config.setFileServiceConfig(new FileServiceConfig());
     	
     	List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
+    	List<Server> servers = serverService.getAllServers();
     	
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);
+        model.addAttribute("servers", servers);
         model.addAttribute("content", "service/form");
         model.addAttribute("activeMenu", "service");
         return "main";
@@ -61,9 +67,11 @@ public class ServiceConfigController {
     public String edit(@PathVariable("id") Long id, Model model) {
     	ServiceConfig serviceConfig = serviceConfigService.findById(id);
         List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
+        List<Server> servers = serverService.getAllServers();
 
         model.addAttribute("serviceConfig", serviceConfig);
         model.addAttribute("datasourceList", datasourceList);
+        model.addAttribute("servers", servers);
         model.addAttribute("content", "service/form");
         model.addAttribute("activeMenu", "service");
 

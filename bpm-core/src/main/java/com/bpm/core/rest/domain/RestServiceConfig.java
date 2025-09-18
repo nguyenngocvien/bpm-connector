@@ -15,7 +15,8 @@ import java.util.List;
 public class RestServiceConfig {
 
     private Long id;
-    private String targetUrl;
+    private Long serverId;
+    private String path;
     
     @Builder.Default
     private String httpMethod = "GET";

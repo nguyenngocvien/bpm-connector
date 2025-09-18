@@ -80,6 +80,7 @@ public class CoreServiceAutoConfiguration {
     		PlatformTransactionManager txManager,
     		DbService dbService,
     		DataSourceService dataSourceService,
+    		ServerService serverService,
     		RestService restService,
     		AuthServiceCache authServiceCache,
     		ServiceLogService serviceLogService,
@@ -88,7 +89,7 @@ public class CoreServiceAutoConfiguration {
     	
         return new ServiceDispatcher(
         		new DBInvoker(dbService, dataSourceService, serviceLogService, txManager),
-        		new RESTInvoker(restService, serviceLogService, authServiceCache),
+        		new RESTInvoker(serverService, restService, serviceLogService, authServiceCache),
         		service);
     }
 

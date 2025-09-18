@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS core_service_rest (
     id BIGINT PRIMARY KEY REFERENCES core_service_config(id) ON DELETE CASCADE,
 
-    target_url TEXT NOT NULL,
+	server_id INT REFERENCES core_servers(id) ON DELETE SET NULL,
+	
+    path TEXT NOT NULL,
     http_method VARCHAR(10) NOT NULL DEFAULT 'GET',
     content_type VARCHAR(50) DEFAULT 'application/json',
 

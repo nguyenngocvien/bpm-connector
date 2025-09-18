@@ -5,7 +5,6 @@ import com.bpm.core.server.repository.ServerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ServerService {
@@ -20,8 +19,10 @@ public class ServerService {
         return serverRepository.findAll();
     }
 
-    public Optional<Server> getServerById(Long id) {
-        return serverRepository.findById(id);
+    public Server getServerById(Long id) {
+        Server server = serverRepository.findById(id)
+        		.orElseThrow(() -> new IllegalArgumentException("Invalid ID")); 
+    	return server;
     }
 
     public void saveServer(Server server) {

@@ -8,6 +8,8 @@ import com.bpm.core.rest.domain.NameValuePair;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.infrastructure.WebClientAuthUtil;
 import com.bpm.core.rest.service.RestService;
+import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.service.ServerService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.service.ServiceInvoker;
 
@@ -26,13 +28,15 @@ import java.util.stream.Collectors;
 
 public class RESTInvoker implements ServiceInvoker {
 
+	private final ServerService serverService;
     private final RestService restService;
     private final ServiceLogService logService;
     private final AuthServiceCache authCache;
     private final ObjectMapper objectMapper;
 
-    public RESTInvoker(RestService restService, ServiceLogService logService, AuthServiceCache authCache) {
-        this.restService = restService;
+    public RESTInvoker(ServerService serverService, RestService restService, ServiceLogService logService, AuthServiceCache authCache) {
+        this.serverService = serverService;
+    	this.restService = restService;
         this.logService = logService;
         this.authCache = authCache;
         this.objectMapper = new ObjectMapper();
@@ -46,8 +50,9 @@ public class RESTInvoker implements ServiceInvoker {
         }
 
         RestServiceConfig config = optionalConfig.get();
+        Server server = serverService.getServerById(config.getServerId());
 
-        String resolvedUrl = buildResolvedUrl(config);
+        String resolvedUrl = buildResolvedUrl(config, server);
         WebClient.Builder builder = WebClient.builder().baseUrl(resolvedUrl);
 
         // Apply auth if needed
@@ -113,15 +118,21 @@ public class RESTInvoker implements ServiceInvoker {
     }
 
     // Resolve URL with path params
-    private String buildResolvedUrl(RestServiceConfig config) {
+    private String buildResolvedUrl(RestServiceConfig config, Server server) {
+        String baseUrl = (server.isHttps() ? "https://" : "http://")
+                + server.getIp() + ":" + server.getPort();
+
+        String fullPath = config.getPath();
+
         if (config.getPathParamList() != null && !config.getPathParamList().isEmpty()) {
             Map<String, String> pathVars = config.getPathParamList().stream()
                     .collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
-            return UriComponentsBuilder.fromUriString(config.getTargetUrl())
+            return UriComponentsBuilder.fromUriString(baseUrl + fullPath)
                     .buildAndExpand(pathVars)
                     .toUriString();
         }
-        return config.getTargetUrl();
+
+        return baseUrl + fullPath;
     }
 
     // Template handle payload
