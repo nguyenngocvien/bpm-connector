@@ -2,7 +2,7 @@ package com.bpm.core.serviceconfig.domain;
 
 import java.time.LocalDateTime;
 
-import com.bpm.core.datasource.domain.DbServiceConfig;
+import com.bpm.core.db.domain.DbServiceConfig;
 import com.bpm.core.document.domain.FileServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;

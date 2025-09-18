@@ -2,7 +2,7 @@ package com.bpm.api;
 
 import org.springframework.stereotype.Component;
 
-import com.bpm.core.cache.DataSourceCache;
+import com.bpm.core.db.cache.DataSourceCache;
 
 import jakarta.annotation.PreDestroy;
 

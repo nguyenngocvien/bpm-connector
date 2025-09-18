@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bpm.core.cache.DataSourceCache;
+import com.bpm.core.db.cache.DataSourceCache;
 
 @RestController
 @RequestMapping("/admin/datasource")

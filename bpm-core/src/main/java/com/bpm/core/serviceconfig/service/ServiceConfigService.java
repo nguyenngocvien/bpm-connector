@@ -1,15 +1,12 @@
 package com.bpm.core.serviceconfig.service;
 
-import com.bpm.core.datasource.domain.DataSourceConfig;
-import com.bpm.core.datasource.domain.DbServiceConfig;
-import com.bpm.core.datasource.repository.DataSourceRepository;
-import com.bpm.core.datasource.repository.DbServiceRepository;
+import com.bpm.core.db.service.DbService;
 import com.bpm.core.document.domain.FileServiceConfig;
-import com.bpm.core.document.repository.FileServiceRepository;
+import com.bpm.core.document.service.FileService;
 import com.bpm.core.mail.domain.MailServiceConfig;
-import com.bpm.core.mail.repository.MailServiceRepository;
+import com.bpm.core.mail.service.MailService;
 import com.bpm.core.rest.domain.RestServiceConfig;
-import com.bpm.core.rest.repository.RestServiceRepository;
+import com.bpm.core.rest.service.RestService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.repository.ServiceConfigRepository;
 
@@ -17,106 +14,100 @@ import java.util.List;
 
 public class ServiceConfigService {
 
-    private final ServiceConfigRepository serviceConfigRepository;
-    private final DataSourceRepository dataSourceRepository;
-    private final DbServiceRepository dbServiceRepository;
-    private final RestServiceRepository restServiceRepository;
-    private final MailServiceRepository mailServiceRepository;
-    private final FileServiceRepository fileServiceRepository;
+	private final ServiceConfigRepository serviceConfig;
+    private final DbService db;
+//    private final ServerService server;
+    private final RestService rest;
+    private final MailService mail;
+    private final FileService file;
 
-    public ServiceConfigService(ServiceConfigRepository serviceConfigRepository,
-    							DataSourceRepository dataSourceRepository,
-    							DbServiceRepository dbServiceRepository,
-    							RestServiceRepository restServiceRepository,
-    							MailServiceRepository mailServiceRepository,
-    							FileServiceRepository fileServiceRepository) {
-    	
-        this.serviceConfigRepository = serviceConfigRepository;
-        this.dataSourceRepository = dataSourceRepository;
-        this.dbServiceRepository = dbServiceRepository;
-        this.restServiceRepository = restServiceRepository;
-        this.mailServiceRepository = mailServiceRepository;
-        this.fileServiceRepository = fileServiceRepository;
+    public ServiceConfigService(ServiceConfigRepository serviceConfig,
+                                DbService db,
+//                                ServerService server,
+                                RestService rest,
+                                MailService mail,
+                                FileService file) {
+        this.serviceConfig = serviceConfig;
+        this.db = db;
+//        this.server = server;
+        this.rest = rest;
+        this.mail = mail;
+        this.file = file;
     }
 
     public List<ServiceConfig> findAll(String keyword) {
         if (keyword != null && !keyword.trim().isEmpty()) {
-            return serviceConfigRepository.searchByKeyword(keyword);
+            return serviceConfig.searchByKeyword(keyword);
         }
-        return serviceConfigRepository.findAll();
+        return serviceConfig.findAll();
     }
 
     public ServiceConfig findById(Long id) {
-        ServiceConfig config = serviceConfigRepository.findById(id)
+        ServiceConfig config = serviceConfig.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Service ID: " + id));
 
-        config.setDbServiceConfig(
-        		dbServiceRepository.findById(id).orElse(new DbServiceConfig())
-        );
+        config.setDbServiceConfig(db.getConfigById(id));
+        
         config.setRestServiceConfig(
-                restServiceRepository.findById(id).orElse(new RestServiceConfig())
+                rest.getConfigById(id).orElse(new RestServiceConfig())
         );
         config.setMailServiceConfig(
-                mailServiceRepository.findById(id).orElse(new MailServiceConfig())
+                mail.getMailConfigById(id).orElse(new MailServiceConfig())
         );
         config.setFileServiceConfig(
-        		fileServiceRepository.findById(id).orElse(new FileServiceConfig())
+        		file.getConfigById(id).orElse(new FileServiceConfig())
         );
         return config;
     }
     
     public ServiceConfig findByCode(String serviceCode) {
-        ServiceConfig config = serviceConfigRepository.findByCode(serviceCode)
+        ServiceConfig config = serviceConfig.findByCode(serviceCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Service Code: " + serviceCode));
 
-        config.setDbServiceConfig(
-        		dbServiceRepository.findById(config.getId()).orElse(new DbServiceConfig())
-        );
+        config.setDbServiceConfig(db.getConfigById(config.getId()));
+        
         config.setRestServiceConfig(
-                restServiceRepository.findById(config.getId()).orElse(new RestServiceConfig())
+        		rest.getConfigById(config.getId()).orElse(new RestServiceConfig())
         );
         config.setMailServiceConfig(
-                mailServiceRepository.findById(config.getId()).orElse(new MailServiceConfig())
+        		mail.getMailConfigById(config.getId()).orElse(new MailServiceConfig())
         );
         config.setFileServiceConfig(
-        		fileServiceRepository.findById(config.getId()).orElse(new FileServiceConfig())
+        		file.getConfigById(config.getId()).orElse(new FileServiceConfig())
         );
         return config;
     }
 
-    public List<DataSourceConfig> getAllDataSources() {
-        return dataSourceRepository.findAll();
-    }
-
     public void save(ServiceConfig config) {
-        serviceConfigRepository.save(config);
+    	serviceConfig.save(config);
 
         if ("DB".equals(config.getServiceType().name()) && config.getDbServiceConfig() != null) {
-            dbServiceRepository.save(config.getDbServiceConfig(), config.getId());
+            db.saveConfig(config.getDbServiceConfig(), config.getId());
         }
         else if ("REST".equals(config.getServiceType().name()) && config.getRestServiceConfig() != null) {
-            restServiceRepository.save(config.getRestServiceConfig(), config.getId());
+            rest.saveConfig(config.getRestServiceConfig(), config.getId());
         }
     }
 
     public void delete(Long id) {
-        if (!serviceConfigRepository.existsById(id)) {
+        if (!serviceConfig.existsById(id)) {
             throw new IllegalArgumentException("Service not found: " + id);
         }
-        serviceConfigRepository.deleteById(id);
+        serviceConfig.deleteById(id);
     }
 
     public void toggleLog(Long id, boolean enabled) {
-        if (!serviceConfigRepository.existsById(id)) {
+        if (!serviceConfig.existsById(id)) {
             throw new IllegalArgumentException("Service not found: " + id);
         }
-        serviceConfigRepository.enableLog(id, enabled);
+        serviceConfig.enableLog(id, enabled);
     }
 
     public void toggleActive(Long id, boolean active) {
-        if (!serviceConfigRepository.existsById(id)) {
+        if (!serviceConfig.existsById(id)) {
             throw new IllegalArgumentException("Service not found: " + id);
         }
-        serviceConfigRepository.setActive(id, active);
+        serviceConfig.setActive(id, active);
     }
+    
 }

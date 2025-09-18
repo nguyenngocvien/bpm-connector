@@ -1,8 +1,9 @@
 package com.bpm.api.modules.serviceconfig.controller;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.datasource.domain.DataSourceConfig;
-import com.bpm.core.datasource.domain.DbServiceConfig;
+import com.bpm.core.db.domain.DataSourceConfig;
+import com.bpm.core.db.domain.DbServiceConfig;
+import com.bpm.core.db.service.DataSourceService;
 import com.bpm.core.document.domain.FileServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
@@ -20,9 +21,11 @@ import java.util.List;
 public class ServiceConfigController {
 
 	private final ServiceConfigService serviceConfigService;
+	private final DataSourceService dataSourceService;
 
-    public ServiceConfigController(ServiceConfigService serviceConfigService) {
+    public ServiceConfigController(ServiceConfigService serviceConfigService, DataSourceService dataSourceService) {
     	this.serviceConfigService = serviceConfigService;
+    	this.dataSourceService = dataSourceService;
     }
 
     @GetMapping
@@ -45,7 +48,7 @@ public class ServiceConfigController {
     	config.setMailServiceConfig(new MailServiceConfig());
     	config.setFileServiceConfig(new FileServiceConfig());
     	
-    	List<DataSourceConfig> datasourceList = serviceConfigService.getAllDataSources();
+    	List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
     	
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);
@@ -57,7 +60,7 @@ public class ServiceConfigController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
     	ServiceConfig serviceConfig = serviceConfigService.findById(id);
-        List<DataSourceConfig> datasourceList = serviceConfigService.getAllDataSources();
+        List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
 
         model.addAttribute("serviceConfig", serviceConfig);
         model.addAttribute("datasourceList", datasourceList);

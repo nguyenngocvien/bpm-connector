@@ -1,10 +1,12 @@
 package com.bpm.core.common.config;
 
+import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.auth.domain.AuthProperties;
 import com.bpm.core.auth.provider.BasicAuthProvider;
 import com.bpm.core.auth.provider.JwtAuthProvider;
 import com.bpm.core.auth.repository.AuthRepository;
 import com.bpm.core.auth.service.AuthManager;
+import com.bpm.core.auth.service.AuthService;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,5 +36,15 @@ public class AuthAutoConfiguration {
     @Bean
     public AuthRepository authRepository(JdbcTemplate jdbcTemplate) {
         return new AuthRepository(jdbcTemplate);
+    }
+    
+    @Bean
+    public AuthService authService(AuthRepository repository) {
+        return new AuthService(repository);
+    }
+    
+    @Bean
+    public AuthServiceCache authServiceCache(AuthRepository repository) {
+        return new AuthServiceCache(repository);
     }
 }

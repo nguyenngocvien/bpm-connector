@@ -3,9 +3,7 @@ package com.bpm.core.serviceconfig.service;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-import com.bpm.core.datasource.domain.DatasourceStatus;
+import com.bpm.core.db.domain.DatasourceStatus;
 import com.bpm.core.mail.domain.MailServerStatus;
 import com.bpm.core.serviceconfig.domain.ServiceMetric;
 

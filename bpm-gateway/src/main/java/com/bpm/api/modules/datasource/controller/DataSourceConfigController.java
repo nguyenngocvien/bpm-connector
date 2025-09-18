@@ -1,9 +1,9 @@
 package com.bpm.api.modules.datasource.controller;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.datasource.domain.DataSourceConfig;
-import com.bpm.core.datasource.infrastructure.DataSourceTestUtil;
-import com.bpm.core.datasource.service.DataSourceService;
+import com.bpm.core.db.domain.DataSourceConfig;
+import com.bpm.core.db.infrastructure.DataSourceTestUtil;
+import com.bpm.core.db.service.DataSourceService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,7 +43,7 @@ public class DataSourceConfigController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        DataSourceConfig config = dataSourceService.getDataSourceById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
+        DataSourceConfig config = dataSourceService.getDataSourceById(id);
         model.addAttribute("dbConfig", config);
         model.addAttribute("content", "db/form");
         model.addAttribute("activeMenu", "datasource");

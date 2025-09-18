@@ -3,9 +3,7 @@ FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
 # Copy parent pom and module pom
-COPY pom.xml .
-COPY bpm-gateway/pom.xml bpm-gateway/
-COPY core-service/pom.xml core-service/
+COPY . .
 
 # Load dependencies first (cache)
 RUN mvn dependency:go-offline

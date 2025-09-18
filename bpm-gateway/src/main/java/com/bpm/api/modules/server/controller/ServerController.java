@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.server.domain.Server;
-import com.bpm.core.server.repository.ServerRepository;
+import com.bpm.core.server.service.ServerService;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(ROUTES.UI_SERVER)
 public class ServerController {
 
-    private final ServerRepository serverRepository;
+    private final ServerService serverService;
 
-    public ServerController(ServerRepository serverRepository) {
-        this.serverRepository = serverRepository;
+    public ServerController(ServerService serverService) {
+        this.serverService = serverService;
     }
 
     // 1. List servers
     @GetMapping
     public String listServers(Model model) {
-        model.addAttribute("servers", serverRepository.findAll());
+        model.addAttribute("servers", serverService.getAllServers());
         
         model.addAttribute("content", "server/list");
         model.addAttribute("activeMenu", "server");
@@ -43,7 +43,7 @@ public class ServerController {
     // 3. Edit server form
     @GetMapping("/edit/{id}")
     public String editServerForm(@PathVariable Long id, Model model) {
-        Server server = serverRepository.findById(id)
+        Server server = serverService.getServerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid server ID: " + id));
         model.addAttribute("server", server);
         
@@ -55,14 +55,14 @@ public class ServerController {
     // 4. Save server (Add/Edit)
     @PostMapping("/save")
     public String saveServer(@ModelAttribute Server server) {
-    	serverRepository.save(server);
+    	serverService.saveServer(server);
     	return "redirect:" + ROUTES.UI_SERVER;
     }
 
     // 5. Delete server
     @GetMapping("/delete/{id}")
     public String deleteServer(@PathVariable Long id) {
-    	serverRepository.delete(id);
+    	serverService.deleteServer(id);
         return "redirect:" + ROUTES.UI_SERVER;
     }
 }

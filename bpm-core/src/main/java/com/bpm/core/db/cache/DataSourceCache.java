@@ -1,0 +1,28 @@
+package com.bpm.core.db.cache;
+
+import com.bpm.core.db.domain.DataSourceConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import javax.sql.DataSource;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class DataSourceCache {
+    private static final ConcurrentHashMap<String, DataSource> cache = new ConcurrentHashMap<>();
+
+    public static DataSource getOrCreate(DataSourceConfig config) {
+        return cache.computeIfAbsent(config.getJdbcUrl(), k -> config.toDataSource());
+    }
+
+    public static void clearCache() {
+        for (DataSource ds : cache.values()) {
+            if (ds instanceof HikariDataSource) {
+                ((HikariDataSource) ds).close();
+            }
+        }
+        cache.clear();
+    }
+
+    public static boolean contains(String name) {
+        return cache.containsKey(name);
+    }
+}

@@ -1,7 +1,5 @@
 package com.bpm.api.modules.serviceconfig.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,25 +10,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.common.response.Response;
-import com.bpm.core.common.util.JsonUtil;
-import com.bpm.core.datasource.domain.DbServiceConfig;
-import com.bpm.core.datasource.infrastructure.DbServiceConfigParser;
+import com.bpm.core.db.domain.DbServiceConfig;
+import com.bpm.core.db.infrastructure.DbServiceConfigParser;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.domain.ServiceType;
 import com.bpm.core.serviceconfig.service.ServiceConfigService;
-import com.bpm.core.serviceconfig.service.ServiceInvoker;
+import com.bpm.core.serviceconfig.service.ServiceDispatcher;
 
 @Controller
 @RequestMapping(ROUTES.UI_TESTING)
 public class ServiceTestController {
 
     private final ServiceConfigService service;
-    private final Map<String, ServiceInvoker> invokerMap;
+    private final ServiceDispatcher dispatcher;
 
     @Autowired
-    public ServiceTestController(ServiceConfigService service, Map<String, ServiceInvoker> invokerMap) {
+    public ServiceTestController(ServiceConfigService service, ServiceDispatcher dispatcher) {
         this.service = service;
-        this.invokerMap = invokerMap;
+        this.dispatcher = dispatcher;
     }
 
     @GetMapping
@@ -67,35 +64,11 @@ public class ServiceTestController {
                                  @RequestParam String params,
                                  Model model) {
 
-    	System.out.println(">>> Invoking Service ID = " + serviceId);
-    	
-        ServiceConfig config = service.findById(serviceId);
+        System.out.println(">>> Invoking Service ID = " + serviceId);
 
-        String invokerKey = getInvokerKey(config.getServiceType()); // e.g., "dbInvoker"
-        ServiceInvoker invoker = invokerMap.get(invokerKey);
+        Response<Object> res = dispatcher.execute(serviceId, params);
 
-        Response<Object> res;
-        if (invoker == null) {
-            res = Response.error("No invoker found for type: " + config.getServiceType());
-        } else {
-            try {
-                Map<String, Object> paramMap = JsonUtil.toObjectMap(params);
-                res = invoker.invoke(config, paramMap);
-            } catch (Exception e) {
-                res = Response.error("Invalid JSON or invocation failure: " + e.getMessage());
-            }
-        }
         model.addAttribute("outputJson", res.toString());
-        
         return "service/response :: result";
-    }
-
-    private String getInvokerKey(ServiceType serviceType) {
-        if (serviceType == null) return null;
-        switch (serviceType) {
-            case DB: return "dbInvoker";
-            case REST: return "restInvoker";
-            default: return null;
-        }
     }
 }

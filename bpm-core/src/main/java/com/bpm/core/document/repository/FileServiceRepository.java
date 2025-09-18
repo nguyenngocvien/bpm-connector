@@ -3,7 +3,6 @@ package com.bpm.core.document.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 
 import com.bpm.core.document.domain.FileServiceConfig;
 
