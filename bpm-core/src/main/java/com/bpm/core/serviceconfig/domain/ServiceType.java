@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 public enum ServiceType {
 
-	DB("SQL"),
-	REST("Rest"),
-    MAIL("Mail"),
-    FILE("File");
+	SQL("SQL"),
+	REST("REST"),
+    MAIL("MAIL"),
+    FILE("FILE");
 
     public static List<String> listAll() {
         return Arrays.stream(values())

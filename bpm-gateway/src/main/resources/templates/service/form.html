@@ -50,7 +50,7 @@
 					<select th:field="*{serviceType}" class="form-select" required id="serviceType">
 					    <option value="">-- Select Type --</option>
 						<option th:each="type : ${serviceTypes}"
-								th:value="${type}"
+								th:value="${type.name()}"
 								th:text="${type.label}">
 						</option>
 					</select>
@@ -77,7 +77,7 @@
 	        </div>
 	 
 	        <!-- DB Config Section -->
-			<div id="dbConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+			<div id="DBConfigSection" style="display:none;" class="config-section mt-4 position-relative border border-dark rounded p-3 pt-4">
 			    <h5 class="section-label">Database Configuration</h6> 
 	            <!-- Datasource Dropdown -->
 	            <div class="mb-3">
@@ -100,8 +100,8 @@
 	                <label class="form-label">SQL Type</label>
 	                <select th:field="*{dbServiceConfig.sqlType}" class="form-select" required>
 	                    <option value="" disabled>-- Select SQL Type --</option>
-	                    <option th:each="type : ${T(com.bpm.core.model.db.SqlType).values()}"
-	                            th:value="${type}" th:text="${type.label}"></option>
+	                    <option th:each="type : ${sqlTypes}"
+	                            th:value="${type.name()}" th:text="${type.label}"></option>
 	                </select>
 	            </div>
 				<!-- SQL Statement -->
@@ -133,8 +133,8 @@
 	                            <td><input type="text" th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramName}" class="form-control" /></td>
 								<td>
 								    <select th:field="*{dbServiceConfig.paramList[__${iterStat.index}__].paramType}" class="form-select">
-								        <option th:each="type : ${T(com.bpm.core.model.db.ParamType).values()}"
-								                th:value="${type}"
+								        <option th:each="type : ${paramTypes}"
+								                th:value="${type.name()}"
 								                th:text="${type.label}">
 								        </option>
 								    </select>
@@ -215,8 +215,8 @@
 	        </div>
 	 
 	        <!-- REST Config Section -->
-			<div id="restConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
-				<h5 class="section-label">REST API Configuration</h6>
+			<div id="RESTConfigSection" style="display:none;" class="config-section mt-4 position-relative border border-dark rounded p-3 pt-4">
+				<h5 class="section-label">REST Configuration</h6>
 	 
 				<div class="row mb-3">
 				    <!-- Server -->
@@ -238,37 +238,42 @@
 				    </div>
 				</div>
 	 
-	            <!-- HTTP Method -->
-	            <div class="mb-3">
-	                <label class="form-label">HTTP Method</label>
-	                <select th:field="*{restServiceConfig.httpMethod}" class="form-select">
-	                    <option value="">-- Select Method --</option>
-	                    <option value="GET">GET</option>
-	                    <option value="POST">POST</option>
-	                    <option value="PUT">PUT</option>
-	                    <option value="DELETE">DELETE</option>
-	                </select>
-	            </div>
-	 
-	            <!-- Content-Type -->
-	            <div class="mb-3">
-	                <label class="form-label">Content-Type</label>
-	                <input type="text" th:field="*{restServiceConfig.contentType}" class="form-control" placeholder="application/json">
-	            </div>
-	 
-	            <!-- Payload Template -->
-	            <div class="mb-3">
-	                <label class="form-label">Payload Template</label>
-	                <textarea th:field="*{restServiceConfig.payloadTemplate}" class="form-control" rows="3" placeholder='{"key":"${value}"}'></textarea>
-	            </div>
-	 
-	            <!-- Response Mapping -->
-	            <div class="mb-3">
-	                <label class="form-label">Response Mapping (JsonPath)</label>
-	                <input type="text" th:field="*{restServiceConfig.responseMapping}" class="form-control" placeholder="$.data.items">
-	            </div>
-	 
-	            <!-- Auth ID (optional dropdown) -->
+				<!-- HTTP Method & Content-Type -->
+			    <div class="row mb-3">
+			        <div class="col-md-6">
+			            <label class="form-label">HTTP Method</label>
+			            <select th:field="*{restServiceConfig.httpMethod}" class="form-select">
+			                <option value="">-- Select Method --</option>
+			                <option value="GET">GET</option>
+			                <option value="POST">POST</option>
+			                <option value="PUT">PUT</option>
+			                <option value="DELETE">DELETE</option>
+			            </select>
+			        </div>
+
+			        <div class="col-md-6">
+			            <label class="form-label">Content-Type</label>
+			            <input type="text" th:field="*{restServiceConfig.contentType}" class="form-control" placeholder="application/json">
+			        </div>
+			    </div>
+
+			    <!-- Timeout, Retry -->
+			    <div class="row mb-3">
+			        <div class="col-md-4">
+			            <label class="form-label">Timeout (ms)</label>
+			            <input type="number" th:field="*{restServiceConfig.timeoutMs}" class="form-control" min="100" step="100">
+			        </div>
+			        <div class="col-md-4">
+			            <label class="form-label">Retry Count</label>
+			            <input type="number" th:field="*{restServiceConfig.retryCount}" class="form-control" min="0">
+			        </div>
+			        <div class="col-md-4">
+			            <label class="form-label">Retry Backoff (ms)</label>
+			            <input type="number" th:field="*{restServiceConfig.retryBackoffMs}" class="form-control" min="100" step="100">
+			        </div>
+			    </div>
+				
+	            <!-- Authentication  -->
 	            <div class="mb-3">
 	                <label class="form-label">Authentication</label>
 	                <select th:field="*{restServiceConfig.authId}" class="form-select">
@@ -354,10 +359,41 @@
 	                    </tbody>
 	                </table>
 	            </div>
+				
+				<!-- Request Mapping Script -->
+				<div class="mb-3">
+				    <label class="form-label">Request Mapping Script (JS)</label>
+				    <textarea th:field="*{restServiceConfig.requestMappingScript}" 
+				              class="form-control code-editor" rows="8"
+				              placeholder="
+				  const output = {
+				  userId: inputObj.user.id,
+				  order: {
+				    product: inputObj.itemCode,
+				    qty: inputObj.quantity
+				  }
+				};
+				JSON.stringify(output);"></textarea>
+				</div>
+
+				<!-- Response Mapping Script -->
+				<div class="mb-3">
+				    <label class="form-label">Response Mapping Script (JS)</label>
+				    <textarea th:field="*{restServiceConfig.responseMappingScript}" 
+				              class="form-control code-editor" rows="8"
+				              placeholder="
+				const obj = JSON.parse(api2Response);
+				const mapped = {
+				  status: obj.resultCode,
+				  message: obj.resultMessage,
+				  data: obj.payload
+				};
+				JSON.stringify(mapped);"></textarea>
+				</div>
 	        </div>
 	 
 	        <!-- Mail Config Section -->
-			<div id="mailConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+			<div id="MAILConfigSection" style="display:none;" class="config-section mt-4 position-relative border border-dark rounded p-3 pt-4">
 				<h5 class="section-label">Mail Configuration</h6>
 	            <div class="mb-3">
 	                <label class="form-label">SMTP Server</label>
@@ -378,7 +414,7 @@
 	        </div>
 	 
 	        <!-- File Config Section -->
-			<div id="fileConfigSection" style="display:none;" class="mt-4 position-relative border border-dark rounded p-3 pt-4">
+			<div id="FILEConfigSection" style="display:none;" class="config-section mt-4 position-relative border border-dark rounded p-3 pt-4">
 						<h5 class="section-label">File Configuration</h6>
 	            <div class="mb-3">
 	                <label class="form-label">File Path</label>
@@ -397,24 +433,28 @@
 	</div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const serviceTypeField = document.getElementById('serviceType');
-            const dbSection = document.getElementById('dbConfigSection');
-            const restSection = document.getElementById('restConfigSection');
-            const mailSection = document.getElementById('mailConfigSection');
-            const fileSection = document.getElementById('fileConfigSection');
- 
-            function updateSections() {
-                const type = serviceTypeField.value;
-                dbSection.style.display = type === 'DB' ? 'block' : 'none';
-                restSection.style.display = type === 'REST' ? 'block' : 'none';
-                mailSection.style.display = type === 'MAIL' ? 'block' : 'none';
-                fileSection.style.display = type === 'FILE' ? 'block' : 'none';
-            }
- 
-            serviceTypeField.addEventListener('change', updateSections);
-            updateSections(); // initial call
-        });
+		document.addEventListener('DOMContentLoaded', () => {
+		    const serviceTypeField = document.getElementById('serviceType');
+		    const sections = {
+		        SQL: document.getElementById('DBConfigSection'),
+		        REST: document.getElementById('RESTConfigSection'),
+		        MAIL: document.getElementById('MAILConfigSection'),
+		        FILE: document.getElementById('FILEConfigSection')
+		    };
+
+		    const updateSections = () => {
+		        const selectedType = serviceTypeField.value;
+		        console.log("Selected Service Type:", selectedType);
+
+		        Object.keys(sections).forEach(key => {
+		            sections[key].style.display = (key === selectedType) ? 'block' : 'none';
+		        });
+		    };
+
+		    serviceTypeField.addEventListener('change', updateSections);
+
+		    updateSections(); // call once on load
+		});
     </script>
 	<script th:inline="javascript">
 	    /*<![CDATA[*/

@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.bpm.core.server.domain.Server;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,25 +33,29 @@ public class ServerRepository {
 
     public void insert(Server server) {
         String sql = "INSERT INTO core_servers (name, type, ip, port, https) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                server.getName(),
-                server.getType(),
-                server.getIp(),
-                server.getPort(),
-                server.isHttps()
-        );
+        jdbcTemplate.update(conn -> {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, server.getName());
+            ps.setObject(2, server.getType().name(), java.sql.Types.VARCHAR); // Enum -> VARCHAR
+            ps.setString(3, server.getIp());
+            ps.setInt(4, server.getPort());
+            ps.setBoolean(5, server.isHttps());
+            return ps;
+        });
     }
 
     public void update(Server server) {
         String sql = "UPDATE core_servers SET name = ?, type = ?, ip = ?, port = ?, https = ? WHERE id = ?";
-        jdbcTemplate.update(sql,
-                server.getName(),
-                server.getType(),
-                server.getIp(),
-                server.getPort(),
-                server.isHttps(),
-                server.getId()
-        );
+        jdbcTemplate.update(conn -> {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, server.getName());
+            ps.setObject(2, server.getType().name(), java.sql.Types.VARCHAR); // Enum -> VARCHAR
+            ps.setString(3, server.getIp());
+            ps.setInt(4, server.getPort());
+            ps.setBoolean(5, server.isHttps());
+            ps.setLong(6, server.getId());
+            return ps;
+        });
     }
 
     public void save(Server server) {
@@ -60,6 +65,7 @@ public class ServerRepository {
             update(server);
         }
     }
+
 
     public void delete(Long id) {
         String sql = "DELETE FROM core_servers WHERE id = ?";

@@ -32,7 +32,7 @@ public class ServiceDispatcher {
             Map<String, Object> paramMap = JsonUtil.toObjectMap(params);
 
             switch (config.getServiceType()) {
-                case DB:
+                case SQL:
                     res = dbInvoker.invoke(config, paramMap);
                     break;
                 case REST:

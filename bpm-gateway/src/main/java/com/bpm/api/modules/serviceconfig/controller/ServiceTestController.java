@@ -49,7 +49,7 @@ public class ServiceTestController {
     	
     	String input = "";
     	
-        if (ServiceType.DB.equals(config.getServiceType())) {
+        if (ServiceType.SQL.equals(config.getServiceType())) {
 			DbServiceConfig dbConfig = config.getDbServiceConfig();
 			
 			input = DbServiceConfigParser.convertParamArrayToJsonObject(dbConfig.getParamList());

@@ -2,8 +2,11 @@ package com.bpm.core.serviceconfig.service.impl;
 
 import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.common.response.Response;
-import com.bpm.core.rest.domain.NameValuePair;
 import com.bpm.core.rest.domain.RestServiceConfig;
+import com.bpm.core.rest.infrastructure.RestRequestMapper;
+import com.bpm.core.rest.infrastructure.RestResponseMapper;
+import com.bpm.core.rest.infrastructure.RestUrlBuilder;
+import com.bpm.core.rest.infrastructure.ServiceLogHelper;
 import com.bpm.core.rest.infrastructure.WebClientAuthUtil;
 import com.bpm.core.rest.service.RestService;
 import com.bpm.core.server.domain.Server;
@@ -18,28 +21,32 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.JsonPath;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RESTInvoker implements ServiceInvoker {
 
-	private final ServerService serverService;
+    private final ServerService serverService;
     private final RestService restService;
     private final ServiceLogService logService;
     private final AuthServiceCache authCache;
-    private final ObjectMapper objectMapper;
 
-    public RESTInvoker(ServerService serverService, RestService restService, ServiceLogService logService, AuthServiceCache authCache) {
+    private final RestRequestMapper requestMapper;
+    private final RestResponseMapper responseMapper;
+
+    public RESTInvoker(ServerService serverService, RestService restService,
+                       ServiceLogService logService, AuthServiceCache authCache) {
         this.serverService = serverService;
-    	this.restService = restService;
+        this.restService = restService;
         this.logService = logService;
         this.authCache = authCache;
-        this.objectMapper = new ObjectMapper();
+        ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+        this.requestMapper = new RestRequestMapper(engine);
+        this.responseMapper = new RestResponseMapper(engine);
     }
 
     @Override
@@ -52,10 +59,9 @@ public class RESTInvoker implements ServiceInvoker {
         RestServiceConfig config = optionalConfig.get();
         Server server = serverService.getServerById(config.getServerId());
 
-        String resolvedUrl = buildResolvedUrl(config, server);
+        String resolvedUrl = RestUrlBuilder.buildResolvedUrl(config, server);
         WebClient.Builder builder = WebClient.builder().baseUrl(resolvedUrl);
 
-        // Apply auth if needed
         if (config.getAuthId() != null) {
             authCache.getAuthById(config.getAuthId())
                      .ifPresent(auth -> WebClientAuthUtil.applyAuth(builder, auth));
@@ -65,22 +71,20 @@ public class RESTInvoker implements ServiceInvoker {
         WebClient.RequestBodySpec request = webClient.method(HttpMethod.valueOf(config.getHttpMethod()))
                 .uri(uriBuilder -> {
                     UriComponentsBuilder uriComp = UriComponentsBuilder.fromHttpUrl(resolvedUrl);
-                    // Add Query Params
                     if (config.getQueryParamList() != null) {
-                        config.getQueryParamList().forEach(param -> 
-                            uriComp.queryParam(param.getName(), param.getValue()));
+                        config.getQueryParamList().forEach(param ->
+                                uriComp.queryParam(param.getName(), param.getValue()));
                     }
                     return uriComp.build().toUri();
                 })
                 .header(HttpHeaders.CONTENT_TYPE, config.getContentType());
 
-        // Add Headers
         if (config.getHeaderList() != null) {
-            config.getHeaderList().forEach(header -> 
-                request.header(header.getName(), header.getValue()));
+            config.getHeaderList().forEach(header ->
+                    request.header(header.getName(), header.getValue()));
         }
 
-        String bodyStr = processPayloadTemplate(config.getPayloadTemplate(), inputParams);
+        String bodyStr = requestMapper.processRequestMapping(config.getRequestMappingScript(), inputParams);
 
         long startTime = System.currentTimeMillis();
         String responseString = null;
@@ -94,11 +98,10 @@ public class RESTInvoker implements ServiceInvoker {
                     .timeout(Duration.ofMillis(Optional.ofNullable(config.getTimeoutMs()).orElse(3000)));
 
             responseString = responseMono.block();
-            Object mappedResponse = mapResponse(responseString, config.getResponseMapping());
+            Object mappedResponse = responseMapper.processResponseMapping(config.getResponseMappingScript(), responseString);
 
-            // Log request/response
             if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
-                ServiceLog log = buildLog(serviceConfig, inputParams, bodyStr, responseString, statusCode, startTime);
+                ServiceLog log = ServiceLogHelper.buildLog(serviceConfig, inputParams, bodyStr, responseString, statusCode, startTime);
                 logId = saveLogSafe(log);
             }
 
@@ -109,7 +112,7 @@ public class RESTInvoker implements ServiceInvoker {
             String errMsg = ex.getMessage();
 
             if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
-                ServiceLog log = buildLog(serviceConfig, inputParams, bodyStr, errMsg, statusCode, startTime);
+                ServiceLog log = ServiceLogHelper.buildLog(serviceConfig, inputParams, bodyStr, errMsg, statusCode, startTime);
                 logId = saveLogSafe(log);
             }
 
@@ -117,64 +120,6 @@ public class RESTInvoker implements ServiceInvoker {
         }
     }
 
-    // Resolve URL with path params
-    private String buildResolvedUrl(RestServiceConfig config, Server server) {
-        String baseUrl = (server.isHttps() ? "https://" : "http://")
-                + server.getIp() + ":" + server.getPort();
-
-        String fullPath = config.getPath();
-
-        if (config.getPathParamList() != null && !config.getPathParamList().isEmpty()) {
-            Map<String, String> pathVars = config.getPathParamList().stream()
-                    .collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
-            return UriComponentsBuilder.fromUriString(baseUrl + fullPath)
-                    .buildAndExpand(pathVars)
-                    .toUriString();
-        }
-
-        return baseUrl + fullPath;
-    }
-
-    // Template handle payload
-    private String processPayloadTemplate(String template, Map<String, Object> params) {
-        if (template == null || template.isEmpty()) return "";
-        String processed = template;
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            processed = processed.replace("${" + entry.getKey() + "}", entry.getValue().toString());
-        }
-        return processed;
-    }
-
-    // Mapping output from JSON
-    private Object mapResponse(String responseStr, String mappingRule) {
-        if (mappingRule == null || mappingRule.isEmpty()) {
-            return responseStr;
-        }
-        try {
-            JsonNode root = objectMapper.readTree(responseStr);
-            if (mappingRule.startsWith("$.") || mappingRule.startsWith("$[")) {
-                return JsonPath.read(responseStr, mappingRule);
-            }
-            return root;
-        } catch (Exception ex) {
-            return responseStr;
-        }
-    }
-
-    // build log object
-    private ServiceLog buildLog(ServiceConfig serviceConfig, Map<String, Object> inputParams,
-                                String bodyStr, String responseStr, int statusCode, long startTime) {
-        ServiceLog log = new ServiceLog();
-        log.setServiceCode(serviceConfig.getServiceCode());
-        log.setRequestData(inputParams.toString());
-        log.setMappedRequest(bodyStr);
-        log.setResponseData(responseStr);
-        log.setStatusCode(statusCode);
-        log.setDurationMs((int) (System.currentTimeMillis() - startTime));
-        return log;
-    }
-
-    // write log safe
     private Long saveLogSafe(ServiceLog log) {
         try {
             return logService.createLog(log);
@@ -184,3 +129,4 @@ public class RESTInvoker implements ServiceInvoker {
         }
     }
 }
+

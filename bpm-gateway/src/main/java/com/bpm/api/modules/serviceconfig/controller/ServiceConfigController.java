@@ -3,6 +3,8 @@ package com.bpm.api.modules.serviceconfig.controller;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.db.domain.DataSourceConfig;
 import com.bpm.core.db.domain.DbServiceConfig;
+import com.bpm.core.db.domain.ParamType;
+import com.bpm.core.db.domain.SqlType;
 import com.bpm.core.db.service.DataSourceService;
 import com.bpm.core.document.domain.FileServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
@@ -57,6 +59,9 @@ public class ServiceConfigController {
     	List<Server> servers = serverService.getAllServers();
     	
     	model.addAttribute("serviceTypes", ServiceType.values());
+    	model.addAttribute("sqlTypes", SqlType.values());
+    	model.addAttribute("paramTypes", ParamType.values());
+    	
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);
         model.addAttribute("servers", servers);
@@ -72,6 +77,9 @@ public class ServiceConfigController {
         List<Server> servers = serverService.getAllServers();
 
         model.addAttribute("serviceTypes", ServiceType.values());
+        model.addAttribute("sqlTypes", SqlType.values());
+        model.addAttribute("paramTypes", ParamType.values());
+        
         model.addAttribute("serviceConfig", serviceConfig);
         model.addAttribute("datasourceList", datasourceList);
         model.addAttribute("servers", servers);

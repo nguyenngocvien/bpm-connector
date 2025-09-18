@@ -33,8 +33,8 @@ public class RestServiceConfig {
     @Builder.Default
     private Integer retryBackoffMs = 1000;
 
-    private String payloadTemplate;
-    private String responseMapping;
+    private String requestMappingScript;
+    private String responseMappingScript;
 
     private String headers;
     private String queryParams;

@@ -44,13 +44,13 @@ public class RestRepository {
 
         String sql = ""
                 + "INSERT INTO core_service_rest (id, server_id, path, http_method, content_type, timeout_ms, retry_count, retry_backoff_ms, "
-                + "payload_template, response_mapping, auth_id, headers, query_params, path_params, created_at, updated_at) "
+                + "request_mapping_script, response_mapping_script, auth_id, headers, query_params, path_params, created_at, updated_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
                 + "ON CONFLICT (id) DO UPDATE SET "
                 + "server_id = EXCLUDED.server_id, path = EXCLUDED.path, http_method = EXCLUDED.http_method, content_type = EXCLUDED.content_type, "
                 + "timeout_ms = EXCLUDED.timeout_ms, retry_count = EXCLUDED.retry_count, retry_backoff_ms = EXCLUDED.retry_backoff_ms, "
-                + "payload_template = EXCLUDED.payload_template, response_mapping = EXCLUDED.response_mapping, auth_id = EXCLUDED.auth_id, "
-                + "headers = EXCLUDED.headers, query_params = EXCLUDED.query_params, path_params = EXCLUDED.path_params, "
+                + "request_mapping_script = EXCLUDED.request_mapping_script, response_mapping_script = EXCLUDED.response_mapping_script, "
+                + "auth_id = EXCLUDED.auth_id, headers = EXCLUDED.headers, query_params = EXCLUDED.query_params, path_params = EXCLUDED.path_params, "
                 + "updated_at = CURRENT_TIMESTAMP";
 
         jdbcTemplate.update(sql,
@@ -62,8 +62,8 @@ public class RestRepository {
                 config.getTimeoutMs(),
                 config.getRetryCount(),
                 config.getRetryBackoffMs(),
-                config.getPayloadTemplate(),
-                config.getResponseMapping(),
+                config.getRequestMappingScript(),
+                config.getResponseMappingScript(),
                 config.getAuthId(),
                 config.getHeaders(),
                 config.getQueryParams(),
@@ -79,18 +79,23 @@ public class RestRepository {
     private final RowMapper<RestServiceConfig> rowMapperWithJsonParsing = (rs, rowNum) -> {
         RestServiceConfig config = new RestServiceConfig();
         config.setId(rs.getLong("id"));
+
         Object serverIdObj = rs.getObject("server_id");
         config.setServerId(serverIdObj != null ? rs.getLong("server_id") : null);
+
         config.setPath(rs.getString("path"));
         config.setHttpMethod(rs.getString("http_method"));
         config.setContentType(rs.getString("content_type"));
         config.setTimeoutMs(rs.getInt("timeout_ms"));
         config.setRetryCount(rs.getInt("retry_count"));
         config.setRetryBackoffMs(rs.getInt("retry_backoff_ms"));
-        config.setPayloadTemplate(rs.getString("payload_template"));
-        config.setResponseMapping(rs.getString("response_mapping"));
+
+        config.setRequestMappingScript(rs.getString("request_mapping_script"));
+        config.setResponseMappingScript(rs.getString("response_mapping_script"));
+
         Object authIdObj = rs.getObject("auth_id");
         config.setAuthId(authIdObj != null ? rs.getInt("auth_id") : null);
+
         config.setCreatedAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null);
         config.setUpdatedAt(rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
 
