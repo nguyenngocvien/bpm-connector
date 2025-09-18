@@ -10,10 +10,10 @@ import com.bpm.core.db.domain.ParamType;
 import com.bpm.core.db.domain.SqlType;
 import com.bpm.core.db.service.DataSourceService;
 import com.bpm.core.db.service.DbService;
-import com.bpm.core.log.domain.ServiceLog;
-import com.bpm.core.log.service.ServiceLogService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.service.ServiceInvoker;
+import com.bpm.core.servicelog.domain.ServiceLog;
+import com.bpm.core.servicelog.service.ServiceLogService;
 
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;

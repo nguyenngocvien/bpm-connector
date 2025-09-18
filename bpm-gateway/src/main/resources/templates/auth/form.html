@@ -39,8 +39,8 @@
             <label class="form-label">Auth Type</label>
             <select th:field="*{authType}" class="form-select" required>
                 <option value="" disabled>Select auth type</option>
-                <option th:each="type : ${T(com.bpm.core.model.auth.AuthType).values()}"
-                        th:value="${type}" th:text="${type.name()}"></option>
+                <option th:each="type : ${authTypes}"
+                        th:value="${type}" th:text="${type.label}"></option>
             </select>
         </div>
 

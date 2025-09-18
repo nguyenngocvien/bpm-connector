@@ -1,4 +1,4 @@
-package com.bpm.core.log.domain;
+package com.bpm.core.servicelog.domain;
 
 import java.time.LocalDateTime;
 

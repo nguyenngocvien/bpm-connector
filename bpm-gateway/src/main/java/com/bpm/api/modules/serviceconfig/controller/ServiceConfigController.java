@@ -10,6 +10,7 @@ import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.server.domain.Server;
 import com.bpm.core.server.service.ServerService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
+import com.bpm.core.serviceconfig.domain.ServiceType;
 import com.bpm.core.serviceconfig.service.ServiceConfigService;
 
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,7 @@ public class ServiceConfigController {
     	List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
     	List<Server> servers = serverService.getAllServers();
     	
+    	model.addAttribute("serviceTypes", ServiceType.values());
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);
         model.addAttribute("servers", servers);
@@ -69,6 +71,7 @@ public class ServiceConfigController {
         List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
         List<Server> servers = serverService.getAllServers();
 
+        model.addAttribute("serviceTypes", ServiceType.values());
         model.addAttribute("serviceConfig", serviceConfig);
         model.addAttribute("datasourceList", datasourceList);
         model.addAttribute("servers", servers);

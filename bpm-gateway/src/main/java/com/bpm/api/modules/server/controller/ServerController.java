@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerType;
 import com.bpm.core.server.service.ServerService;
 
 import org.springframework.ui.Model;
@@ -34,6 +35,7 @@ public class ServerController {
     @GetMapping("/add")
     public String createServerForm(Model model) {
         model.addAttribute("server", new Server());
+        model.addAttribute("serverTypes", ServerType.values());
         model.addAttribute("content", "server/form");
         model.addAttribute("activeMenu", "server");
         
@@ -45,7 +47,7 @@ public class ServerController {
     public String editServerForm(@PathVariable Long id, Model model) {
         Server server = serverService.getServerById(id);
         model.addAttribute("server", server);
-        
+        model.addAttribute("serverTypes", ServerType.values());
         model.addAttribute("content", "server/form");
         model.addAttribute("activeMenu", "server");
         return "main";

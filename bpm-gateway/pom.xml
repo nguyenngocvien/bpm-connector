@@ -40,7 +40,7 @@
 	<!-- Core module -->
 	<dependency>
 		<groupId>com.bpm</groupId>
-		<artifactId>core-service</artifactId>
+		<artifactId>bpm-core</artifactId>
 		<version>1.0.0</version>
 	</dependency>
 	<!-- Jackson + Lombok -->
@@ -64,11 +64,6 @@
 	<dependency>
 	    <groupId>org.flywaydb</groupId>
 	    <artifactId>flyway-core</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>com.bpm</groupId>
-		<artifactId>bpm-core</artifactId>
-		<version>1.0.0</version>
 	</dependency>
   </dependencies>
   <build>

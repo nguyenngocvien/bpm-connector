@@ -1,10 +1,10 @@
-package com.bpm.core.log.repository;
+package com.bpm.core.servicelog.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.bpm.core.log.domain.ServiceLog;
+import com.bpm.core.servicelog.domain.ServiceLog;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;

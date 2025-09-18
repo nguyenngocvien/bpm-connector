@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.auth.domain.AuthConfig;
+import com.bpm.core.auth.domain.AuthType;
 import com.bpm.core.auth.repository.AuthRepository;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class AuthController {
     @GetMapping("/add")
     public String add(Model model) {
         model.addAttribute("authConfig", new AuthConfig());
+        model.addAttribute("authTypes", AuthType.values());
         model.addAttribute("content", "auth/form");
         model.addAttribute("activeMenu", "auth");
         return "main";
@@ -42,6 +44,7 @@ public class AuthController {
         AuthConfig authConfig = authRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
         authConfig.setPassword(""); // clear password for editing
         model.addAttribute("authConfig", authConfig);
+        model.addAttribute("authTypes", AuthType.values());
         model.addAttribute("content", "auth/form");
         model.addAttribute("activeMenu", "auth");
         return "main";

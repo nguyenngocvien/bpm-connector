@@ -11,18 +11,18 @@ RUN mvn dependency:go-offline
 # Copy all source
 COPY . .
 
-# Build all module
+# Build toàn bộ project
 RUN mvn clean package -DskipTests
 
 # ===== Stage 2: Run Spring Boot App =====
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
-# Copy JAR of module bpm-gateway (main app)
+# Copy JAR của module bpm-gateway (main app)
 COPY --from=builder /app/bpm-gateway/target/*.jar app.jar
 
 # Open port
 EXPOSE 8080
 
-# Run app with profile docker
+# Run app với profile docker
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker"]

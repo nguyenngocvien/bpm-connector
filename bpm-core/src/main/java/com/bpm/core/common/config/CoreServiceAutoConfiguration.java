@@ -9,7 +9,6 @@ import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.db.service.DataSourceService;
 import com.bpm.core.db.service.DbService;
 import com.bpm.core.document.service.FileService;
-import com.bpm.core.log.service.ServiceLogService;
 import com.bpm.core.mail.service.EmailSender;
 import com.bpm.core.mail.service.MailService;
 import com.bpm.core.rest.service.RestService;
@@ -18,6 +17,7 @@ import com.bpm.core.serviceconfig.service.ServiceConfigService;
 import com.bpm.core.serviceconfig.service.ServiceDispatcher;
 import com.bpm.core.serviceconfig.service.impl.DBInvoker;
 import com.bpm.core.serviceconfig.service.impl.RESTInvoker;
+import com.bpm.core.servicelog.service.ServiceLogService;
 
 @Configuration
 public class CoreServiceAutoConfiguration {
@@ -54,7 +54,7 @@ public class CoreServiceAutoConfiguration {
     
     @Bean
     public ServiceLogService serviceLogService(JdbcTemplate jdbcTemplate) {
-        return new ServiceLogService(new com.bpm.core.log.repository.ServiceLogRepository(jdbcTemplate));
+        return new ServiceLogService(new com.bpm.core.servicelog.repository.ServiceLogRepository(jdbcTemplate));
     }
 
     @Bean

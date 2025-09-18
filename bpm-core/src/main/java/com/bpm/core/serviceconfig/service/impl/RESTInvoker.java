@@ -2,8 +2,6 @@ package com.bpm.core.serviceconfig.service.impl;
 
 import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.common.response.Response;
-import com.bpm.core.log.domain.ServiceLog;
-import com.bpm.core.log.service.ServiceLogService;
 import com.bpm.core.rest.domain.NameValuePair;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.infrastructure.WebClientAuthUtil;
@@ -12,6 +10,8 @@ import com.bpm.core.server.domain.Server;
 import com.bpm.core.server.service.ServerService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.service.ServiceInvoker;
+import com.bpm.core.servicelog.domain.ServiceLog;
+import com.bpm.core.servicelog.service.ServiceLogService;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
