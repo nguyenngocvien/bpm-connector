@@ -5,6 +5,7 @@ import jakarta.mail.internet.*;
 import java.util.Properties;
 
 import com.bpm.core.mail.domain.MailServiceConfig;
+import com.bpm.core.server.domain.Server;
 
 public class EmailSender {
 

@@ -3,7 +3,7 @@ package com.bpm.api.modules.datasource.controller;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.db.domain.DataSourceConfig;
 import com.bpm.core.db.infrastructure.DataSourceTestUtil;
-import com.bpm.core.db.service.DataSourceService;
+import com.bpm.core.db.service.DataSourceConfigService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,9 +18,9 @@ import java.util.Map;
 @RequestMapping(ROUTES.UI_DATASOURCE)
 public class DataSourceConfigController {
 
-    private final DataSourceService dataSourceService;
+    private final DataSourceConfigService dataSourceService;
 
-    public DataSourceConfigController(DataSourceService dataSourceService) {
+    public DataSourceConfigController(DataSourceConfigService dataSourceService) {
         this.dataSourceService = dataSourceService;
     }
 

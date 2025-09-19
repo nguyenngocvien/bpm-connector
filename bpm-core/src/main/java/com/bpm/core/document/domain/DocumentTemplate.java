@@ -1,0 +1,31 @@
+package com.bpm.core.document.domain;
+
+import lombok.Data;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "doc_templates")
+@Data
+public class DocumentTemplate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 255)
+    private String name; // template file name
+
+    @Column(nullable = false, length = 20)
+    private String type;
+
+    @Lob
+    private byte[] content; // optional
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+}

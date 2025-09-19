@@ -2,24 +2,24 @@ package com.bpm.core.auth.cache;
 
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.domain.AuthType;
-import com.bpm.core.auth.repository.AuthRepository;
+import com.bpm.core.auth.repository.AuthConfigRepository;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthServiceCache {
 
-    private final AuthRepository authRepository;
+    private final AuthConfigRepository authRepository;
 
     // Simple in-memory cache
-    private final ConcurrentHashMap<Integer, AuthConfig> authCacheById = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, AuthConfig> authCacheById = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, AuthConfig> authCacheByName = new ConcurrentHashMap<>();
 
-    public AuthServiceCache(AuthRepository authRepository) {
+    public AuthServiceCache(AuthConfigRepository authRepository) {
         this.authRepository = authRepository;
     }
 
-    public Optional<AuthConfig> getAuthById(Integer id) {
+    public Optional<AuthConfig> getAuthById(Long id) {
         AuthConfig config = authCacheById.computeIfAbsent(id, k ->
             authRepository.findById(k).filter(this::validate).orElse(null));
         if (config != null) authCacheByName.putIfAbsent(config.getName(), config);

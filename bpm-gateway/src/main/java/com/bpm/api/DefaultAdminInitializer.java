@@ -8,18 +8,18 @@ import org.springframework.stereotype.Component;
 
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.domain.AuthType;
-import com.bpm.core.auth.repository.AuthRepository;
+import com.bpm.core.auth.repository.AuthConfigRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Component
 public class DefaultAdminInitializer implements CommandLineRunner {
 
-    private final AuthRepository authRepository;
+    private final AuthConfigRepository authRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DefaultAdminInitializer(AuthRepository authRepository, PasswordEncoder passwordEncoder) {
+    public DefaultAdminInitializer(AuthConfigRepository authRepository, PasswordEncoder passwordEncoder) {
         this.authRepository = authRepository;
         this.passwordEncoder = passwordEncoder;
     }

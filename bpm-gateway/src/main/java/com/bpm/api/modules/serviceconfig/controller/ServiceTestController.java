@@ -14,18 +14,18 @@ import com.bpm.core.db.domain.DbServiceConfig;
 import com.bpm.core.db.infrastructure.DbServiceConfigParser;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.domain.ServiceType;
-import com.bpm.core.serviceconfig.service.ServiceConfigService;
+import com.bpm.core.serviceconfig.service.ServiceConfigRepositoryService;
 import com.bpm.core.serviceconfig.service.ServiceDispatcher;
 
 @Controller
 @RequestMapping(ROUTES.UI_TESTING)
 public class ServiceTestController {
 
-    private final ServiceConfigService service;
+    private final ServiceConfigRepositoryService service;
     private final ServiceDispatcher dispatcher;
 
     @Autowired
-    public ServiceTestController(ServiceConfigService service, ServiceDispatcher dispatcher) {
+    public ServiceTestController(ServiceConfigRepositoryService service, ServiceDispatcher dispatcher) {
         this.service = service;
         this.dispatcher = dispatcher;
     }
@@ -66,7 +66,20 @@ public class ServiceTestController {
 
         System.out.println(">>> Invoking Service ID = " + serviceId);
 
-        Response<Object> res = dispatcher.execute(serviceId, params);
+        Response<Object> res = dispatcher.executeServiceById(serviceId, params);
+
+        model.addAttribute("outputJson", res.toString());
+        return "service/response :: result";
+    }
+    
+    @PostMapping
+    public String executeService(@RequestParam String serviceCode,
+                                 @RequestParam String params,
+                                 Model model) {
+
+        System.out.println(">>> Invoking Service Code = " + serviceCode);
+
+        Response<Object> res = dispatcher.executeServiceByCode(serviceCode, params);
 
         model.addAttribute("outputJson", res.toString());
         return "service/response :: result";

@@ -5,28 +5,37 @@ import java.util.Map;
 import com.bpm.core.common.response.Response;
 import com.bpm.core.common.util.JsonUtil;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
-import com.bpm.core.serviceconfig.service.impl.DBInvoker;
-import com.bpm.core.serviceconfig.service.impl.RESTInvoker;
+import com.bpm.core.serviceconfig.service.impl.DbInvoker;
+import com.bpm.core.serviceconfig.service.impl.RestInvoker;
 
 public class ServiceDispatcher {
-
-    private final DBInvoker dbInvoker;
-    private final RESTInvoker restInvoker;
-
-    private final ServiceConfigService service;
-
-    public ServiceDispatcher(DBInvoker dbInvoker,
-                             RESTInvoker restInvoker,
-                             ServiceConfigService service) {
-        this.dbInvoker = dbInvoker;
+	
+    private final ServiceConfigRepositoryService service;
+    private final DbInvoker dbInvoker;
+    private final RestInvoker restInvoker;
+    
+    public ServiceDispatcher(ServiceConfigRepositoryService service,
+				    		DbInvoker dbInvoker,
+				            RestInvoker restInvoker) {
+        
+    	this.dbInvoker = dbInvoker;
         this.restInvoker = restInvoker;
         
         this.service = service;
     }
 
-    public Response<Object> execute(Long serviceId, String params) {
+    public Response<Object> executeServiceById(Long serviceId, String params) {
         ServiceConfig config = service.findById(serviceId);
-        Response<Object> res;
+        return execute(config, params);
+    }
+    
+    public Response<Object> executeServiceByCode(String serviceCode, String params) {
+        ServiceConfig config = service.findByCode(serviceCode);
+        return execute(config, params);
+    }
+    
+    private Response<Object> execute(ServiceConfig config, String params) {
+    	Response<Object> res;
 
         try {
             Map<String, Object> paramMap = JsonUtil.toObjectMap(params);

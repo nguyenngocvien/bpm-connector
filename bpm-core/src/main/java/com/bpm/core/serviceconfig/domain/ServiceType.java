@@ -9,7 +9,7 @@ public enum ServiceType {
 	SQL("SQL"),
 	REST("REST"),
     MAIL("MAIL"),
-    FILE("FILE");
+    DOCUMENT("DOCUMENT");
 
     public static List<String> listAll() {
         return Arrays.stream(values())

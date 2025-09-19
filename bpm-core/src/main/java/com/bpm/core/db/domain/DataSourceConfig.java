@@ -1,57 +1,82 @@
 package com.bpm.core.db.domain;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
-import javax.sql.DataSource;
-
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import lombok.Builder.Default;
 
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "core_datasources")
 public class DataSourceConfig {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "url", nullable = false)
     private String jdbcUrl;
+
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
 
+    @Column(name = "driver_class_name", nullable = false)
     private String driverClassName;
 
     @Default
-    private Integer maxPoolSize = 1; //Pool keep 1 connection
+    @Column(name = "max_pool_size")
+    private Integer maxPoolSize = 1;
 
     @Default
+    @Column(name = "min_idle")
     private Integer minIdle = 0;
 
     @Default
-    private Integer connectionTimeoutMs = 3000; // 3s timeout when get connection
+    @Column(name = "connection_timeout_ms")
+    private Integer connectionTimeoutMs = 3000;
 
     @Default
+    @Column(name = "idle_timeout_ms")
     private Integer idleTimeoutMs = 600000;
 
     @Default
+    @Column(name = "max_lifetime_ms")
     private Integer maxLifetimeMs = 1800000;
 
     @Default
     private Boolean active = true;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public HikariConfig toHikariConfig() {
-        HikariConfig config = new HikariConfig();
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public com.zaxxer.hikari.HikariConfig toHikariConfig() {
+        com.zaxxer.hikari.HikariConfig config = new com.zaxxer.hikari.HikariConfig();
         config.setJdbcUrl(this.jdbcUrl);
         config.setUsername(this.username);
         config.setPassword(this.password);
@@ -62,15 +87,14 @@ public class DataSourceConfig {
         if (this.connectionTimeoutMs != null) config.setConnectionTimeout(this.connectionTimeoutMs);
         if (this.idleTimeoutMs != null) config.setIdleTimeout(this.idleTimeoutMs);
         if (this.maxLifetimeMs != null) config.setMaxLifetime(this.maxLifetimeMs);
-        
-        config.setValidationTimeout(2000);
 
+        config.setValidationTimeout(2000);
         config.setPoolName("ds-" + this.name);
 
         return config;
     }
 
-    public DataSource toDataSource() {
-        return new HikariDataSource(this.toHikariConfig());
+    public javax.sql.DataSource toDataSource() {
+        return new com.zaxxer.hikari.HikariDataSource(this.toHikariConfig());
     }
 }

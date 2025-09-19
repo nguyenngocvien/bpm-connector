@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.mail.service.EmailSender;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
-import com.bpm.core.serviceconfig.service.ServiceConfigService;
+import com.bpm.core.serviceconfig.service.ServiceConfigRepositoryService;
 
 @RestController
 @RequestMapping(ROUTES.MAIL)
 public class MailController {
 
-    private final ServiceConfigService service;
+    private final ServiceConfigRepositoryService service;
     private final EmailSender emailSender;
 
     @Autowired
-    public MailController(ServiceConfigService service, EmailSender emailSender) {
+    public MailController(ServiceConfigRepositoryService service, EmailSender emailSender) {
         this.service = service;
         this.emailSender = emailSender;
     }

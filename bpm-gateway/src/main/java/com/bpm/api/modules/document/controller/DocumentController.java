@@ -1,30 +1,36 @@
 package com.bpm.api.modules.document.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bpm.api.constant.ROUTES;
-import com.bpm.core.document.domain.CreateDocRequest;
-import com.bpm.core.document.domain.CreateDocResponse;
-import com.bpm.core.document.repository.CmisRepository;
+import com.bpm.core.common.response.Response;
+import com.bpm.core.serviceconfig.service.ServiceDispatcher;
 
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
-@RequestMapping(ROUTES.DOCUMENT)
+@RequestMapping("/api/doc")
 public class DocumentController {
 
-//    private final CmisRepository repository;
-//
-//    public DocumentController(CmisRepository repository) {
-//        this.repository = repository;
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<CreateDocResponse> create(@Valid @RequestBody CreateDocRequest req) {
-//        return ResponseEntity.ok(repository.createDocument(req));
-//    }
+    private final ServiceDispatcher serviceDispatcher;
+
+    @Autowired
+    public DocumentController(ServiceDispatcher serviceDispatcher) {
+        this.serviceDispatcher = serviceDispatcher;
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<Response<Object>> generateDocument(
+            @RequestParam String serviceCode,
+            @RequestBody String paramsJson) {
+
+        Response<Object> response = serviceDispatcher.executeServiceByCode(serviceCode, paramsJson);
+
+        return ResponseEntity.ok(response);
+    }
 }
+

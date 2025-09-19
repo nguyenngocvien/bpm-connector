@@ -7,14 +7,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.bpm.core.auth.domain.AuthConfig;
-import com.bpm.core.auth.service.AuthService;
+import com.bpm.core.auth.service.AuthRepositoryService;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final AuthService authService;
+    private final AuthRepositoryService authService;
 
-    public CustomUserDetailsService(AuthService authService) {
+    public CustomUserDetailsService(AuthRepositoryService authService) {
         this.authService = authService;
     }
 

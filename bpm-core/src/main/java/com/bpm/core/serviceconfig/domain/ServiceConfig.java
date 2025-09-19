@@ -1,43 +1,73 @@
 package com.bpm.core.serviceconfig.domain;
 
-import java.time.LocalDateTime;
-
 import com.bpm.core.db.domain.DbServiceConfig;
-import com.bpm.core.document.domain.FileServiceConfig;
+import com.bpm.core.document.domain.DocumentServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
+import jakarta.persistence.*;
+import lombok.*;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "core_services")
 @Data
-@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceConfig {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "service_code", nullable = false, unique = true, length = 50)
     private String serviceCode;
+
+    @Column(name = "service_name", nullable = false, length = 100)
     private String serviceName;
-    private ServiceType serviceType; // REST, SOAP, DB, MAIL, FILE
+
+    @Column(name = "service_description", columnDefinition = "TEXT")
     private String serviceDescription;
 
-    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "service_type", nullable = false, length = 20)
+    private ServiceType serviceType;
+
+    @Column(name = "log_enabled")
     private Boolean logEnabled = true;
 
-    @Builder.Default
+    @Column(name = "active")
     private Boolean active = true;
 
-    @Builder.Default
+    @Column(name = "version")
     private Integer version = 1;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToOne(mappedBy = "serviceConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private DbServiceConfig dbServiceConfig;
+
+    @OneToOne(mappedBy = "serviceConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private RestServiceConfig restServiceConfig;
+
+    @OneToOne(mappedBy = "serviceConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private MailServiceConfig mailServiceConfig;
-    private FileServiceConfig fileServiceConfig;
+
+    @OneToOne(mappedBy = "serviceConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    private DocumentServiceConfig documentServiceConfig;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

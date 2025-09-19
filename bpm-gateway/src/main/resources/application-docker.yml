@@ -29,6 +29,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  thymeleaf:
+    cache: false		
 
 auth:
   jwt:
@@ -36,3 +38,22 @@ auth:
 
 server:
   port: ${SERVER_PORT:8080}
+  
+app:
+  cmis:
+    atompubUrl: "http://172.29.255.121:9081/fncmis/resources/Service"
+    repositoryId: "OBJ"
+    username: "ecmadmin"
+    password: "Car3full"
+    connectTimeoutMs: 10000
+    readTimeoutMs: 30000
+    defaultObjectTypeId: "cmis:document"
+    defaultFolderPath: "/UPLOAD_TEMP"
+
+springdoc:
+  api-docs:
+    path: /api-docs   # endpoint JSON OpenAPI
+  swagger-ui:
+    path: /swagger-ui.html   # UI page
+    operationsSorter: method
+    tagsSorter: alpha

@@ -5,15 +5,15 @@ import com.bpm.core.db.domain.DataSourceConfig;
 import com.bpm.core.db.domain.DbServiceConfig;
 import com.bpm.core.db.domain.ParamType;
 import com.bpm.core.db.domain.SqlType;
-import com.bpm.core.db.service.DataSourceService;
-import com.bpm.core.document.domain.FileServiceConfig;
+import com.bpm.core.db.service.DataSourceConfigService;
+import com.bpm.core.document.domain.DocumentServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.server.domain.Server;
 import com.bpm.core.server.service.ServerService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.domain.ServiceType;
-import com.bpm.core.serviceconfig.service.ServiceConfigService;
+import com.bpm.core.serviceconfig.service.ServiceConfigRepositoryService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,11 +25,11 @@ import java.util.List;
 @RequestMapping(ROUTES.UI_SERVICE)
 public class ServiceConfigController {
 
-	private final ServiceConfigService serviceConfigService;
-	private final DataSourceService dataSourceService;
+	private final ServiceConfigRepositoryService serviceConfigService;
+	private final DataSourceConfigService dataSourceService;
 	private final ServerService serverService;
 
-    public ServiceConfigController(ServiceConfigService serviceConfigService, DataSourceService dataSourceService, ServerService serverService) {
+    public ServiceConfigController(ServiceConfigRepositoryService serviceConfigService, DataSourceConfigService dataSourceService, ServerService serverService) {
     	this.serviceConfigService = serviceConfigService;
     	this.dataSourceService = dataSourceService;
     	this.serverService = serverService;
@@ -53,7 +53,7 @@ public class ServiceConfigController {
     	config.setDbServiceConfig(new DbServiceConfig());
     	config.setRestServiceConfig(new RestServiceConfig());
     	config.setMailServiceConfig(new MailServiceConfig());
-    	config.setFileServiceConfig(new FileServiceConfig());
+    	config.setDocumentServiceConfig(new DocumentServiceConfig());
     	
     	List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
     	List<Server> servers = serverService.getAllServers();
