@@ -60,6 +60,7 @@ public class ServiceConfig {
     @OneToOne(mappedBy = "serviceConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private DocumentServiceConfig documentServiceConfig;
 
+
     @PrePersist
     public void onCreate() {
         createdAt = LocalDateTime.now();

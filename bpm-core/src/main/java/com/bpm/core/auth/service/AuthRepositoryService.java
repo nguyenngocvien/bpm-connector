@@ -6,7 +6,6 @@ import com.bpm.core.auth.repository.AuthConfigRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AuthRepositoryService {
 
@@ -20,13 +19,14 @@ public class AuthRepositoryService {
         return authRepository.findAll();
     }
 
-    public Optional<AuthConfig> getAuthConfigById(Long id) {
-        return authRepository.findById(id);
+    public AuthConfig getAuthConfigById(Long id) {
+        return authRepository.findById(id)
+        		.orElseThrow(() -> new UsernameNotFoundException("Credential not found: " + id));
     }
 
     public AuthConfig getAuthConfigByName(String name) {
     	AuthConfig config = authRepository.findByName(name)
-    			.orElseThrow(() -> new UsernameNotFoundException("User not found: " + name)); 
+    			.orElseThrow(() -> new UsernameNotFoundException("Credential not found: " + name)); 
     	
         return config;
     }
@@ -36,7 +36,7 @@ public class AuthRepositoryService {
         if (saved != null) {
             return saved;
         }
-        throw new RuntimeException("Failed to save AuthConfig: " + config.getName());
+        throw new RuntimeException("Failed to save Credential: " + config.getName());
     }
 
     public boolean deleteAuthConfig(Long id) {

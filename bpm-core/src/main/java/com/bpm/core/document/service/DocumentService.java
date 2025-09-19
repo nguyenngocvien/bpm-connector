@@ -13,14 +13,14 @@ import com.bpm.core.document.infrastructure.CmisService;
 import com.bpm.core.document.infrastructure.TemplateService;
 import com.bpm.core.document.repository.DocumentTemplateRepository;
 import com.bpm.core.server.domain.Server;
-import com.bpm.core.server.service.ServerService;
+import com.bpm.core.server.service.ServerRepositoryService;
 
 public class DocumentService {
 
     private TemplateService templateService;
     private CmisService cmisService;
     private DocumentTemplateRepository templateRepo;
-    private ServerService serverService;
+    private ServerRepositoryService serverService;
     private AuthRepositoryService authService;
 
     public DocumentResponse generateFile(DocumentServiceConfig docConfig, Map<String, Object> params) throws IOException {
@@ -29,8 +29,7 @@ public class DocumentService {
 
         Server server = serverService.getServerById(docConfig.getServerId());
         		
-        AuthConfig auth = authService.getAuthConfigById(docConfig.getAuthId())
-                .orElseThrow(() -> new RuntimeException("Auth not found"));
+        AuthConfig auth = authService.getAuthConfigById(docConfig.getAuthId());
         
         byte[] content;
         String ext;

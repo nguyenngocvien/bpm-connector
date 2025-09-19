@@ -1,35 +1,35 @@
 package com.bpm.core.serviceconfig.service;
 
-import java.util.Map;
-
 import com.bpm.core.common.response.Response;
-import com.bpm.core.common.util.JsonUtil;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
-import com.bpm.core.serviceconfig.service.impl.DbInvoker;
+import com.bpm.core.serviceconfig.service.impl.DbExecutor;
+import com.bpm.core.serviceconfig.service.impl.EmailSender;
 import com.bpm.core.serviceconfig.service.impl.RestInvoker;
 
-public class ServiceDispatcher {
+public class ServiceDispatcher{
 	
     private final ServiceConfigRepositoryService service;
-    private final DbInvoker dbInvoker;
+    private final DbExecutor dbExecutor;
     private final RestInvoker restInvoker;
+    private final EmailSender emailSender;
     
     public ServiceDispatcher(ServiceConfigRepositoryService service,
-				    		DbInvoker dbInvoker,
-				            RestInvoker restInvoker) {
+				    		DbExecutor dbExecutor,
+				            RestInvoker restInvoker,
+				            EmailSender emailSender) {
         
-    	this.dbInvoker = dbInvoker;
+    	this.service = service;
+    	this.dbExecutor = dbExecutor;
         this.restInvoker = restInvoker;
-        
-        this.service = service;
+        this.emailSender = emailSender;   
     }
 
-    public Response<Object> executeServiceById(Long serviceId, String params) {
+    public Response<Object> execute(Long serviceId, String params) {
         ServiceConfig config = service.findById(serviceId);
         return execute(config, params);
     }
     
-    public Response<Object> executeServiceByCode(String serviceCode, String params) {
+    public Response<Object> execute(String serviceCode, String params) {
         ServiceConfig config = service.findByCode(serviceCode);
         return execute(config, params);
     }
@@ -38,21 +38,17 @@ public class ServiceDispatcher {
     	Response<Object> res;
 
         try {
-            Map<String, Object> paramMap = JsonUtil.toObjectMap(params);
 
             switch (config.getServiceType()) {
                 case SQL:
-                    res = dbInvoker.invoke(config, paramMap);
+                    res = dbExecutor.execute(config.getId(), params);
                     break;
                 case REST:
-                    res = restInvoker.invoke(config, paramMap);
+                    res = restInvoker.invoke(config.getId(), params);
                     break;
-//                case SOAP:
-//                    res = soapInvoker.invoke(config, paramMap);
-//                    break;
-//                case MAIL:
-//                    res = mailInvoker.invoke(config, paramMap);
-//                    break;
+                case MAIL:
+                    res = emailSender.sendEmail(config.getId(), params);
+                    break;
 //                case FILE:
 //                    res = fileInvoker.invoke(config, paramMap);
 //                    break;

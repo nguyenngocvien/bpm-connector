@@ -2,10 +2,11 @@ package com.bpm.core.rest.service;
 
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.repository.RestServiceConfigRepository;
+import com.bpm.core.serviceconfig.infrastructure.RestConfigMapper;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RestServiceConfigService {
@@ -20,8 +21,24 @@ public class RestServiceConfigService {
         return restRepository.findAll();
     }
 
-    public Optional<RestServiceConfig> getConfigById(Long id) {
-        return restRepository.findById(id);
+    public RestServiceConfig getConfigById(Long id) {
+    	RestServiceConfig config = restRepository.findById(id)
+    	        .map(cfg -> {
+    	            RestConfigMapper.deserializeLists(cfg);
+    	            return cfg;
+    	        })
+    	        .orElseThrow(() -> new IllegalArgumentException("Not found: " + id));
+        return config;
+    }
+    
+    public RestServiceConfig getActiveConfigById(Long id) {
+    	RestServiceConfig config = restRepository.findByIdAndServiceConfig_ActiveTrue(id)
+    	        .map(cfg -> {
+    	            RestConfigMapper.deserializeLists(cfg);
+    	            return cfg;
+    	        })
+    	        .orElseThrow(() -> new IllegalArgumentException("Not found: " + id));
+        return config;
     }
 
     public void saveConfig(RestServiceConfig config, Long serviceId) {

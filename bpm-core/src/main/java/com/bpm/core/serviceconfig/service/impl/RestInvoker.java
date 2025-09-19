@@ -2,6 +2,7 @@ package com.bpm.core.serviceconfig.service.impl;
 
 import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.common.response.Response;
+import com.bpm.core.common.util.JsonUtil;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.infrastructure.RestRequestMapper;
 import com.bpm.core.rest.infrastructure.RestResponseMapper;
@@ -10,8 +11,7 @@ import com.bpm.core.rest.infrastructure.ServiceLogHelper;
 import com.bpm.core.rest.infrastructure.WebClientAuthUtil;
 import com.bpm.core.rest.service.RestServiceConfigService;
 import com.bpm.core.server.domain.Server;
-import com.bpm.core.server.service.ServerService;
-import com.bpm.core.serviceconfig.domain.ServiceConfig;
+import com.bpm.core.server.service.ServerRepositoryService;
 import com.bpm.core.servicelog.domain.ServiceLog;
 import com.bpm.core.servicelog.service.ServiceLogService;
 
@@ -19,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -29,7 +28,7 @@ import java.util.*;
 
 public class RestInvoker {
 
-    private final ServerService serverService;
+    private final ServerRepositoryService serverService;
     private final RestServiceConfigService restService;
     private final ServiceLogService logService;
     private final AuthServiceCache authCache;
@@ -37,7 +36,7 @@ public class RestInvoker {
     private final RestRequestMapper requestMapper;
     private final RestResponseMapper responseMapper;
 
-    public RestInvoker(ServerService serverService, RestServiceConfigService restService,
+    public RestInvoker(ServerRepositoryService serverService, RestServiceConfigService restService,
                        ServiceLogService logService, AuthServiceCache authCache) {
         this.serverService = serverService;
         this.restService = restService;
@@ -48,12 +47,12 @@ public class RestInvoker {
         this.responseMapper = new RestResponseMapper(engine);
     }
 
-    public Response<Object> invoke(ServiceConfig serviceConfig, Map<String, Object> inputParams) {
-        RestServiceConfig config = restService.getConfigById(serviceConfig.getId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "REST config not found for ID: " + serviceConfig.getId()));
+    public Response<Object> invoke(Long serviceId, String params) {
+    	
+        RestServiceConfig config = restService.getActiveConfigById(serviceId);
 
         Server server = serverService.getServerById(config.getServerId());
+        
         String resolvedUrl = RestUrlBuilder.buildResolvedUrl(config, server);
 
         WebClient.Builder builder = WebClient.builder().baseUrl(resolvedUrl);
@@ -84,6 +83,7 @@ public class RestInvoker {
         }
 
         // --- build request body ---
+        Map<String,Object> inputParams = JsonUtil.toObjectMap(params);
         String bodyStr = requestMapper.processRequestMapping(config.getRequestMappingScript(), inputParams);
 
         long startTime = System.currentTimeMillis();
@@ -103,8 +103,8 @@ public class RestInvoker {
             Object mappedResponse = responseMapper.processResponseMapping(config.getResponseMappingScript(), responseString);
 
             // --- logging ---
-            if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
-                ServiceLog log = ServiceLogHelper.buildLog(serviceConfig, inputParams, bodyStr, responseString, statusCode, startTime);
+            if (Boolean.TRUE.equals(config.getServiceConfig().getLogEnabled())) {
+                ServiceLog log = ServiceLogHelper.buildLog(config.getServiceConfig(), inputParams, bodyStr, responseString, statusCode, startTime);
                 logId = saveLogSafe(log);
             }
 
@@ -114,8 +114,8 @@ public class RestInvoker {
             statusCode = 500;
             String errMsg = ex.getMessage();
 
-            if (Boolean.TRUE.equals(serviceConfig.getLogEnabled())) {
-                ServiceLog log = ServiceLogHelper.buildLog(serviceConfig, inputParams, bodyStr, errMsg, statusCode, startTime);
+            if (Boolean.TRUE.equals(config.getServiceConfig().getLogEnabled())) {
+                ServiceLog log = ServiceLogHelper.buildLog(config.getServiceConfig(), inputParams, bodyStr, errMsg, statusCode, startTime);
                 logId = saveLogSafe(log);
             }
 

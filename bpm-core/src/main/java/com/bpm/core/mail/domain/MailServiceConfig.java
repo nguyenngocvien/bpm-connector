@@ -2,6 +2,9 @@ package com.bpm.core.mail.domain;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import com.bpm.core.serviceconfig.domain.ServiceConfig;
+
 import lombok.*;
 
 @Data
@@ -13,8 +16,13 @@ import lombok.*;
 public class MailServiceConfig {
 
     @Id
-    @Column(name = "config_id")
-    private Long configId; // liên kết với core_service_config(id)
+    @Column(name = "id")
+    private Long id;
+    
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private ServiceConfig serviceConfig;
 
     @Column(name = "server_id", nullable = false)
     private Long serverId;

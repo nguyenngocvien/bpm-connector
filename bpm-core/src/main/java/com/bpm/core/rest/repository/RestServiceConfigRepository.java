@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface RestServiceConfigRepository extends JpaRepository<RestServiceConfig, Long> {
 
     Optional<RestServiceConfig> findById(Long id);
+    
+    Optional<RestServiceConfig> findByIdAndServiceConfig_ActiveTrue(Long id);
 
     boolean existsByPathAndServerId(String path, Long serverId);
 }

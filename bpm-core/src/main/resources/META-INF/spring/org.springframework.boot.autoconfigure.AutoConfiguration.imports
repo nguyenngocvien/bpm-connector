@@ -1,3 +1,2 @@
-com.bpm.core.common.config.AuthAutoConfiguration
 com.bpm.core.common.config.WebAutoConfig
 com.bpm.core.common.config.CoreServiceAutoConfiguration

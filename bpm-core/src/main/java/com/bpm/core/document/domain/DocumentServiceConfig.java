@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+import com.bpm.core.serviceconfig.domain.ServiceConfig;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +19,11 @@ public class DocumentServiceConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private ServiceConfig serviceConfig;
 
     @Column(name = "template_id", nullable = false)
     private Long templateId;

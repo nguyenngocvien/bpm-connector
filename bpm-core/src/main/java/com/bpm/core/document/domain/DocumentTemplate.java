@@ -21,6 +21,7 @@ public class DocumentTemplate {
     private String type;
 
     @Lob
+    @Column(columnDefinition = "BYTEA")
     private byte[] content; // optional
 
     @Column(name = "created_at", nullable = false, updatable = false)

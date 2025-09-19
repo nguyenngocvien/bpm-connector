@@ -4,7 +4,6 @@ import com.bpm.core.db.service.DbServiceConfigService;
 import com.bpm.core.document.domain.DocumentServiceConfig;
 import com.bpm.core.document.repository.DocumentConfigRepository;
 import com.bpm.core.mail.service.MailServiceConfigService;
-import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.service.RestServiceConfigService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.domain.ServiceType;
@@ -88,12 +87,9 @@ public class ServiceConfigRepositoryService {
 
         switch (type) {
             case SQL -> config.setDbServiceConfig(dbService.getConfigById(id));
-            case REST -> config.setRestServiceConfig(
-                    restService.getConfigById(id).orElse(new RestServiceConfig()));
-            case MAIL -> config.setMailServiceConfig(
-                    mailService.getConfigById(id));
-            case DOCUMENT -> config.setDocumentServiceConfig(
-                    docRepository.findById(id).orElse(new DocumentServiceConfig()));
+            case REST -> config.setRestServiceConfig(restService.getConfigById(id));
+            case MAIL -> config.setMailServiceConfig(mailService.getConfigById(id));
+            case DOCUMENT -> config.setDocumentServiceConfig(docRepository.findById(id).orElse(new DocumentServiceConfig()));
             default -> {
                 // no-op or throw exception
             }

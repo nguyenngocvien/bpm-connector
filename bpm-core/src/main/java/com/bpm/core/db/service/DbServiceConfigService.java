@@ -41,6 +41,12 @@ public class DbServiceConfigService {
     	return repository.findById(id)
         		.orElseThrow(() -> new IllegalArgumentException("DbServiceConfig not found with ID: " + id));
     }
+    
+ // Find by id and active
+//    public DbServiceConfig getActiveConfigById(Long id) {
+//    	return repository.findB(id)
+//        		.orElseThrow(() -> new IllegalArgumentException("DbServiceConfig not found with ID: " + id));
+//    }
 
     // Find all enabled
     public List<DbServiceConfig> findAllEnabled() {

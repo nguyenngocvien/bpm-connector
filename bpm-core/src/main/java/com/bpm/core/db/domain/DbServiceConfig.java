@@ -3,6 +3,9 @@ package com.bpm.core.db.domain;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.bpm.core.serviceconfig.domain.ServiceConfig;
+
 import lombok.*;
 import lombok.Builder.Default;
 
@@ -16,6 +19,11 @@ public class DbServiceConfig {
 
     @Id
     private Long id;
+    
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private ServiceConfig serviceConfig;
 
     @Column(name = "ds_id", nullable = false)
     private Long dbSourceId;

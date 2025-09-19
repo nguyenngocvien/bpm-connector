@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.bpm.core.serviceconfig.domain.ServiceConfig;
 
 @Entity
 @Table(name = "cfg_service_rest")
@@ -14,7 +17,12 @@ import java.time.LocalDateTime;
 public class RestServiceConfig {
 
     @Id
-    private Long id; // tham chiếu core_services(id)
+    private Long id;
+    
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private ServiceConfig serviceConfig;
 
     @Column(name = "server_id")
     private Long serverId;
@@ -67,4 +75,13 @@ public class RestServiceConfig {
     @Builder.Default
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
+    
+    @Transient
+    private List<NameValuePair> headerList;
+
+    @Transient
+    private List<NameValuePair> queryParamList;
+
+    @Transient
+    private List<NameValuePair> pathParamList;
 }
