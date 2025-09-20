@@ -1,11 +1,21 @@
 package com.bpm.core.document.service;
 
+import java.util.List;
+
 import com.bpm.core.document.domain.DocumentTemplate;
 import com.bpm.core.document.repository.DocumentTemplateRepository;
 
 public class TemplateRepositoryService {
 
     private DocumentTemplateRepository templateRepository;
+    
+    public TemplateRepositoryService(DocumentTemplateRepository templateRepository) {
+		this.templateRepository = templateRepository;
+	}
+    
+    public List<DocumentTemplate> getAllTemplates() {
+        return templateRepository.findAll();
+    }
 
     public DocumentTemplate getTemplateById(Long templateId) {
         return templateRepository.findById(templateId)
@@ -18,5 +28,9 @@ public class TemplateRepositoryService {
 
     public DocumentTemplate saveTemplate(DocumentTemplate template) {
         return templateRepository.save(template);
+    }
+    
+    public void deleteTemplate(Long id) {
+        templateRepository.deleteById(id);
     }
 }

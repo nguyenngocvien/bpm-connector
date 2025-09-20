@@ -20,8 +20,7 @@ public class DocumentTemplate {
     @Column(nullable = false, length = 20)
     private String type;
 
-    @Lob
-    @Column(columnDefinition = "BYTEA")
+    @Column(name = "content")
     private byte[] content; // optional
 
     @Column(name = "created_at", nullable = false, updatable = false)

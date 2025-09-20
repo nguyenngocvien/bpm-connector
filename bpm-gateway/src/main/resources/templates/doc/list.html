@@ -1,0 +1,36 @@
+<div class="content" th:fragment="content">
+    <h3>Document Template Generator Configurations</h3>
+    <hr class="mb-4 mt-2" />
+	<a class="btn btn-sm btn-outline-secondary p-2 mb-3" th:href="@{/admin/doctemplates/add}">+ Add Template</a>
+    <table class="table table-dark table-hover align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="tpl : ${doctemplates}">
+				<td th:text="${tpl.id}"></td>
+	            <td th:text="${tpl.name}"></td>
+	            <td th:text="${tpl.type}"></td>
+				<!-- Details SVG Icon -->
+                <td>
+                    <a th:href="@{'/admin/doctemplates/edit/' + ${tpl.id}}" class="text-info" title="View Details">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+						         class="bi bi-pencil-square" viewBox="0 0 16 16">
+					        <path d="M15.502 1.94a.5.5 0 0 1 0 .706l-1.05 1.05-2.121-2.121 1.05-1.05a.5.5 0 0 1 .707 0l1.414 1.414zm-1.75 2.456L9.708 8.44a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l4.043-4.043-2.121-2.121z"/>
+					        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5V6a.5.5 0 0 0-1 0v7.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H10a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+					    </svg>
+                    </a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(doctemplates)}">
+                <td colspan="8" class="text-center">No template configurations found.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

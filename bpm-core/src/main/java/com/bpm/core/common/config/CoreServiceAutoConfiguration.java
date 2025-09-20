@@ -20,6 +20,8 @@ import com.bpm.core.db.repository.DbServiceConfigRepository;
 import com.bpm.core.db.service.DataSourceConfigService;
 import com.bpm.core.db.service.DbServiceConfigService;
 import com.bpm.core.document.repository.DocumentConfigRepository;
+import com.bpm.core.document.repository.DocumentTemplateRepository;
+import com.bpm.core.document.service.TemplateRepositoryService;
 import com.bpm.core.mail.repository.MailServiceConfigRepository;
 import com.bpm.core.mail.service.MailServiceConfigService;
 import com.bpm.core.rest.infrastructure.RestRequestMapper;
@@ -106,6 +108,11 @@ public class CoreServiceAutoConfiguration {
     @Bean
     public RestServiceConfigService restService(RestServiceConfigRepository repository) {
         return new RestServiceConfigService(repository);
+    }
+    
+    @Bean
+    public TemplateRepositoryService templateService(DocumentTemplateRepository repository) {
+        return new TemplateRepositoryService(repository);
     }
     
     @Bean

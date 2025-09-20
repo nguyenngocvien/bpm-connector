@@ -10,5 +10,5 @@ public class ROUTES {
     public static final String UI_SERVICE = UI + "/service";
     public static final String UI_DATASOURCE = UI + "/datasource";
     public static final String UI_TESTING = UI + "/test";
-    public static final String UI_FILE = UI + "/file";
+    public static final String UI_DOC_TEMPLATE = UI + "/doctemplates";
 }
