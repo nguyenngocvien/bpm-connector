@@ -9,7 +9,7 @@ import java.util.List;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 
 @Entity
-@Table(name = "cfg_service_rest")
+@Table(name = "cfg_svc_rest")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cfg_service_mail")
+@Table(name = "cfg_svc_mail")
 public class MailServiceConfig {
 
     @Id

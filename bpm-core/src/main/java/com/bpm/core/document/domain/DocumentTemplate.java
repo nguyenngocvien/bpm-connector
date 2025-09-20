@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "doc_templates")
+@Table(name = "cfg_doc_tmplts")
 @Data
 public class DocumentTemplate {
 

@@ -1,5 +1,7 @@
 package com.bpm.core.servicelog.service;
 
+import java.util.List;
+
 import com.bpm.core.servicelog.domain.ServiceLog;
 import com.bpm.core.servicelog.repository.ServiceLogRepository;
 
@@ -12,9 +14,14 @@ public class ServiceLogService {
     }
 
     public Long createLog(ServiceLog log) {
-        if (log.getCreatedAt() == null) {
-            throw new IllegalArgumentException("createdAt must not be null");
-        }
-        return repository.insertLog(log);
+    	return repository.save(log).getId();
+    }
+    
+    public List<ServiceLog> getLogsByServiceCode(String serviceCode) {
+        return repository.findByServiceCodeOrderByCreatedAtDesc(serviceCode);
+    }
+
+    public List<ServiceLog> getLatestLogs() {
+        return repository.findTop10ByOrderByCreatedAtDesc();
     }
 }

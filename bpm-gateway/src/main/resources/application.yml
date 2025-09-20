@@ -28,7 +28,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -41,20 +41,14 @@ spring:
 #     name: admin
 #     password: secret
 
+logging:
+  level:
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
+
 auth:
   jwt:
     secret: mySuperSecretKey1234567890123456
-
-app:
-  cmis:
-    atompubUrl: "http://172.29.255.121:9081/fncmis/resources/Service"
-    repositoryId: "OBJ"
-    username: "ecmadmin"
-    password: "Car3full"
-    connectTimeoutMs: 10000
-    readTimeoutMs: 30000
-    defaultObjectTypeId: "cmis:document"
-    defaultFolderPath: "/UPLOAD_TEMP"
 
 springdoc:
   api-docs:

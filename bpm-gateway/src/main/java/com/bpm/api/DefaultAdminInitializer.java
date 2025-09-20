@@ -30,8 +30,8 @@ public class DefaultAdminInitializer implements CommandLineRunner {
         final String defaultRawPassword = "123456";
         final String defaultRole = "ADMIN";
 
-        Optional<AuthConfig> existing = authRepository.findByName(defaultUsername);
-        if (existing.isPresent()) {
+        Optional<AuthConfig> authConfig = authRepository.findByName(defaultUsername);
+        if (authConfig.isPresent()) {
             System.out.println("[INFO] Default admin already exists.");
             return;
         }

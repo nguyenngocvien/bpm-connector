@@ -20,9 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import java.time.Duration;
 import java.util.*;
 
@@ -37,14 +34,15 @@ public class RestInvoker {
     private final RestResponseMapper responseMapper;
 
     public RestInvoker(ServerRepositoryService serverService, RestServiceConfigService restService,
-                       ServiceLogService logService, AuthServiceCache authCache) {
+                       ServiceLogService logService, AuthServiceCache authCache,
+                       RestRequestMapper requestMapper,
+                       RestResponseMapper responseMapper) {
         this.serverService = serverService;
         this.restService = restService;
         this.logService = logService;
         this.authCache = authCache;
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-        this.requestMapper = new RestRequestMapper(engine);
-        this.responseMapper = new RestResponseMapper(engine);
+        this.requestMapper = requestMapper;
+        this.responseMapper = responseMapper;
     }
 
     public Response<Object> invoke(Long serviceId, String params) {

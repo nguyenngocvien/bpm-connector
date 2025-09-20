@@ -10,7 +10,7 @@ import lombok.Builder.Default;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "core_datasources")
+@Table(name = "cfg_datasources")
 public class DataSourceConfig {
 
     @Id

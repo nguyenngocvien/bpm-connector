@@ -14,7 +14,7 @@ import lombok.Builder.Default;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cfg_service_db")
+@Table(name = "cfg_svc_db")
 public class DbServiceConfig {
 
     @Id

@@ -1,13 +1,11 @@
 package com.bpm.core.common.config;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 
+import org.graalvm.polyglot.Context;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.bpm.core.auth.cache.AuthServiceCache;
@@ -36,6 +34,7 @@ import com.bpm.core.serviceconfig.service.ServiceDispatcher;
 import com.bpm.core.serviceconfig.service.impl.DbExecutor;
 import com.bpm.core.serviceconfig.service.impl.EmailSender;
 import com.bpm.core.serviceconfig.service.impl.RestInvoker;
+import com.bpm.core.servicelog.repository.ServiceLogRepository;
 import com.bpm.core.servicelog.service.ServiceLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -46,6 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     "com.bpm.core.db.repository",
     "com.bpm.core.server.repository",
     "com.bpm.core.serviceconfig.repository",
+    "com.bpm.core.servicelog.repository",
     "com.bpm.core.rest.repository",
     "com.bpm.core.mail.repository",
     "com.bpm.core.document.repository",
@@ -55,6 +55,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     "com.bpm.core.db.domain",
     "com.bpm.core.server.domain",
     "com.bpm.core.serviceconfig.domain",
+    "com.bpm.core.servicelog.domain",
     "com.bpm.core.mail.domain",
     "com.bpm.core.rest.domain",
     "com.bpm.core.document.domain"
@@ -113,8 +114,8 @@ public class CoreServiceAutoConfiguration {
     }
 
     @Bean
-    public ServiceLogService serviceLogService(JdbcTemplate jdbcTemplate) {
-        return new ServiceLogService(new com.bpm.core.servicelog.repository.ServiceLogRepository(jdbcTemplate));
+    public ServiceLogService serviceLogService(ServiceLogRepository repository) {
+        return new ServiceLogService(repository);
     }
 
     @Bean
@@ -145,28 +146,21 @@ public class CoreServiceAutoConfiguration {
     }
     
     @Bean
-    public ScriptEngine scriptEngine() {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        System.out.println("Available ScriptEngines: " + manager.getEngineFactories());
-        ScriptEngine engine = manager.getEngineByName("graal.js");
-        if (engine == null) {
-            engine = manager.getEngineByName("js");
-        }
-        if (engine == null) {
-            throw new IllegalStateException("No Graal.js engine found!");
-        }
-        return engine;
+    public Context graalVmContext() {
+        return Context.newBuilder("js")
+                .allowHostAccess(true)
+                .allowHostClassLookup(s -> true)
+                .build();
     }
 
-    
     @Bean
-    public RestRequestMapper requestMapper(ScriptEngine engine) {
-    	return new RestRequestMapper(engine);
+    public RestRequestMapper requestMapper(Context graalVmContext) {
+    	return new RestRequestMapper(graalVmContext);
     }
     
     @Bean
-    public RestResponseMapper responseMapper(ScriptEngine engine) {
-    	return new RestResponseMapper(engine);
+    public RestResponseMapper responseMapper(Context graalVmContext) {
+    	return new RestResponseMapper(graalVmContext);
     }
     
     @Bean
@@ -177,7 +171,7 @@ public class CoreServiceAutoConfiguration {
     		AuthServiceCache authCache,
     		RestRequestMapper requestMapper,
     		RestResponseMapper responseMapper) {
-    	return new RestInvoker(serverService, restService, logService, authCache);
+    	return new RestInvoker(serverService, restService, logService, authCache, requestMapper, responseMapper);
     }
     
     @Bean

@@ -10,7 +10,7 @@ import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "doc_services")
+@Table(name = "cfg_doc_srvcs")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

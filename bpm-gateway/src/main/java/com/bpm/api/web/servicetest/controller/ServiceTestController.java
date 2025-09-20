@@ -1,6 +1,5 @@
 package com.bpm.api.web.servicetest.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,6 @@ public class ServiceTestController {
     private final ServiceConfigRepositoryService service;
     private final ServiceDispatcher dispatcher;
 
-    @Autowired
     public ServiceTestController(ServiceConfigRepositoryService service, ServiceDispatcher dispatcher) {
         this.service = service;
         this.dispatcher = dispatcher;
@@ -57,19 +55,6 @@ public class ServiceTestController {
         
         model.addAttribute("inputJson", input);
         return "service/param-textarea :: textarea";
-    }
-
-    @PostMapping
-    public String executeService(@RequestParam Long serviceId,
-                                 @RequestParam String params,
-                                 Model model) {
-
-        System.out.println(">>> Invoking Service ID = " + serviceId);
-
-        Response<Object> res = dispatcher.execute(serviceId, params);
-
-        model.addAttribute("outputJson", res.toString());
-        return "service/response :: result";
     }
     
     @PostMapping

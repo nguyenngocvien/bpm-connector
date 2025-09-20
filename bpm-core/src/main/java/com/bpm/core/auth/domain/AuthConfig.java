@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "core_auth_credentials")
+@Table(name = "cfg_auths")
 public class AuthConfig {
 
     @Id

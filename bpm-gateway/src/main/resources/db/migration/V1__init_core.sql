@@ -1,6 +1,6 @@
 -- ================= CORE METADATA =================
 
-CREATE TABLE core_servers (
+CREATE TABLE cfg_servers (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     type VARCHAR(20) NOT NULL, -- REST, MAIL, DB...
@@ -9,12 +9,10 @@ CREATE TABLE core_servers (
     https BOOLEAN DEFAULT FALSE
 );
 
-CREATE TYPE auth_type_enum AS ENUM ('BASIC', 'BEARER', 'API_KEY', 'OAUTH2', 'NONE');
-
-CREATE TABLE core_auth_credentials (
+CREATE TABLE cfg_auths (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,   -- định danh credential
-    auth_type auth_type_enum NOT NULL,
+    auth_type VARCHAR(20),
 
     username VARCHAR(100),               -- BASIC
     password VARCHAR(100),               -- BASIC
@@ -35,7 +33,7 @@ CREATE TABLE core_auth_credentials (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE core_datasources (
+CREATE TABLE cfg_datasources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,   -- định danh datasource
     description TEXT,
@@ -59,7 +57,7 @@ CREATE TABLE core_datasources (
 
 CREATE TYPE service_type_enum AS ENUM ('REST', 'SOAP', 'DB', 'MAIL', 'FILE');
 
-CREATE TABLE core_services (
+CREATE TABLE cfg_services (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50) NOT NULL UNIQUE,
     service_name VARCHAR(100) NOT NULL,
@@ -75,7 +73,7 @@ CREATE TABLE core_services (
 
 -- ================= DOCUMENT DOMAIN =================
 
-CREATE TABLE doc_templates (
+CREATE TABLE cfg_doc_tmplts (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,   -- filename: invoice.docx
     type VARCHAR(20) NOT NULL,    -- DOCX, XLSX, PDF...
@@ -84,11 +82,11 @@ CREATE TABLE doc_templates (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE doc_services (
+CREATE TABLE cfg_doc_srvcs (
     id SERIAL PRIMARY KEY,
-    template_id BIGINT NOT NULL REFERENCES doc_templates(id),
-    server_id BIGINT NOT NULL REFERENCES core_servers(id),
-    auth_id BIGINT REFERENCES core_auth_credentials(id),
+    template_id BIGINT NOT NULL REFERENCES cfg_doc_tmplts(id),
+    server_id BIGINT NOT NULL REFERENCES cfg_servers(id),
+    auth_id BIGINT REFERENCES cfg_auths(id),
 
     status VARCHAR(20) DEFAULT 'ACTIVE',
     version VARCHAR(50),
@@ -98,10 +96,10 @@ CREATE TABLE doc_services (
 
 -- ================= SERVICE CONFIGS =================
 
-CREATE TABLE cfg_service_db (
-    id BIGINT PRIMARY KEY REFERENCES core_services(id) ON DELETE CASCADE,
+CREATE TABLE cfg_svc_db (
+    id BIGINT PRIMARY KEY REFERENCES cfg_services(id) ON DELETE CASCADE,
 
-    datasource_id BIGINT NOT NULL REFERENCES core_datasources(id),
+    datasource_id BIGINT NOT NULL REFERENCES cfg_datasources(id),
     sql_statement TEXT NOT NULL,
     sql_type VARCHAR(10) NOT NULL,   -- QUERY / UPDATE / PROC
 
@@ -122,11 +120,11 @@ CREATE TABLE cfg_service_db (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE cfg_service_rest (
-    id BIGINT PRIMARY KEY REFERENCES core_services(id) ON DELETE CASCADE,
+CREATE TABLE cfg_svc_rest (
+    id BIGINT PRIMARY KEY REFERENCES cfg_services(id) ON DELETE CASCADE,
 
-    server_id BIGINT REFERENCES core_servers(id) ON DELETE SET NULL,
-    auth_id BIGINT REFERENCES core_auth_credentials(id) ON DELETE SET NULL,
+    server_id BIGINT REFERENCES cfg_servers(id) ON DELETE SET NULL,
+    auth_id BIGINT REFERENCES cfg_auths(id) ON DELETE SET NULL,
 
     path TEXT NOT NULL,
     http_method VARCHAR(10) NOT NULL DEFAULT 'GET',
@@ -147,11 +145,11 @@ CREATE TABLE cfg_service_rest (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE cfg_service_mail (
-    id BIGINT PRIMARY KEY REFERENCES core_services(id) ON DELETE CASCADE,
+CREATE TABLE cfg_svc_mail (
+    id BIGINT PRIMARY KEY REFERENCES cfg_services(id) ON DELETE CASCADE,
 
-    server_id BIGINT NOT NULL REFERENCES core_servers(id),
-    auth_id BIGINT REFERENCES core_auth_credentials(id),
+    server_id BIGINT NOT NULL REFERENCES cfg_servers(id),
+    auth_id BIGINT REFERENCES cfg_auths(id),
 
     default_mail_from VARCHAR(100) NOT NULL,
     default_mail_to TEXT,
@@ -175,7 +173,7 @@ CREATE TABLE cfg_service_mail (
 
 -- ================= LOGGING =================
 
-CREATE TABLE log_service_calls (
+CREATE TABLE svc_logs (
     id BIGSERIAL PRIMARY KEY,
     service_code VARCHAR(50) NOT NULL,
     request_data TEXT,
