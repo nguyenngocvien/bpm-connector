@@ -23,7 +23,7 @@ public class EmailSender {
 		this.authService = authService;
 	}
 
-	public Response<Object> sendEmail(Long mailId, String jsonObject) {
+	public Object sendEmail(Long mailId, String jsonObject) {
 	    try {
 	        MailServiceConfig config = mailService.getActiveMailServiceConfigById(mailId);
 	        Server server = serverService.getServerById(config.getServerId());
@@ -76,7 +76,7 @@ public class EmailSender {
 
 	        Transport.send(message);
 
-	        return Response.success("Email sent successfully", null);
+	        return "Email sent successfully";
 
 	    } catch (MessagingException e) {
 	        return Response.error("Failed to send email: " + e.getMessage());
@@ -85,3 +85,38 @@ public class EmailSender {
 	    }
 	}
 }
+
+
+//package com.bpm.core.invoker;
+//
+//import com.bpm.core.common.model.Response;
+//import com.bpm.core.entity.ServiceConfig;
+//import com.bpm.core.entity.ServiceType;
+//import com.bpm.core.service.EmailConfigService;
+//import lombok.extern.slf4j.Slf4j;
+//
+//@Slf4j
+//public class EmailInvoker implements ServiceInvoker {
+//    private final EmailConfigService emailService;
+//
+//    public EmailInvoker(EmailConfigService emailService) {
+//        this.emailService = emailService;
+//    }
+//
+//    @Override
+//    public ServiceType getServiceType() {
+//        return ServiceType.EMAIL;
+//    }
+//
+//    @Override
+//    public Response execute(ServiceConfig config, String params) {
+//        try {
+//            emailService.sendEmail(config, params);
+//            return Response.success("Email sent");
+//        } catch (Exception e) {
+//            log.error("Email send failed: {}", e.getMessage(), e);
+//            return Response.error("EMAIL_ERROR", e.getMessage());
+//        }
+//    }
+//}
+//

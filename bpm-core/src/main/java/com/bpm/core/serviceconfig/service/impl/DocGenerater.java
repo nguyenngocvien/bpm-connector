@@ -12,7 +12,7 @@ public class DocGenerater {
 
     private DocumentService documentService;
 
-    public Response<Object> invoke(ServiceConfig serviceConfig, Map<String, Object> params) {
+    public Object invoke(ServiceConfig serviceConfig, Map<String, Object> params) {
 
         DocumentServiceConfig docConfig = serviceConfig.getDocumentServiceConfig();
         if (docConfig == null) {
@@ -22,7 +22,7 @@ public class DocGenerater {
         // 3. Generate file
         try {
         	DocumentResponse document = documentService.generateFile(docConfig, params); 
-        	return Response.success(document);
+        	return document;
         } catch (Exception e) {
         	return Response.error("Failed to generate document: " + e.getMessage());
         }

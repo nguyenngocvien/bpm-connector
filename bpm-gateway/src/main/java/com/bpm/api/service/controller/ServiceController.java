@@ -23,11 +23,11 @@ public class ServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<Response<Object>> execute(
+    public ResponseEntity<Response> execute(
             @RequestParam String serviceCode,
             @RequestParam String params) {
         try {
-            Response<Object> response = dispatcher.execute(serviceCode, params);
+            Response response = dispatcher.execute(serviceCode, params);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest()

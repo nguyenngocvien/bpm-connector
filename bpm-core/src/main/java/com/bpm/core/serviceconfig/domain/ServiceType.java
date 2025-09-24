@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public enum ServiceType {
 
-	SQL("SQL"),
+	DB("DB"),
 	REST("REST"),
     MAIL("MAIL"),
     DOCUMENT("DOCUMENT");

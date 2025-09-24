@@ -1,12 +1,14 @@
 package com.bpm.core.common.config;
 
+import java.util.List;
+
 import org.graalvm.polyglot.Context;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.auth.domain.AuthProperties;
@@ -15,6 +17,8 @@ import com.bpm.core.auth.provider.JwtAuthProvider;
 import com.bpm.core.auth.repository.AuthConfigRepository;
 import com.bpm.core.auth.service.AuthManager;
 import com.bpm.core.auth.service.AuthRepositoryService;
+import com.bpm.core.common.util.ServiceLogHelper;
+import com.bpm.core.db.infrastructure.DbExecutorHelper;
 import com.bpm.core.db.repository.DataSourceRepository;
 import com.bpm.core.db.repository.DbServiceConfigRepository;
 import com.bpm.core.db.service.DataSourceConfigService;
@@ -24,12 +28,14 @@ import com.bpm.core.document.repository.DocumentTemplateRepository;
 import com.bpm.core.document.service.TemplateRepositoryService;
 import com.bpm.core.mail.repository.MailServiceConfigRepository;
 import com.bpm.core.mail.service.MailServiceConfigService;
+import com.bpm.core.rest.infrastructure.RestClientHelper;
 import com.bpm.core.rest.infrastructure.RestRequestMapper;
 import com.bpm.core.rest.infrastructure.RestResponseMapper;
 import com.bpm.core.rest.repository.RestServiceConfigRepository;
 import com.bpm.core.rest.service.RestServiceConfigService;
 import com.bpm.core.server.repository.ServerConfigRepository;
 import com.bpm.core.server.service.ServerRepositoryService;
+import com.bpm.core.serviceconfig.interfaces.ServiceInvoker;
 import com.bpm.core.serviceconfig.repository.ServiceConfigRepository;
 import com.bpm.core.serviceconfig.service.ServiceConfigRepositoryService;
 import com.bpm.core.serviceconfig.service.ServiceDispatcher;
@@ -145,11 +151,10 @@ public class CoreServiceAutoConfiguration {
     
     @Bean
     public DbExecutor dbExecutor(
-    		DbServiceConfigService dbService,
-    		DataSourceConfigService dataSourceService,
-    		ServiceLogService logService,
-    		PlatformTransactionManager txManager) {
-    	return new DbExecutor(dbService, dataSourceService, logService, txManager);
+    		DbExecutorHelper dbHelper,
+    		ServiceLogHelper logHelper,
+    		TransactionTemplate txTemplate) {
+    	return new DbExecutor(dbHelper, logHelper, txTemplate);
     }
     
     @Bean
@@ -172,13 +177,9 @@ public class CoreServiceAutoConfiguration {
     
     @Bean
     public RestInvoker restInvoker(
-    		ServerRepositoryService serverService,
-    		RestServiceConfigService restService,
-    		ServiceLogService logService,
-    		AuthServiceCache authCache,
-    		RestRequestMapper requestMapper,
-    		RestResponseMapper responseMapper) {
-    	return new RestInvoker(serverService, restService, logService, authCache, requestMapper, responseMapper);
+    		RestClientHelper clientHelper,
+    		ServiceLogHelper logHelper) {
+    	return new RestInvoker(clientHelper, logHelper);
     }
     
     @Bean
@@ -187,12 +188,7 @@ public class CoreServiceAutoConfiguration {
     }
     
     @Bean
-    public ServiceDispatcher dispatcher(
-    		ServiceConfigRepositoryService configService,
-    	    DbExecutor dbExecutor,
-    	    RestInvoker restInvoker,
-    	    EmailSender emailSender) {
-    	
-        return new ServiceDispatcher(configService, dbExecutor, restInvoker, emailSender);
+    public ServiceDispatcher dispatcher(ServiceConfigRepositoryService configService, List<ServiceInvoker> invokers) {
+        return new ServiceDispatcher(configService, invokers);
     }
 }

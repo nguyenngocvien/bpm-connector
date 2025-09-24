@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.common.response.Response;
+import com.bpm.core.common.util.JsonUtil;
 import com.bpm.core.db.domain.DbServiceConfig;
 import com.bpm.core.db.infrastructure.DbServiceConfigParser;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
@@ -47,7 +48,7 @@ public class ServiceTestController {
     	
     	String input = "";
     	
-        if (ServiceType.SQL.equals(config.getServiceType())) {
+        if (ServiceType.DB.equals(config.getServiceType())) {
 			DbServiceConfig dbConfig = config.getDbServiceConfig();
 			
 			input = DbServiceConfigParser.convertParamArrayToJsonObject(dbConfig.getParamList());
@@ -64,9 +65,9 @@ public class ServiceTestController {
 
         System.out.println(">>> Invoking Service Code = " + serviceCode);
 
-        Response<Object> res = dispatcher.execute(serviceCode, params);
+        Response res = dispatcher.execute(serviceCode, params);
 
-        model.addAttribute("outputJson", res.toString());
+        model.addAttribute("outputJson", JsonUtil.toString(res));
         return "service/response :: result";
     }
 }

@@ -1,65 +1,40 @@
 package com.bpm.core.serviceconfig.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.bpm.core.common.response.Response;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
-import com.bpm.core.serviceconfig.service.impl.DbExecutor;
-import com.bpm.core.serviceconfig.service.impl.EmailSender;
-import com.bpm.core.serviceconfig.service.impl.RestInvoker;
+import com.bpm.core.serviceconfig.domain.ServiceType;
+import com.bpm.core.serviceconfig.interfaces.ServiceInvoker;
 
-public class ServiceDispatcher{
-	
-    private final ServiceConfigRepositoryService service;
-    private final DbExecutor dbExecutor;
-    private final RestInvoker restInvoker;
-    private final EmailSender emailSender;
-    
-    public ServiceDispatcher(ServiceConfigRepositoryService service,
-				    		DbExecutor dbExecutor,
-				            RestInvoker restInvoker,
-				            EmailSender emailSender) {
-        
-    	this.service = service;
-    	this.dbExecutor = dbExecutor;
-        this.restInvoker = restInvoker;
-        this.emailSender = emailSender;   
+public class ServiceDispatcher {
+    private final ServiceConfigRepositoryService configService;
+    private final Map<ServiceType, ServiceInvoker> invokerMap;
+
+    public ServiceDispatcher(ServiceConfigRepositoryService configService, List<ServiceInvoker> invokers) {
+        this.configService = configService;
+        this.invokerMap = invokers.stream()
+                .collect(Collectors.toMap(ServiceInvoker::getServiceType, Function.identity()));
     }
 
-    public Response<Object> execute(Long serviceId, String params) {
-        ServiceConfig config = service.findById(serviceId);
+    public Response execute(Long serviceId, String params) {
+        ServiceConfig config = configService.findById(serviceId);
         return execute(config, params);
     }
-    
-    public Response<Object> execute(String serviceCode, String params) {
-        ServiceConfig config = service.findByCode(serviceCode);
+
+    public Response execute(String serviceCode, String params) {
+        ServiceConfig config = configService.findByCode(serviceCode);
         return execute(config, params);
     }
-    
-    private Response<Object> execute(ServiceConfig config, String params) {
-    	Response<Object> res;
 
-        try {
-
-            switch (config.getServiceType()) {
-                case SQL:
-                    res = dbExecutor.execute(config.getId(), params);
-                    break;
-                case REST:
-                    res = restInvoker.invoke(config.getId(), params);
-                    break;
-                case MAIL:
-                    res = emailSender.sendEmail(config.getId(), params);
-                    break;
-//                case FILE:
-//                    res = fileInvoker.invoke(config, paramMap);
-//                    break;
-                default:
-                    res = Response.error("Unsupported service type: " + config.getServiceType());
-            }
-        } catch (Exception e) {
-            res = Response.error("Invalid JSON or invocation failure: " + e.getMessage());
+    private Response execute(ServiceConfig config, String params) {
+        ServiceInvoker invoker = invokerMap.get(config.getServiceType());
+        if (invoker == null) {
+            throw new UnsupportedOperationException("Unsupported service type: " + config.getServiceType());
         }
-
-        return res;
+        return invoker.execute(config, params);
     }
 }
-

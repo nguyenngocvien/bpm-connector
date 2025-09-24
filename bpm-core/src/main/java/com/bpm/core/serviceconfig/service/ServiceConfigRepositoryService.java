@@ -86,7 +86,7 @@ public class ServiceConfigRepositoryService {
         ServiceType type = config.getServiceType();
 
         switch (type) {
-            case SQL -> config.setDbServiceConfig(dbService.getConfigById(id));
+            case DB -> config.setDbServiceConfig(dbService.getConfigById(id));
             case REST -> config.setRestServiceConfig(restService.getConfigById(id));
             case MAIL -> config.setMailServiceConfig(mailService.getConfigById(id));
             case DOCUMENT -> config.setDocumentServiceConfig(docRepository.findById(id).orElse(new DocumentServiceConfig()));
@@ -101,7 +101,7 @@ public class ServiceConfigRepositoryService {
         ServiceType type = config.getServiceType();
 
         switch (type) {
-            case SQL -> {
+            case DB -> {
                 if (config.getDbServiceConfig() != null) {
                     dbService.save(config.getDbServiceConfig());
                 }

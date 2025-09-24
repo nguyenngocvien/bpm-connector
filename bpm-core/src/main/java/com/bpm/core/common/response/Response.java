@@ -1,78 +1,72 @@
 package com.bpm.core.common.response;
 
-import com.bpm.core.common.util.JsonUtil;
+import org.springframework.http.HttpStatus;
 
-public class Response<T> {
-    private int code;
-    private String message;
-    private T data;
-    private Long logId;
+public class Response {
+	private int status;
+	private String code;
+	private String message;
+	private String data;
+	private String logId;
 
     public Response() {}
-
-    public Response(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
     
-    public Response(int code, String message, T data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
-    }
-    
-    public Response(int code, String message, T data, Long logId) {
-        this.code = code;
+    public Response(int status, String code, String message, String data, String logId) {
+    	this.status = status;
+    	this.code = code;
         this.message = message;
         this.data = data;
         this.logId = logId;
     }
-
-    public static <T> Response<T> success(T data) {
-        return new Response<>(0, "Success", data, null);
+    
+    public static Response success(String data) {
+        return new Response(HttpStatus.OK.value(), "SUCCESS", "OK", data, null);
     }
     
-    public static <T> Response<T> success(String message, T data) {
-        return new Response<>(0, message, data, null);
+    public static Response error(String message) {
+        return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "ERROR", message, null, null);
     }
     
-    public static <T> Response<T> success(String message, T data, Long logId) {
-        return new Response<>(0, message, data, logId);
+    public static Response error(String code, String message) {
+    	return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), code, message, null, null);
+	}
+    
+    public static Response error(String code, String message, String logId) {
+    	return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), code, message, null, logId);
+	}
+    
+    public static Response error(int status, String code, String message) {
+        return new Response(status, code, message, null, null);
+    }
+    
+    public static Response error(int status, String code, String message, String logId) {
+        return new Response(status, code, message, null, logId);
     }
 
-    public static <T> Response<T> error(String message) {
-        return new Response<>(1, message, null, null);
-    }
-
-    public Response<T> withLogId(Long logId) {
-        this.logId = logId;
+    public Response withLogId(Long logId) {
+        if (logId != null) {
+            this.logId = String.valueOf(logId);
+        }
         return this;
     }
-
-    public static <T> Response<T> error(int code, String message) {
-        return new Response<>(code, message, null, null);
-    }
     
-    public static <T> Response<T> error(int code, String message, long logId) {
-        return new Response<>(code, message, null, logId);
-    }
-
     // Getters & Setters
-    public int getCode() { return code; }
-    public void setCode(int code) { this.code = code; }
+    public int getStatus() {
+		return status;
+	}
+    public void setStatus(int status) {
+		this.status = status;
+	}
+    
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public T getData() { return data; }
-    public void setData(T data) { this.data = data; }
+    public String getData() { return data; }
+    public void setData(String data) { this.data = data; }
 
-    public Long getLogId() { return logId; }
-    public void setLogId(Long logId) { this.logId = logId; }
-	
-    @Override
-    public String toString() {
-        String fullMessage = (logId != null ? "LOG_ID:" + logId + ". " : "") + (message != null ? message : "");
-        return JsonUtil.toString(new Wrapper<>(code, fullMessage, data));
-    }
+    public String getLogId() { return logId; }
+    public void setLogId(String logId) { this.logId = logId; }
 }
