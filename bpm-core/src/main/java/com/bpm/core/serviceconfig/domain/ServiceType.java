@@ -9,7 +9,8 @@ public enum ServiceType {
 	DB("DB"),
 	REST("REST"),
     MAIL("MAIL"),
-    DOCUMENT("DOCUMENT");
+    DOCUMENT("DOCUMENT"),
+	CMIS("CMIS");
 
     public static List<String> listAll() {
         return Arrays.stream(values())

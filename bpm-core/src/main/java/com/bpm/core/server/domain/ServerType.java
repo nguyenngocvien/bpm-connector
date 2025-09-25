@@ -1,9 +1,9 @@
 package com.bpm.core.server.domain;
 
 public enum ServerType {
-    REST("Rest"),
-    MAIL("Mail"),
-    FILE("File");
+    REST("REST Server"),
+    MAIL("MAIL Server"),
+    FILE("Content Management Server");
 
     private final String label;
 

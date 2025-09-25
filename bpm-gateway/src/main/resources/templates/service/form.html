@@ -398,10 +398,13 @@
 	            <div class="mb-3">
 	                <label class="form-label">SMTP Server</label>
 	                <input type="text" th:field="*{mailServiceConfig.smtpServer}" class="form-control">
-	            </div>
-	            <div class="mb-3">
-	                <label class="form-label">SMTP Port</label>
-	                <input type="number" th:field="*{mailServiceConfig.smtpPort}" class="form-control">
+					<select th:field="*{restServiceConfig.serverId}" class="form-select">
+			            <option value="">-- Select Mail server --</option>
+			            <option th:each="server : ${servers}"
+			                    th:value="${server.id}"
+			                    th:text="${server.name}">
+			            </option>
+			        </select>
 	            </div>
 	            <div class="mb-3">
 	                <label class="form-label">Email From</label>

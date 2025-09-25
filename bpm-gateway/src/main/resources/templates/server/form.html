@@ -60,5 +60,24 @@
 	            <label class="form-check-label">Enable HTTPS</label>
 	        </div>
 	    </form>
+		<script>
+		    // Bootstrap 5 form validation
+		    (function () {
+		        'use strict'
+
+		        // Lấy tất cả các form cần validation
+		        const forms = document.querySelectorAll('.needs-validation')
+
+		        Array.from(forms).forEach(function (form) {
+		            form.addEventListener('submit', function (event) {
+		                if (!form.checkValidity()) {
+		                    event.preventDefault()
+		                    event.stopPropagation()
+		                }
+		                form.classList.add('was-validated')
+		            }, false)
+		        })
+		    })()
+		</script>
 	</div>
 </div>

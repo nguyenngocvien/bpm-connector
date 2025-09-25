@@ -3,6 +3,7 @@ package com.bpm.api;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,15 @@ public class DefaultAdminInitializer implements CommandLineRunner {
 
     private final AuthConfigRepository authRepository;
     private final PasswordEncoder passwordEncoder;
+    
+    @Value("${app.auth.default.username:admin}")
+    private String defaultUsername;
+
+    @Value("${app.auth.default.password:123456}")
+    private String defaultPassword;
+    
+    @Value("${app.auth.default.role:ADMIN}")
+    private String defaultRole;
 
     @Autowired
     public DefaultAdminInitializer(AuthConfigRepository authRepository, PasswordEncoder passwordEncoder) {
@@ -26,9 +36,6 @@ public class DefaultAdminInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        final String defaultUsername = "admin";
-        final String defaultRawPassword = "123456";
-        final String defaultRole = "ADMIN";
 
         Optional<AuthConfig> authConfig = authRepository.findByName(defaultUsername);
         if (authConfig.isPresent()) {
@@ -40,7 +47,7 @@ public class DefaultAdminInitializer implements CommandLineRunner {
         admin.setName(defaultUsername);
         admin.setAuthType(AuthType.BASIC);
         admin.setUsername(defaultUsername);
-        admin.setPassword(passwordEncoder.encode(defaultRawPassword));
+        admin.setPassword(passwordEncoder.encode(defaultPassword));
         admin.setRole(defaultRole);
         admin.setActive(true);
 

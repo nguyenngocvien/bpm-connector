@@ -1,76 +1,84 @@
 package com.bpm.api.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bpm.core.auth.domain.AuthConfig;
+import com.bpm.core.auth.repository.AuthConfigRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private AuthFilter authFilter;
+    private final AuthConfigRepository authRepository;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/js/**", "/login").permitAll()
-                .anyRequest().authenticated()
-            )
-            .csrf(csrf -> csrf.disable())
-            .httpBasic(httpBasic -> httpBasic.disable())
-            .formLogin(Customizer.withDefaults())
-            .logout(logout -> logout.permitAll())
-            .exceptionHandling(ex -> ex
-                .defaultAuthenticationEntryPointFor(
-                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                    new AntPathRequestMatcher("/api/**")
-                )
-                .defaultAuthenticationEntryPointFor(
-                    new LoginUrlAuthenticationEntryPoint("/login"),
-                    new AntPathRequestMatcher("/admin/**")
-                )
-            );
-
-        // Add custom AuthFilter before default username-password filter
-        http.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    // Required to enable Spring form login to check credentials
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       PasswordEncoder passwordEncoder)
-            throws Exception {
-        
-    	DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-
-        return new ProviderManager(authProvider);
+    public SecurityConfig(AuthConfigRepository authRepository) {
+        this.authRepository = authRepository;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * DB-backed UserDetailsService
+     * Supports multiple roles (comma-separated in AuthConfig.role)
+     */
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            AuthConfig auth = authRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+         // Roles are comma-separated in DB, e.g., "ADMIN,USER"
+            String[] roles = auth.getRole() != null ? auth.getRole().split(",") : new String[]{};
+            
+            return User.builder()
+                    .username(auth.getUsername())
+                    .password(auth.getPassword())
+                    .roles(roles)
+                    .disabled(!auth.isActive())
+                    .build();
+        };
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // Disable CSRF for REST APIs
+            .csrf(AbstractHttpConfigurer::disable)
+
+            // Configure public and protected endpoints
+            .authorizeHttpRequests(auth -> auth
+                // Public Swagger/OpenAPI endpoints
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    "/configuration/**"
+                ).permitAll()
+                
+                // Role-based access control
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+                
+                // All other endpoints require authentication
+                .anyRequest().authenticated()
+            )
+
+            // Enable HTTP Basic authentication
+            .httpBasic(Customizer.withDefaults());
+
+        return http.build();
     }
 }

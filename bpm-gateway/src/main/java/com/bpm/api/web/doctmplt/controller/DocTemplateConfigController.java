@@ -27,7 +27,7 @@ public class DocTemplateConfigController {
         List<DocumentTemplate> configs = service.getAllTemplates();
         model.addAttribute("doctemplates", configs);
         model.addAttribute("content", "doc/list");
-        model.addAttribute("activeMenu", "doctemplates");
+        model.addAttribute("activeMenu", "templates");
         return "main";
     }
 
@@ -35,7 +35,7 @@ public class DocTemplateConfigController {
     public String add(Model model) {
         model.addAttribute("doctemplate", new DocumentTemplate());
         model.addAttribute("content", "doc/form");
-        model.addAttribute("activeMenu", "doctemplates");
+        model.addAttribute("activeMenu", "templates");
         return "main";
     }
 
@@ -44,7 +44,7 @@ public class DocTemplateConfigController {
     	DocumentTemplate config = service.getTemplateById(id);
         model.addAttribute("doctemplate", config);
         model.addAttribute("content", "doc/form");
-        model.addAttribute("activeMenu", "doctemplates");
+        model.addAttribute("activeMenu", "templates");
         return "main";
     }
 

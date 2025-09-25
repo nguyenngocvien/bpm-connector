@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthConfigRepository extends JpaRepository<AuthConfig, Long> {
     Optional<AuthConfig> findByName(String name);
+    Optional<AuthConfig> findByUsername(String name);
 }

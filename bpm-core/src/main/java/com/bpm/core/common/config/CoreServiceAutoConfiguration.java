@@ -130,6 +130,11 @@ public class CoreServiceAutoConfiguration {
     public ServiceLogService serviceLogService(ServiceLogRepository repository) {
         return new ServiceLogService(repository);
     }
+    
+    @Bean
+    public ServiceLogHelper logHelper(ServiceLogService logService) {
+        return new ServiceLogHelper(logService);
+    }
 
     @Bean
     public ServiceConfigRepositoryService serviceConfigService(
@@ -150,17 +155,8 @@ public class CoreServiceAutoConfiguration {
     }
     
     @Bean
-    public DbExecutor dbExecutor(
-    		DbExecutorHelper dbHelper,
-    		ServiceLogHelper logHelper,
-    		TransactionTemplate txTemplate) {
-    	return new DbExecutor(dbHelper, logHelper, txTemplate);
-    }
-    
-    @Bean
     public Context graalVmContext() {
         return Context.newBuilder("js")
-                .allowHostAccess(true)
                 .allowHostClassLookup(s -> true)
                 .build();
     }
@@ -173,6 +169,32 @@ public class CoreServiceAutoConfiguration {
     @Bean
     public RestResponseMapper responseMapper(Context graalVmContext) {
     	return new RestResponseMapper(graalVmContext);
+    }
+    
+    @Bean
+    public DbExecutorHelper dbExecutorHelper(
+    		DbServiceConfigService dbService,
+    		DataSourceConfigService dataSourceService) {
+    	return new DbExecutorHelper(dbService, dataSourceService);
+    }
+    
+    @Bean
+    public DbExecutor dbExecutor(
+    		DbExecutorHelper dbHelpe,
+    		ServiceLogHelper logHelper,
+    		TransactionTemplate txTemplate) {
+    	return new DbExecutor(dbHelpe, logHelper, txTemplate);
+    }
+    
+    @Bean
+    public RestClientHelper clientHelper(
+    		ServerRepositoryService serverService,
+    		RestServiceConfigService restService,
+    		AuthServiceCache authCache,
+    		RestRequestMapper requestMapper,
+    		RestResponseMapper responseMapper) {
+    	
+    	return new RestClientHelper(serverService, restService, authCache, requestMapper, responseMapper);
     }
     
     @Bean

@@ -1,4 +1,4 @@
-package com.bpm.api.config;
+package com.bpm.api.doc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +17,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Online Card API")
+                .title("E-Connetor")
                 .version("1.0")
-                .description("API documentation for Online Card App"))
+                .description("API Connector for BPM"))
             .addSecurityItem(new SecurityRequirement().addList(BASIC_AUTH_SCHEME))
             .components(
                 new io.swagger.v3.oas.models.Components()
