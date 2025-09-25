@@ -10,6 +10,7 @@ import com.bpm.core.document.domain.DocumentServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerType;
 import com.bpm.core.server.service.ServerRepositoryService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import com.bpm.core.serviceconfig.domain.ServiceType;
@@ -57,10 +58,18 @@ public class ServiceConfigController {
     	
     	List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
     	List<Server> servers = serverService.getAllServers();
-    	
     	model.addAttribute("serviceTypes", ServiceType.values());
     	model.addAttribute("sqlTypes", SqlType.values());
     	model.addAttribute("paramTypes", ParamType.values());
+    	
+    	List<Server> restServers = serverService.getServersByType(ServerType.REST);
+    	model.addAttribute("restServers", restServers);
+    	
+    	List<Server> mailServers = serverService.getServersByType(ServerType.MAIL);
+    	model.addAttribute("mailServers", mailServers);
+    	
+    	List<Server> cmisServers = serverService.getServersByType(ServerType.CMIS);
+    	model.addAttribute("cmisServers", cmisServers);
     	
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);

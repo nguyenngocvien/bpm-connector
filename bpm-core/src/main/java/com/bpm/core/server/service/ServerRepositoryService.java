@@ -1,6 +1,7 @@
 package com.bpm.core.server.service;
 
 import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerType;
 import com.bpm.core.server.repository.ServerConfigRepository;
 
 import java.util.List;
@@ -21,6 +22,10 @@ public class ServerRepositoryService {
         Server server = serverRepository.findById(id)
         		.orElseThrow(() -> new IllegalArgumentException("Invalid ID")); 
     	return server;
+    }
+    
+    public List<Server> getServersByType(ServerType type) {
+        return serverRepository.findByType(type.name());
     }
 
     public void saveServer(Server server) {

@@ -2,8 +2,8 @@ spring:
   application:
     name: bpm-connector
   datasource:
-    url: jdbc:postgresql://10.6.18.23:30432/coresys
-#    url: jdbc:postgresql://0.0.0.0:5432/coresys
+#    url: jdbc:postgresql://10.6.18.23:30432/coresys
+    url: jdbc:postgresql://0.0.0.0:5432/coresys
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver

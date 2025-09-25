@@ -35,53 +35,53 @@
             <input type="text" th:field="*{name}" class="form-control" placeholder="Unique auth name" required />
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Auth Type</label>
-            <select th:field="*{authType}" class="form-select" required>
-                <option value="" disabled>Select auth type</option>
-                <option th:each="type : ${authTypes}"
-                        th:value="${type}" th:text="${type.label}"></option>
-            </select>
-        </div>
+		<!-- Auth Type -->
+		<div class="mb-3">
+		    <label class="form-label">Auth Type</label>
+		    <select id="authTypeSelect" th:field="*{authType}" class="form-select" required>
+		        <option value="" disabled>Select auth type</option>
+		        <option th:each="type : ${authTypes}"
+		                th:value="${type}" th:text="${type.label}"></option>
+		    </select>
+		</div>
 
-        <!-- BASIC -->
-        <div class="mb-3" th:if="${authConfig.authType == 'BASIC'}">
-            <label class="form-label">Username</label>
-            <input type="text" th:field="*{username}" class="form-control" placeholder="Username" required />
-            <label class="form-label mt-2">Password</label>
-            <input type="password" th:field="*{password}" class="form-control" placeholder="Password" th:required="${authConfig.id == null}" />
-            <small class="text-muted" th:if="${authConfig.id != null}">Leave blank to keep current password</small>
-        </div>
+		<!-- BASIC -->
+		<div id="basicBlock" class="mb-3" th:attr="style=${authConfig.authType == 'BASIC'} ? 'display:block;' : 'display:none;'">
+		    <label class="form-label">Username</label>
+		    <input type="text" th:field="*{username}" class="form-control" placeholder="Username"/>
+		    <label class="form-label mt-2">Password</label>
+		    <input type="password" th:field="*{password}" class="form-control" placeholder="Password"/>
+		</div>
 
-        <!-- BEARER / OAUTH2 -->
-        <div class="mb-3" th:if="${authConfig.authType == 'BEARER' || authConfig.authType == 'OAUTH2'}">
-            <label class="form-label">Token</label>
-            <input type="text" th:field="*{token}" class="form-control" placeholder="Bearer token" required />
-        </div>
+		<!-- BEARER / OAUTH2 -->
+		<div id="bearerBlock" class="mb-3" th:attr="style=${authConfig.authType == 'BEARER' || authConfig.authType == 'OAUTH2'} ? 'display:block;' : 'display:none;'">
+		    <label class="form-label">Token</label>
+		    <input type="text" th:field="*{token}" class="form-control" placeholder="Bearer token"/>
+		</div>
 
-        <!-- API KEY -->
-        <div class="mb-3" th:if="${authConfig.authType == 'API_KEY'}">
-            <label class="form-label">API Key Header</label>
-            <input type="text" th:field="*{apiKeyHeader}" class="form-control" placeholder="Header name" required />
-            <label class="form-label mt-2">API Key Value</label>
-            <input type="text" th:field="*{apiKeyValue}" class="form-control" placeholder="API key value" required />
-        </div>
+		<!-- API KEY -->
+		<div id="apiKeyBlock" class="mb-3" th:attr="style=${authConfig.authType == 'API_KEY'} ? 'display:block;' : 'display:none;'">
+		    <label class="form-label">API Key Header</label>
+		    <input type="text" th:field="*{apiKeyHeader}" class="form-control" placeholder="Header name"/>
+		    <label class="form-label mt-2">API Key Value</label>
+		    <input type="text" th:field="*{apiKeyValue}" class="form-control" placeholder="API key value"/>
+		</div>
 
-        <!-- OAUTH2 Details -->
-        <div th:if="${authConfig.authType == 'OAUTH2'}">
-            <div class="mb-3">
-                <label class="form-label">Client ID</label>
-                <input type="text" th:field="*{oauth2ClientId}" class="form-control" placeholder="OAuth2 Client ID" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Client Secret</label>
-                <input type="password" th:field="*{oauth2ClientSecret}" class="form-control" placeholder="OAuth2 Client Secret" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Token URL</label>
-                <input type="text" th:field="*{oauth2TokenUrl}" class="form-control" placeholder="OAuth2 Token URL" />
-            </div>
-        </div>
+		<!-- OAUTH2 Details -->
+		<div id="oauth2Block" th:attr="style=${authConfig.authType == 'OAUTH2'} ? 'display:block;' : 'display:none;'">
+		    <div class="mb-3">
+		        <label class="form-label">Client ID</label>
+		        <input type="text" th:field="*{oauth2ClientId}" class="form-control" placeholder="OAuth2 Client ID"/>
+		    </div>
+		    <div class="mb-3">
+		        <label class="form-label">Client Secret</label>
+		        <input type="password" th:field="*{oauth2ClientSecret}" class="form-control" placeholder="OAuth2 Client Secret"/>
+		    </div>
+		    <div class="mb-3">
+		        <label class="form-label">Token URL</label>
+		        <input type="text" th:field="*{oauth2TokenUrl}" class="form-control" placeholder="OAuth2 Token URL"/>
+		    </div>
+		</div>
 
         <div class="mb-3">
             <label class="form-label">Role</label>
@@ -99,3 +99,34 @@
 	    </div>
     </form>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const select = document.getElementById("authTypeSelect");
+    const blocks = {
+        BASIC: document.getElementById("basicBlock"),
+        BEARER: document.getElementById("bearerBlock"),
+        API_KEY: document.getElementById("apiKeyBlock"),
+        OAUTH2: document.getElementById("oauth2Block")
+    };
+
+    function toggleBlocks() {
+        Object.values(blocks).forEach(b => {
+            if (b) b.style.display = "none";
+        });
+
+        const value = select.value;
+        if (value && blocks[value]) {
+            blocks[value].style.display = "block";
+        }
+
+        // OAUTH2 = vừa BEARER vừa OAUTH2
+        if (value === "OAUTH2") {
+            if (blocks["BEARER"]) blocks["BEARER"].style.display = "block";
+            if (blocks["OAUTH2"]) blocks["OAUTH2"].style.display = "block";
+        }
+    }
+
+    select.addEventListener("change", toggleBlocks);
+    toggleBlocks(); // init khi load trang
+});
+</script>

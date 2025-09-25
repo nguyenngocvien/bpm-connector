@@ -17,10 +17,11 @@ import com.bpm.core.common.exception.ServiceExecutionException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private ResponseEntity<Response> buildResponse(HttpStatus status, String code, String message, Long logId) {
-        Response response = Response.error(status.value(), code, message, logId.toString());
-        return ResponseEntity.ok(response);
-    }
+	private ResponseEntity<Response> buildResponse(HttpStatus status, String code, String message, Long logId) {
+	    String data = (logId != null ? logId.toString() : null);
+	    Response response = Response.error(status.value(), code, message, data);
+	    return ResponseEntity.status(status).body(response);
+	}
 
     // ✅ Xử lý ServiceExecutionException
     @ExceptionHandler(ServiceExecutionException.class)

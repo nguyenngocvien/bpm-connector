@@ -222,13 +222,20 @@
 				    <!-- Server -->
 				    <div class="col-md-6">
 				        <label class="form-label">Server</label>
-				        <select th:field="*{restServiceConfig.serverId}" class="form-select">
-				            <option value="">-- Select server --</option>
-				            <option th:each="server : ${servers}"
-				                    th:value="${server.id}"
-				                    th:text="${server.name + ' (' + (server.https ? 'https' : 'http') + '://' + server.ip + ':' + server.port + ')'}">
-				            </option>
-				        </select>
+						<div class="input-group">
+					        <select th:field="*{restServiceConfig.serverId}" class="form-select">
+					            <option value="">-- Select server --</option>
+					            <option th:each="restServer : ${restServers}"
+					                    th:value="${restServer.id}"
+					                    th:text="${restServer.name + ' (' + (server.https ? 'https' : 'http') + '://' + server.ip + ':' + server.port + ')'}">
+					            </option>
+					        </select>
+							<a th:href="@{/admin/servers/add}" class="btn btn-outline-primary" title="Add Server">
+		                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+		                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+		                        </svg>
+		                    </a>
+						</div>
 				    </div>
 
 				    <!-- Path -->
@@ -397,27 +404,33 @@
 				<h5 class="section-label">Mail Configuration</h6>
 	            <div class="mb-3">
 	                <label class="form-label">SMTP Server</label>
-	                <input type="text" th:field="*{mailServiceConfig.smtpServer}" class="form-control">
-					<select th:field="*{restServiceConfig.serverId}" class="form-select">
-			            <option value="">-- Select Mail server --</option>
-			            <option th:each="server : ${servers}"
-			                    th:value="${server.id}"
-			                    th:text="${server.name}">
-			            </option>
-			        </select>
+					<div class="input-group">
+						<select th:field="*{mailServiceConfig.serverId}" class="form-select">
+				            <option value="">-- Select Mail server --</option>
+				            <option th:each="mailServer : ${mailServers}"
+				                    th:value="${mailServer.id}"
+				                    th:text="${mailServer.name}">
+				            </option>
+				        </select>
+						<a th:href="@{/admin/servers/add}" class="btn btn-outline-primary" title="Add Server">
+	                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+	                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+	                        </svg>
+	                    </a>
+					</div>
 	            </div>
 	            <div class="mb-3">
-	                <label class="form-label">Email From</label>
-	                <input type="email" th:field="*{mailServiceConfig.mailFrom}" class="form-control">
+	                <label class="form-label">Default Mail From</label>
+	                <input type="email" th:field="*{mailServiceConfig.defaultMailFrom}" class="form-control">
 	            </div>
 	            <div class="mb-3">
-	                <label class="form-label">Email To</label>
-	                <input type="email" th:field="*{mailServiceConfig.mailTo}" class="form-control">
+	                <label class="form-label">Default Mail To</label>
+	                <input type="email" th:field="*{mailServiceConfig.defaultMailTo}" class="form-control">
 	            </div>
 	        </div>
 	 
-	        <!-- File Config Section -->
-			<div id="FILEConfigSection" style="display:none;" class="config-section mt-4 position-relative border border-dark rounded p-3 pt-4">
+	        <!-- File Config Section 
+			<div id="CMISConfigSection" style="display:none;" class="config-section mt-4 position-relative border border-dark rounded p-3 pt-4">
 						<h5 class="section-label">File Configuration</h6>
 	            <div class="mb-3">
 	                <label class="form-label">File Path</label>
@@ -432,17 +445,18 @@
 	                <input type="text" th:field="*{fileServiceConfig.fileFormat}" class="form-control">
 	            </div>
 	        </div>
+			-->
 	    </form>
 	</div>
-
-    <script>
+	
+	<script>
 		document.addEventListener('DOMContentLoaded', () => {
 		    const serviceTypeField = document.getElementById('serviceType');
 		    const sections = {
-		        SQL: document.getElementById('DBConfigSection'),
+		        DB: document.getElementById('DBConfigSection'),
 		        REST: document.getElementById('RESTConfigSection'),
 		        MAIL: document.getElementById('MAILConfigSection'),
-		        FILE: document.getElementById('FILEConfigSection')
+		        CMIS: document.getElementById('CMISConfigSection')
 		    };
 
 		    const updateSections = () => {
@@ -459,11 +473,7 @@
 		    updateSections(); // call once on load
 		});
     </script>
-	<script th:inline="javascript">
-	    /*<![CDATA[*/
-	    const paramTypes = /*[[${T(com.bpm.core.model.db.ParamType).values()}]]*/ [];
-	    /*]]>*/
-	</script>
+	
 	<script>
 		function addParamRow() {
 		    const tbody = document.getElementById("paramListBody");
@@ -473,9 +483,7 @@
 		
 		    // tạo select paramType từ enum
 		    let selectHtml = `<select name="dbServiceConfig.paramList[${index}].paramType" class="form-select">`;
-		    paramTypes.forEach(type => {
-		        selectHtml += `<option value="${type}">${type}</option>`;
-		    });
+			selectHtml += `<option th:each="type : ${paramTypes}" th:value="${type.name()}" th:text="${type.label}"></option>`;
 		    selectHtml += "</select>";
 		
 		    row.innerHTML = `

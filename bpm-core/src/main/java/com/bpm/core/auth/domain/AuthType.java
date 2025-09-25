@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum AuthType {
+	NONE("No Authentication"),
     BASIC("Basic Authentication"),
     BEARER("Bearer Token"),
     API_KEY("API Key"),
-    OAUTH2("OAuth 2.0"),
-    NONE("No Authentication");
+    OAUTH2("OAuth 2.0");
 
     private final String label;
 
