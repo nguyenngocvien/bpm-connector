@@ -1,5 +1,8 @@
 package com.bpm.core.cmis.service;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.service.AuthRepositoryService;
 import com.bpm.core.cmis.domain.CmisSessionConfig;
@@ -10,74 +13,56 @@ public class CmisSessionService {
 
     private final CmisSessionConfigRepository repository;
     private final AuthRepositoryService authService;
-    private final CmisHelper cmisHelper;
+
+    private final Map<String, CmisHelper> sessionCache = new ConcurrentHashMap<>();
     
-    public CmisSessionService(
-    		CmisSessionConfigRepository repository,
-    		AuthRepositoryService authService,
-    		CmisHelper cmisHelper) {
-    	
-    	this.repository = repository;
-    	this.authService = authService;
-    	this.cmisHelper = cmisHelper;
-		
+    public CmisSessionService(CmisSessionConfigRepository repository, AuthRepositoryService authService) {
+	    this.repository = repository;
+	    this.authService = authService;
 	}
-    
-    /**
-     * Connect CMIS by name
-     */
-    public void connectById(Long id) {
-        CmisSessionConfig config = repository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new RuntimeException("CMIS CONFIG NOT FOUND: " + id));
-        
-        AuthConfig authConfig = authService.getAuthConfigById(config.getAuthId());
 
-        cmisHelper.connect(
-                config.getAtompubUrl(),
-                authConfig.getUsername(),
-                authConfig.getPassword(),
-                config.getRepositoryId()
-        );
+    public CmisHelper getOrConnectByName(String configName) {
+        return sessionCache.computeIfAbsent("name:" + configName, k -> {
+            CmisSessionConfig config = repository.findByNameAndActiveTrue(configName)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy config: " + configName));
+
+            AuthConfig authConfig = authService.getAuthConfigById(config.getAuthId());
+
+            CmisHelper helper = new CmisHelper();
+            helper.connect(
+                    config.getAtompubUrl(),
+                    authConfig.getUsername(),
+                    authConfig.getPassword(),
+                    config.getRepositoryId()
+            );
+            return helper;
+        });
     }
 
-    /**
-     * Connect CMIS by name
-     */
-    public void connectByName(String name) {
-        CmisSessionConfig config = repository.findByNameAndActiveTrue(name)
-                .orElseThrow(() -> new RuntimeException("CMIS CONFIG NOT FOUND: " + name));
-        
-        AuthConfig authConfig = authService.getAuthConfigById(config.getAuthId());
+    public CmisHelper getOrConnectById(Long serverId) {
+        return sessionCache.computeIfAbsent("id:" + serverId, k -> {
+            CmisSessionConfig config = repository.findById(serverId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy config id=" + serverId));
 
-        cmisHelper.connect(
-                config.getAtompubUrl(),
-                authConfig.getUsername(),
-                authConfig.getPassword(),
-                config.getRepositoryId()
-        );
+            AuthConfig authConfig = authService.getAuthConfigById(config.getAuthId());
+
+            CmisHelper helper = new CmisHelper();
+            helper.connect(
+                    config.getAtompubUrl(),
+                    authConfig.getUsername(),
+                    authConfig.getPassword(),
+                    config.getRepositoryId()
+            );
+            return helper;
+        });
     }
 
-    /**
-     * Connect by first active configuration
-     */
-    public void connectDefault() {
-        CmisSessionConfig config = repository.findFirstByActiveTrue()
-                .orElseThrow(() -> new RuntimeException("NO ACTIVE CMIS CONFIG FOUND"));
-
-        AuthConfig authConfig = authService.getAuthConfigById(config.getAuthId());
-        
-        cmisHelper.connect(
-                config.getAtompubUrl(),
-                authConfig.getUsername(),
-                authConfig.getPassword(),
-                config.getRepositoryId()
-        );
+    public void clearCache(String key) {
+        sessionCache.remove(key);
     }
 
-    /**
-     * get CmisHelper
-     */
-    public CmisHelper getHelper() {
-        return cmisHelper;
+    public void clearAllCache() {
+        sessionCache.clear();
     }
 }
+

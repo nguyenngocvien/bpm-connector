@@ -24,8 +24,7 @@ public class DocumentService {
         DocumentTemplate template = templateRepo.findById(docConfig.getTemplateId())
                 .orElseThrow(() -> new RuntimeException("Template not found"));
 
-        cmisService.connectById(docConfig.getServerId());
-        CmisHelper cmisHelper = cmisService.getHelper();
+        CmisHelper cmisHelper = cmisService.getOrConnectById(docConfig.getServerId());
         
         byte[] content;
         String mimeType;
