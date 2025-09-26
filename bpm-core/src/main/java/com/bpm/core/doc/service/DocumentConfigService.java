@@ -1,7 +1,7 @@
-package com.bpm.core.document.service;
+package com.bpm.core.doc.service;
 
-import com.bpm.core.document.domain.DocumentServiceConfig;
-import com.bpm.core.document.repository.DocumentConfigRepository;
+import com.bpm.core.doc.domain.DocumentServiceConfig;
+import com.bpm.core.doc.repository.DocumentConfigRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

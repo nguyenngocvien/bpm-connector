@@ -1,7 +1,7 @@
 package com.bpm.core.serviceconfig.domain;
 
 import com.bpm.core.db.domain.DbServiceConfig;
-import com.bpm.core.document.domain.DocumentServiceConfig;
+import com.bpm.core.doc.domain.DocumentServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import jakarta.persistence.*;

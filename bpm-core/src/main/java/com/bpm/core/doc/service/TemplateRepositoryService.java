@@ -1,9 +1,9 @@
-package com.bpm.core.document.service;
+package com.bpm.core.doc.service;
 
 import java.util.List;
 
-import com.bpm.core.document.domain.DocumentTemplate;
-import com.bpm.core.document.repository.DocumentTemplateRepository;
+import com.bpm.core.doc.domain.DocumentTemplate;
+import com.bpm.core.doc.repository.DocumentTemplateRepository;
 
 public class TemplateRepositoryService {
 

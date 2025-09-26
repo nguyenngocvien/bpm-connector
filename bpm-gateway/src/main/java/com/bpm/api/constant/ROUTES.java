@@ -3,6 +3,7 @@ package com.bpm.api.constant;
 public class ROUTES {
 	public static final String BASE = "/api";
 	public static final String SERVICE = BASE + "/service";
+	public static final String CMIS = BASE + "/cmis";
     
     public static final String UI = "/admin";
     public static final String UI_SERVER = UI + "/servers";

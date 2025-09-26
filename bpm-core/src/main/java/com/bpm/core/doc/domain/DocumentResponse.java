@@ -1,4 +1,4 @@
-package com.bpm.core.document.domain;
+package com.bpm.core.doc.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

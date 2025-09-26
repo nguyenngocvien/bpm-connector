@@ -1,8 +1,8 @@
 package com.bpm.api.web.doctmplt.controller;
 
 import com.bpm.api.constant.ROUTES;
-import com.bpm.core.document.domain.DocumentTemplate;
-import com.bpm.core.document.service.TemplateRepositoryService;
+import com.bpm.core.doc.domain.DocumentTemplate;
+import com.bpm.core.doc.service.TemplateRepositoryService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

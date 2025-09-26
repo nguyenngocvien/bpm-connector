@@ -1,10 +1,10 @@
-package com.bpm.core.document.repository;
+package com.bpm.core.doc.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.bpm.core.document.domain.DocumentServiceConfig;
+import com.bpm.core.doc.domain.DocumentServiceConfig;
 
 public interface DocumentConfigRepository extends JpaRepository<DocumentServiceConfig, Long> {
 

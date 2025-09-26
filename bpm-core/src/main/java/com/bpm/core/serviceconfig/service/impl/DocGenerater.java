@@ -3,9 +3,9 @@ package com.bpm.core.serviceconfig.service.impl;
 import java.util.Map;
 
 import com.bpm.core.common.response.Response;
-import com.bpm.core.document.domain.DocumentResponse;
-import com.bpm.core.document.domain.DocumentServiceConfig;
-import com.bpm.core.document.service.DocumentService;
+import com.bpm.core.doc.domain.DocumentResponse;
+import com.bpm.core.doc.domain.DocumentServiceConfig;
+import com.bpm.core.doc.service.DocumentService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 
 public class DocGenerater {

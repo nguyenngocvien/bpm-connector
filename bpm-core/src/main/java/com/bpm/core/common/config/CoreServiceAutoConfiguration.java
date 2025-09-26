@@ -23,9 +23,9 @@ import com.bpm.core.db.repository.DataSourceRepository;
 import com.bpm.core.db.repository.DbServiceConfigRepository;
 import com.bpm.core.db.service.DataSourceConfigService;
 import com.bpm.core.db.service.DbServiceConfigService;
-import com.bpm.core.document.repository.DocumentConfigRepository;
-import com.bpm.core.document.repository.DocumentTemplateRepository;
-import com.bpm.core.document.service.TemplateRepositoryService;
+import com.bpm.core.doc.repository.DocumentConfigRepository;
+import com.bpm.core.doc.repository.DocumentTemplateRepository;
+import com.bpm.core.doc.service.TemplateRepositoryService;
 import com.bpm.core.mail.repository.MailServiceConfigRepository;
 import com.bpm.core.mail.service.MailServiceConfigService;
 import com.bpm.core.rest.infrastructure.RestClientHelper;
@@ -57,6 +57,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     "com.bpm.core.rest.repository",
     "com.bpm.core.mail.repository",
     "com.bpm.core.document.repository",
+    "com.bpm.core.cmis.repository",
 })
 @EntityScan(basePackages = {
     "com.bpm.core.auth.domain",
@@ -66,7 +67,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     "com.bpm.core.servicelog.domain",
     "com.bpm.core.mail.domain",
     "com.bpm.core.rest.domain",
-    "com.bpm.core.document.domain"
+    "com.bpm.core.document.domain",
+    "com.bpm.core.cmis.domain"
 })
 public class CoreServiceAutoConfiguration {
 	

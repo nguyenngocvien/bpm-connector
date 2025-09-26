@@ -1,8 +1,8 @@
 package com.bpm.core.serviceconfig.service;
 
 import com.bpm.core.db.service.DbServiceConfigService;
-import com.bpm.core.document.domain.DocumentServiceConfig;
-import com.bpm.core.document.repository.DocumentConfigRepository;
+import com.bpm.core.doc.domain.DocumentServiceConfig;
+import com.bpm.core.doc.repository.DocumentConfigRepository;
 import com.bpm.core.mail.service.MailServiceConfigService;
 import com.bpm.core.rest.service.RestServiceConfigService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
