@@ -2,44 +2,42 @@ package com.bpm.api;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.domain.AuthType;
-import com.bpm.core.auth.repository.AuthConfigRepository;
+import com.bpm.core.auth.service.AuthRepositoryService;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class DefaultAdminInitializer implements CommandLineRunner {
 
-    private final AuthConfigRepository authRepository;
-    private final PasswordEncoder passwordEncoder;
-    
+    private final AuthRepositoryService authRepository;
+
     @Value("${app.auth.default.username:admin}")
     private String defaultUsername;
 
     @Value("${app.auth.default.password:123456}")
     private String defaultPassword;
-    
+
     @Value("${app.auth.default.role:ADMIN}")
     private String defaultRole;
-
-    @Autowired
-    public DefaultAdminInitializer(AuthConfigRepository authRepository, PasswordEncoder passwordEncoder) {
-        this.authRepository = authRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
+        Optional<AuthConfig> existing = authRepository.getAuthLogin(defaultUsername);
 
-        Optional<AuthConfig> authConfig = authRepository.findByName(defaultUsername);
-        if (authConfig.isPresent()) {
-            System.out.println("[INFO] Default admin already exists.");
+        if (existing.isPresent()) {
+            log.info("Default admin '{}' already exists.", defaultUsername);
             return;
         }
 
@@ -47,11 +45,11 @@ public class DefaultAdminInitializer implements CommandLineRunner {
         admin.setName(defaultUsername);
         admin.setAuthType(AuthType.BASIC);
         admin.setUsername(defaultUsername);
-        admin.setPassword(passwordEncoder.encode(defaultPassword));
+        admin.setPassword(passwordEncoder.encode(defaultPassword)); // TODO: encode password!
         admin.setRole(defaultRole);
         admin.setActive(true);
 
-        authRepository.save(admin);
-        System.out.println("[INFO] Default admin user created.");
+        authRepository.saveAuthLogin(admin);
+        log.info("Default admin '{}' created.", defaultUsername);
     }
 }

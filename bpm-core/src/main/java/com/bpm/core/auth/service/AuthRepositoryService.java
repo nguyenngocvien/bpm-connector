@@ -2,10 +2,12 @@ package com.bpm.core.auth.service;
 
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.repository.AuthConfigRepository;
+import com.bpm.core.common.util.AESCryptoHelper;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 public class AuthRepositoryService {
 
@@ -20,23 +22,34 @@ public class AuthRepositoryService {
     }
 
     public AuthConfig getAuthConfigById(Long id) {
-        return authRepository.findById(id)
-        		.orElseThrow(() -> new UsernameNotFoundException("Credential not found: " + id));
+        return authRepository.findById(id).map(auth -> {
+            // Decrypt password
+            auth.setPassword(AESCryptoHelper.decrypt(auth.getPassword()));
+            return auth;
+        }).orElseThrow(() -> new RuntimeException("Credential not found with id: " + id));
     }
 
     public AuthConfig getAuthConfigByName(String name) {
-    	AuthConfig config = authRepository.findByName(name)
-    			.orElseThrow(() -> new UsernameNotFoundException("Credential not found: " + name)); 
-    	
-        return config;
+        return authRepository.findByName(name)
+                .map(auth -> {
+                    auth.setPassword(AESCryptoHelper.decrypt(auth.getPassword()));
+                    return auth;
+                })
+                .orElseThrow(() -> new UsernameNotFoundException("Credential not found: " + name));
+    }
+    
+    public Optional<AuthConfig> getAuthLogin(String username) {
+        return authRepository.findByUsername(username);
     }
 
+    public AuthConfig saveAuthLogin(AuthConfig config) {
+        return authRepository.save(config);
+    }
+    
     public AuthConfig saveAuthConfig(AuthConfig config) {
-        AuthConfig saved = authRepository.save(config);
-        if (saved != null) {
-            return saved;
-        }
-        throw new RuntimeException("Failed to save Credential: " + config.getName());
+    	// Encrypt password
+        config.setPassword(AESCryptoHelper.encrypt(config.getPassword()));
+        return authRepository.save(config);
     }
 
     public boolean deleteAuthConfig(Long id) {

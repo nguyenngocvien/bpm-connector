@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.bpm.api.constant.ROUTES;
 import com.bpm.core.auth.domain.AuthConfig;
 import com.bpm.core.auth.domain.AuthType;
-import com.bpm.core.auth.repository.AuthConfigRepository;
+import com.bpm.core.auth.service.AuthRepositoryService;
 
 import java.util.List;
 
@@ -15,15 +15,15 @@ import java.util.List;
 @RequestMapping(ROUTES.UI_AUTH)
 public class AuthController {
 
-    private final AuthConfigRepository authRepository;
+    private final AuthRepositoryService authRepository;
 
-    public AuthController(AuthConfigRepository authRepository) {
+    public AuthController(AuthRepositoryService authRepository) {
         this.authRepository = authRepository;
     }
 
     @GetMapping
     public String list(Model model) {
-        List<AuthConfig> authList = authRepository.findAll();
+        List<AuthConfig> authList = authRepository.getAllAuthConfigs();
         model.addAttribute("authList", authList);
         model.addAttribute("content", "auth/list");
         model.addAttribute("activeMenu", "auth");
@@ -41,7 +41,7 @@ public class AuthController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
-        AuthConfig authConfig = authRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ID"));
+        AuthConfig authConfig = authRepository.getAuthConfigById(id);
         authConfig.setPassword(""); // clear password for editing
         model.addAttribute("authConfig", authConfig);
         model.addAttribute("authTypes", AuthType.values());
@@ -52,13 +52,13 @@ public class AuthController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute AuthConfig auth) {
-    	authRepository.save(auth);
+    	authRepository.saveAuthConfig(auth);
         return "redirect:" + ROUTES.UI_AUTH;
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-    	authRepository.deleteById(id);
+    	authRepository.deleteAuthConfig(id);
         return "redirect:" + ROUTES.UI_AUTH;
     }
 }

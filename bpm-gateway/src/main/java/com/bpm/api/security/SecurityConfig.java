@@ -1,7 +1,8 @@
 package com.bpm.api.security;
 
 import com.bpm.core.auth.domain.AuthConfig;
-import com.bpm.core.auth.repository.AuthConfigRepository;
+import com.bpm.core.auth.service.AuthRepositoryService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,10 +18,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    private final AuthConfigRepository authRepository;
+    private final AuthRepositoryService authService;
 
-    public SecurityConfig(AuthConfigRepository authRepository) {
-        this.authRepository = authRepository;
+    public SecurityConfig(AuthRepositoryService authService) {
+        this.authService = authService;
     }
 
     @Bean
@@ -35,10 +36,10 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            AuthConfig auth = authRepository.findByUsername(username)
+            AuthConfig auth = authService.getAuthLogin(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-         // Roles are comma-separated in DB, e.g., "ADMIN,USER"
+            // Roles are comma-separated in DB, e.g., "ADMIN,USER"
             String[] roles = auth.getRole() != null ? auth.getRole().split(",") : new String[]{};
             
             return User.builder()

@@ -70,13 +70,9 @@
                         <a th:href="@{'/admin/cmis/edit/' + ${cfg.id}}" class="text-info" title="Edit">
                             <i class="bi bi-pencil-square"></i>
                         </a>
-                        <a th:href="@{'/admin/cmis/delete/' + ${cfg.id}}" class="text-danger ms-2" 
-                           onclick="return confirm('Are you sure you want to delete this config?');" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </a>
                     </td>
                 </tr>
-                <tr th:if="${#lists.isEmpty(configs)}">
+                <tr th:if="${#lists.isEmpty(cmisConfigs)}">
                     <td colspan="7" class="text-center">No CMIS configuration found.</td>
                 </tr>
             </tbody>
