@@ -4,7 +4,7 @@ import com.bpm.core.auth.cache.AuthServiceCache;
 import com.bpm.core.common.util.JsonUtil;
 import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.service.RestServiceConfigService;
-import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerConfig;
 import com.bpm.core.server.service.ServerRepositoryService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class RestClientHelper {
 
     public String invoke(ServiceConfig config, String mappedRequest) {
         RestServiceConfig restConfig = restService.getActiveConfigById(config.getId());
-        Server server = serverService.getServerById(restConfig.getServerId());
+        ServerConfig server = serverService.getServerById(restConfig.getServerId());
 
         String resolvedUrl = RestUrlBuilder.buildResolvedUrl(restConfig, server);
 

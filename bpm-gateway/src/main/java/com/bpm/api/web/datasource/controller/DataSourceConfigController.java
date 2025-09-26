@@ -1,6 +1,7 @@
 package com.bpm.api.web.datasource.controller;
 
 import com.bpm.api.constant.ROUTES;
+import com.bpm.core.db.cache.DataSourceCache;
 import com.bpm.core.db.domain.DataSourceConfig;
 import com.bpm.core.db.infrastructure.DataSourceTestUtil;
 import com.bpm.core.db.service.DataSourceConfigService;
@@ -76,5 +77,11 @@ public class DataSourceConfigController {
             response.put("message", e.getMessage());
             return ResponseEntity.ok(response);
         }
+    }
+    
+    @PostMapping("/clear-cache")
+    public ResponseEntity<String> clearCache() {
+        DataSourceCache.clearCache();
+        return ResponseEntity.ok("DataSource cache cleared.");
     }
 }

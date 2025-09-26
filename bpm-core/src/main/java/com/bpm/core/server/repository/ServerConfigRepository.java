@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerConfig;
 
-public interface ServerConfigRepository extends JpaRepository<Server, Long> {
+public interface ServerConfigRepository extends JpaRepository<ServerConfig, Long> {
 
-	Server findByName(String name);
+	ServerConfig findByName(String name);
 
-	Server findByIpAndPort(String ip, Integer port);
+	ServerConfig findByIpAndPort(String ip, Integer port);
 	
-	List<Server> findByType(String type);
+	List<ServerConfig> findByType(String type);
 }

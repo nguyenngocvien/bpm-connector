@@ -2,17 +2,17 @@ package com.bpm.core.db.service;
 
 import com.bpm.core.db.domain.DataSourceConfig;
 import com.bpm.core.db.repository.DataSourceRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
 public class DataSourceConfigService {
 
     private final DataSourceRepository dataSourceRepository;
+    
+    public DataSourceConfigService(DataSourceRepository dataSourceRepository) {
+		this.dataSourceRepository = dataSourceRepository;
+	}
 
     public List<DataSourceConfig> getAllDataSources() {
         return dataSourceRepository.findAll();

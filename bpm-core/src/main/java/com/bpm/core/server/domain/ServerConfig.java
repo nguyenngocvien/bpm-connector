@@ -1,15 +1,17 @@
 package com.bpm.core.server.domain;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "cfg_servers")
+@Table(name = "cfg_cmis_sessions")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Server {
+public class ServerConfig {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +37,10 @@ public class Server {
 
     @Column(name = "repo_id")
     private String repoId;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

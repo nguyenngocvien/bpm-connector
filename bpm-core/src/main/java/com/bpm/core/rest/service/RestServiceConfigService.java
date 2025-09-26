@@ -4,11 +4,8 @@ import com.bpm.core.rest.domain.RestServiceConfig;
 import com.bpm.core.rest.repository.RestServiceConfigRepository;
 import com.bpm.core.serviceconfig.infrastructure.RestConfigMapper;
 
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-@Service
 public class RestServiceConfigService {
 
     private final RestServiceConfigRepository restRepository;

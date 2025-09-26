@@ -1,6 +1,8 @@
 package com.bpm.api.web.serviceconfig.controller;
 
 import com.bpm.api.constant.ROUTES;
+import com.bpm.core.cmis.domain.CmisSessionConfig;
+import com.bpm.core.cmis.service.CmisSessionConfigService;
 import com.bpm.core.db.domain.DataSourceConfig;
 import com.bpm.core.db.domain.DbServiceConfig;
 import com.bpm.core.db.domain.ParamType;
@@ -9,7 +11,7 @@ import com.bpm.core.db.service.DataSourceConfigService;
 import com.bpm.core.doc.domain.DocumentServiceConfig;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.rest.domain.RestServiceConfig;
-import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerConfig;
 import com.bpm.core.server.domain.ServerType;
 import com.bpm.core.server.service.ServerRepositoryService;
 import com.bpm.core.serviceconfig.domain.ServiceConfig;
@@ -29,11 +31,17 @@ public class ServiceConfigController {
 	private final ServiceConfigRepositoryService serviceConfigService;
 	private final DataSourceConfigService dataSourceService;
 	private final ServerRepositoryService serverService;
+	private final CmisSessionConfigService cmisSessionService;
 
-    public ServiceConfigController(ServiceConfigRepositoryService serviceConfigService, DataSourceConfigService dataSourceService, ServerRepositoryService serverService) {
+    public ServiceConfigController(
+    		ServiceConfigRepositoryService serviceConfigService, 
+    		DataSourceConfigService dataSourceService, 
+    		ServerRepositoryService serverService,
+    		CmisSessionConfigService cmisSessionService) {
     	this.serviceConfigService = serviceConfigService;
     	this.dataSourceService = dataSourceService;
     	this.serverService = serverService;
+    	this.cmisSessionService = cmisSessionService;
     }
 
     @GetMapping
@@ -57,19 +65,19 @@ public class ServiceConfigController {
     	config.setDocumentServiceConfig(new DocumentServiceConfig());
     	
     	List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
-    	List<Server> servers = serverService.getAllServers();
+    	List<ServerConfig> servers = serverService.getAllServers();
     	model.addAttribute("serviceTypes", ServiceType.values());
     	model.addAttribute("sqlTypes", SqlType.values());
     	model.addAttribute("paramTypes", ParamType.values());
     	
-    	List<Server> restServers = serverService.getServersByType(ServerType.REST);
+    	List<ServerConfig> restServers = serverService.getServersByType(ServerType.REST);
     	model.addAttribute("restServers", restServers);
     	
-    	List<Server> mailServers = serverService.getServersByType(ServerType.MAIL);
+    	List<ServerConfig> mailServers = serverService.getServersByType(ServerType.MAIL);
     	model.addAttribute("mailServers", mailServers);
     	
-    	List<Server> cmisServers = serverService.getServersByType(ServerType.CMIS);
-    	model.addAttribute("cmisServers", cmisServers);
+    	List<CmisSessionConfig> cmisSessionConfigs = cmisSessionService.getAll();
+    	model.addAttribute("cmisServers", cmisSessionConfigs);
     	
         model.addAttribute("serviceConfig", config);
         model.addAttribute("datasourceList", datasourceList);
@@ -83,7 +91,7 @@ public class ServiceConfigController {
     public String edit(@PathVariable("id") Long id, Model model) {
     	ServiceConfig serviceConfig = serviceConfigService.findById(id);
         List<DataSourceConfig> datasourceList = dataSourceService.getAllDataSources();
-        List<Server> servers = serverService.getAllServers();
+        List<ServerConfig> servers = serverService.getAllServers();
 
         model.addAttribute("serviceTypes", ServiceType.values());
         model.addAttribute("sqlTypes", SqlType.values());

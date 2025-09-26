@@ -9,7 +9,7 @@ import com.bpm.core.auth.service.AuthRepositoryService;
 import com.bpm.core.common.response.Response;
 import com.bpm.core.mail.domain.MailServiceConfig;
 import com.bpm.core.mail.service.MailServiceConfigService;
-import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerConfig;
 import com.bpm.core.server.service.ServerRepositoryService;
 
 public class EmailSender {
@@ -26,7 +26,7 @@ public class EmailSender {
 	public Object sendEmail(Long mailId, String jsonObject) {
 	    try {
 	        MailServiceConfig config = mailService.getActiveMailServiceConfigById(mailId);
-	        Server server = serverService.getServerById(config.getServerId());
+	        ServerConfig server = serverService.getServerById(config.getServerId());
 	        AuthConfig auth = authService.getAuthConfigById(config.getAuthId());
 
 	        Properties props = new Properties();

@@ -2,7 +2,7 @@ package com.bpm.core.rest.infrastructure;
 
 import com.bpm.core.rest.domain.NameValuePair;
 import com.bpm.core.rest.domain.RestServiceConfig;
-import com.bpm.core.server.domain.Server;
+import com.bpm.core.server.domain.ServerConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,7 +16,7 @@ public class RestUrlBuilder {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String buildResolvedUrl(RestServiceConfig config, Server server) {
+    public static String buildResolvedUrl(RestServiceConfig config, ServerConfig server) {
         String baseUrl = (server.isHttps() ? "https://" : "http://")
                 + server.getIp() + ":" + server.getPort();
 

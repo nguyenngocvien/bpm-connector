@@ -1,4 +1,4 @@
-package com.bpm.core.common.config;
+package com.bpm.api.config;
 
 import java.util.List;
 
@@ -17,6 +17,9 @@ import com.bpm.core.auth.provider.JwtAuthProvider;
 import com.bpm.core.auth.repository.AuthConfigRepository;
 import com.bpm.core.auth.service.AuthManager;
 import com.bpm.core.auth.service.AuthRepositoryService;
+import com.bpm.core.cmis.repository.CmisSessionConfigRepository;
+import com.bpm.core.cmis.service.CmisSessionConfigService;
+import com.bpm.core.cmis.service.CmisSessionService;
 import com.bpm.core.common.util.ServiceLogHelper;
 import com.bpm.core.db.infrastructure.DbExecutorHelper;
 import com.bpm.core.db.repository.DataSourceRepository;
@@ -28,6 +31,7 @@ import com.bpm.core.doc.repository.DocumentTemplateRepository;
 import com.bpm.core.doc.service.TemplateRepositoryService;
 import com.bpm.core.mail.repository.MailServiceConfigRepository;
 import com.bpm.core.mail.service.MailServiceConfigService;
+import com.bpm.core.monitor.DashboardService;
 import com.bpm.core.rest.infrastructure.RestClientHelper;
 import com.bpm.core.rest.infrastructure.RestRequestMapper;
 import com.bpm.core.rest.infrastructure.RestResponseMapper;
@@ -56,7 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     "com.bpm.core.servicelog.repository",
     "com.bpm.core.rest.repository",
     "com.bpm.core.mail.repository",
-    "com.bpm.core.document.repository",
+    "com.bpm.core.doc.repository",
     "com.bpm.core.cmis.repository",
 })
 @EntityScan(basePackages = {
@@ -67,10 +71,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     "com.bpm.core.servicelog.domain",
     "com.bpm.core.mail.domain",
     "com.bpm.core.rest.domain",
-    "com.bpm.core.document.domain",
+    "com.bpm.core.doc.domain",
     "com.bpm.core.cmis.domain"
 })
-public class CoreServiceAutoConfiguration {
+public class CoreAutoConfiguration {
 	
 	@Bean
     public BasicAuthProvider basicAuthProvider(AuthProperties properties) {
@@ -138,6 +142,16 @@ public class CoreServiceAutoConfiguration {
         return new ServiceLogHelper(logService);
     }
 
+    @Bean
+    public CmisSessionService cmisSessionService(CmisSessionConfigRepository repository, AuthRepositoryService authService) {
+        return new CmisSessionService(repository, authService);
+    }
+    
+    @Bean
+    public CmisSessionConfigService cmisSessionConfigService(CmisSessionConfigRepository repository) {
+        return new CmisSessionConfigService(repository);
+    }
+    
     @Bean
     public ServiceConfigRepositoryService serviceConfigService(
     		ServiceConfigRepository serviceConfigRepo,
@@ -215,4 +229,9 @@ public class CoreServiceAutoConfiguration {
     public ServiceDispatcher dispatcher(ServiceConfigRepositoryService configService, List<ServiceInvoker> invokers) {
         return new ServiceDispatcher(configService, invokers);
     }
+    
+    @Bean
+	public DashboardService dashboardService() {
+		return new DashboardService();
+	}
 }

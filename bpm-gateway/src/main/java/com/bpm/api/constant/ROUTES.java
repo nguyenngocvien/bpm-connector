@@ -7,6 +7,7 @@ public class ROUTES {
     
     public static final String UI = "/admin";
     public static final String UI_SERVER = UI + "/servers";
+    public static final String UI_CMIS = UI + "/cmis";
     public static final String UI_AUTH = UI + "/auth";
     public static final String UI_SERVICE = UI + "/service";
     public static final String UI_DATASOURCE = UI + "/datasource";
